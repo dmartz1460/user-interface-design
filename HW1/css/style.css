@@ -1,0 +1,17 @@
+/* Default div style */
+div { 
+  text-align: center;
+}
+
+div.column {
+  width: 30%;
+  float: left;
+  border: 5px solid;
+  margin: 5px;
+  padding: 5px;
+}
+
+div.row {
+  width: 100%;
+  float: left;
+}

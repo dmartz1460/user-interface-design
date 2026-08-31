@@ -1,0 +1,53 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Journal</title>
+  <link href="css/style.css" rel="stylesheet">
+</head>
+<body style="background-color: beige;">
+  <script src="js/main.js"></script>
+  <div>
+    <h1>Hello User</h1>
+    <p id="date"></p>
+    <p>"Comparison is the thief of joy"</p>
+  </div>
+  <div class="row">
+    <div class="column" >
+      <h1>Notes for the Day</h1>
+      <input oninput="updateNotes()" type="text" id="notes">
+    </div>
+    <div class="column">
+      <h1>How many Hours of Sleep Last Night?</h1>
+      <input oninput="updateSleepHours()" type="number" id="sleepHours" max="24" min="0" step="0.5">
+    </div>
+    <div class="column">
+      <h1>How did we feel today?</h1>
+      <input onchange="updateMood('anxious')" type="checkbox" id="anxious">
+      <label for="anxious">Anxious</label><br>
+      <input onchange="updateMood('angry')" type="checkbox" id="angry">
+      <label for="angry">Angry</label><br>
+      <input onchange="updateMood('happy')" type="checkbox" id="happy">
+      <label for="happy">Happy</label><br>
+      <input onchange="updateMood('tired')" type="checkbox" id="tired">
+      <label for="tired">Tired</label><br>
+      <input onchange="updateMood('energetic')" type="checkbox" id="energetic">
+      <label for="energetic">Energetic</label><br>
+      <input onchange="updateMood('sad')" type="checkbox" id="sad">
+      <label for="sad">Sad</label><br>
+      <input onchange="updateMood('confident')" type="checkbox" id="confident">
+      <label for="confident">Confident</label><br>
+    </div>
+  </div>
+  <div> 
+    <h1>Your Journal</h1>
+    <h2>Yesterday</h2>
+    <p id="yesterday"></p>
+    <h2>Mood Summary</h2>
+    <ul id="moodSummary"></ul>
+    <h2>Sleep Summary</h2>
+    <p id="sleepSummary"></p>
+  </div>
+</body>
+</html>
