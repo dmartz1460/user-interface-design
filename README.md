@@ -17,3 +17,7 @@ Languages Used:
 - Javascript
 
 ## Projects
+
+### [Project 1: Smart Object UI](/Project1)
+
+
