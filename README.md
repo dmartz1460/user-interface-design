@@ -1,7 +1,7 @@
 # user-interface-design
 Projects from CS-5167: User Interface
 
-## Purpose
+## Overview
 The purpose of this repo is to host all projects pertaining to my user-interface-design course at UC. Each folder 
 in this repo corresponds to one project or assignment designed to practice different areas of UI/UX design. 
 
