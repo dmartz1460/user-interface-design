@@ -27,15 +27,17 @@ This section covers the initial gathering of design needs and requirements of th
 
 ### Affordances and Physical Properties
 
-| **Physical Properties**  | **Affordances** | 
-| ------------------------ | --------------- | 
-| Stands on a table | Digital buttons for user input |
-| Small object | Graphics to indicate capacity and contents |
-| Coin Sensor | Menu icon to navigate screens |
-| Coin Dispensor | At-a-Glance/Lock screen for quick info |
-| 10 Custom Currency Partitions | Swipe up action to unlock screen |
-| Two Displays (front and side) | Arrows to select amount |
-| Storage paritions for each coin type | 
+| **Physical Properties**  | **Affordances** | **Signifiers** | **Constraints** |
+| ------------------------ | --------------- | -------------- | --------------- | 
+| Stands on a table | numpad to enter pin | Arrows to signal direction of a button or swipe action | Greyed out buttons to indicate unavailble selections | 
+| Small object | Graphics to indicate capacity and contents | Text on buttons its action | 
+| Coin Sensor | Menu icon to present available screens | Insertion slot signals where coin shall be inserted | 
+| Coin Dispensor | At-a-Glance/Lock screen for quick info | Dispensor tray to signal where coins will be dispensed |
+| 10 Custom Currency Partitions | Prompt to signal swipe up action to unlock screen |
+| Two Displays (front and side) | Arrows to select number and letter characters |
+| Storage paritions for each coin type | Touch display to interact with UI |
+| Coin insertion slot | Back arrows to navigate to previous screen |
+| | Enter and Cancel keys to finalize or cancel choices | 
 
 ### Assumptions
 
