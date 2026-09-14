@@ -73,7 +73,7 @@ Three separate individuals were asked a series of questions to gather user needs
 
 3. If you had a dedicated physical device for storing money, what kind of information would you want to see on it at a glance?
 - Would you prioritize the total amount, progress toward a specific goal, or something else?
-    * Person 1: total sum, deeper menu to display coin counts, tomogacchi
+    * Person 1: total sum, deeper menu to display coin counts
     * Person 2: total sum, friendly reminders for goals, deeper menu to display counts
     * Person 3: total value on value screen, how many of each currency type, click prompts password to navigate to home screen
 
@@ -109,16 +109,13 @@ Three separate individuals were asked a series of questions to gather user needs
 The following design requirements were made based on user reponses and object properties above:
 
 - `REQ-01`: The system shall prompt for a password pin to unlock the device.
-    * **01.a**: A default pin shall be set before the user is capable of creating a new one.
 - `REQ-02`: The system shall allow custom currency to be tracked using its type/name, and value.
-    * **02.a**: To insert a custom type, the user shall navigate to the menu screen and select "Track Custom Type" where the user can create, edit, delete a custom currency type.
-- `REQ-03`: The system shall track coin data such as coin type, value, total count in physical amount, and currency amount.
-  * **03.a**: Upon insertion of a coin, the system shall display of a pop-up to notify the user of the inserted coin along with its current count and capacity.
+- `REQ-03`: The system shall track coin data such as coin type, value, total count in physical amount, and currency amount.s
+  * **03.a**: Upon insertion of a coin, the system shall display a pop-up to notify the user of the inserted coin along with its current count and capacity.
 - `REQ-04`: The system shall have a lock screen to display an *"At a Glance"* view of the bank.
     * **04.a**: The lock screen shall display basic information such as total amount and time.
     * **04.b**: The lock screen shall prompt the user for an action to unlock the device.
-- `REQ-05`: The system shall contain a menu dropdown for ease of navigation to other screens.
-    * **05.a**: The menu dropdown shall be available on all primary screen besides the lock screen.
+- `REQ-05`: The system shall contain a source of navigation to external screens.
 - `REQ-06`: The system shall contain a secondary display on the side of the device to act as a reactive and informative display.
 - `REQ-07`: The system shall be capable of dispensing a user selected currency value.
     * **07.a**: The user shall have the ability to select the cash or coin types to dispense that add to the dispensed value.
