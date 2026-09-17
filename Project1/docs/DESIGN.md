@@ -29,8 +29,8 @@ This section covers the initial gathering of design needs and requirements of th
 
 | **Physical Properties**  | **Affordances** | **Signifiers** | **Constraints** |
 | ------------------------ | --------------- | -------------- | --------------- | 
-| Stands on a table | numpad to enter pin | Arrows to signal direction of a button or swipe action | Greyed out buttons to indicate unavailble selections | 
-| Small object | Graphics to indicate capacity and contents | Text on buttons its action | 
+| Stands on a table | Numpad to enter pin | Arrows to signal direction of a button or swipe action | Greyed out buttons to indicate unavailble selections | 
+| Small object | Graphics to indicate capacity and contents | Text on buttons signify its action | 
 | Coin Sensor | Menu icon to present available screens | Insertion slot signals where coin shall be inserted | 
 | Coin Dispensor | At-a-Glance/Lock screen for quick info | Dispensor tray to signal where coins will be dispensed |
 | 10 Custom Currency Partitions | Prompt to signal swipe up action to unlock screen |
@@ -119,15 +119,16 @@ The following design requirements were made based on user reponses and object pr
 - `REQ-06`: The system shall contain a secondary display on the side of the device to act as a reactive and informative display.
 - `REQ-07`: The system shall be capable of dispensing a user selected currency value.
     * **07.a**: The user shall have the ability to select the cash or coin types to dispense that add to the dispensed value.
-    * **07.b**: The system shall prompt the user for a pin code to proceed with a dispense action.
+    * **07.b**: The system shall require a pin code to proceed with a dispense action.
 - `REQ-08`: The system shall track current capacity of the bank.
     * **08.a**: Capacity of each coin type shall add up to a calculated total capacity of the bank.
     * **08.b**: A warning indicator shall be present on the screen to notify the user if coin capacity is within 10% of the maximum value.
 - `REQ-09`: The system shall have a way to track a small financial goal and display progress on the lock screen.
     * **09.a**: The user shall be able to create, edit, delete any parameters to the goal.
 
-
 ## Interface Sketching
+
+After design requirements were gathered, an initial vanilla design of the interface was sketched in addition to a hybrid sketch of the interface as it would relate to the physical Smart Bank device. These sketches can be found [here](UI-Project1-Sketching.pdf).
 
 ## User Feedback Evaluation
 
