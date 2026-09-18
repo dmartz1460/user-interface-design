@@ -1,9 +1,14 @@
 import { mount } from 'svelte'
 import './bank.css'
-import Bank from './Primary.svelte'
+import ControlDisplay from './Control.svelte'
+import ReactiveDisplay from './Reactive.svelte'
 
-const app = mount(Bank, {
-  target: document.getElementById('app'),
+const controlApp = mount(ControlDisplay, {
+  target: document.getElementById('controlApp')
 })
 
-export default app
+const reactiveApp = mount(ReactiveDisplay, {
+  target: document.getElementById('reactiveApp')
+})
+
+export default controlApp
