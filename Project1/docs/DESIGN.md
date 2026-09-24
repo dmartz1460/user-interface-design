@@ -132,3 +132,4 @@ After design requirements were gathered, an initial vanilla design of the interf
 
 ## User Feedback Evaluation
 
+To determine the final design of the UI, user's were presented the initial sketches to provide feedback for the most suitable design choices. It was found that user's mostly preferred arrows to navigate screens and buttons that correspond to a new screen instead of a menu. User's also preferred to unlock the lock screen using a button instead of a swipe up action.
