@@ -1,24 +1,33 @@
 <script>
-  let props = $props();
+  // Destructure the props that Control passes
+  // bind:activeScreen → needs $bindable() so we can write to it
+  // totalBalance      → read-only, just display it
+  // timeString        → read-only, displays the current time
+  let { activeScreen = $bindable(), totalBalance, timeString } = $props();
 </script>
 
-<section class="screenTemplate">
-  <div>
-    <h1>{props.time}</h1>
-    <p>locked</p>
+<section class="screen-template">
+  <!-- Top: Clock -->
+  <div class="screen-header">
+    <h1>{timeString}</h1>
+    <p>🔒</p>
   </div>
-  <div class="row">
-    <div class="column" id="balance">
-      <p>{props.balance}</p>
+
+  <!-- Middle: At-a-glance info -->
+  <div class="at-a-glance">
+    <div>
+      <p>${totalBalance.toFixed(2)}</p>
     </div>
-    <div class="column" id="customEntries">
-      <p></p>
+    <div>
+      <p>Custom</p>
     </div>
-    <div class="column" id="goals">
-      <p></p>
+    <div>
+      <p>Goals</p>
     </div>
   </div>
-  <div class="unlockButton">
-    <button onclick={() => props.navigate('home')}>Unlock</button>
+
+  <!-- Bottom: Unlock action -->
+  <div class="unlock-button">
+    <button onclick={() => activeScreen = 'pinpad'}>Unlock</button>
   </div>
 </section>

@@ -9,68 +9,93 @@
   import Custom from './lib/custom.svelte'
   import ReactiveDisplay from './Reactive.svelte'
 
-  // Screen state management
-  let currentScreen = $state('lock')
-  let popupScreen = $state(/** @type {string | null} */ (null))
-
-  // Centralized state for change-dispensing and accounts
-  let bankState = $state({
-    pennies: 0,
-    nickels: 0,
-    dimes: 0,
-    quarters: 0,
+  let now = $state(new Date());
+  $effect(() => {
+    const interval = setInterval(() => { now = new Date(); }, 1000);
+    return () => clearInterval(interval);
   });
 
-  let balance = $derived(() => {
-    const { pennies, nickels, dimes, quarters } = bankState;
-    return pennies * 0.01 + nickels * 0.05 + dimes * 0.10 + quarters * 0.25;
+  // Format time as HH:MM
+  let timeString = $derived(
+    now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+  );
+
+  // Variable to track screen state
+  let activeScreen = $state('lock');
+
+  // Variables to track coin state
+  let totalBalance = $state(23.51);
+  let coin = $state({
+    quarters: { count: 27, capacity: 100, value: 0.25 },
+    dimes: { count: 15, capacity: 100, value: 0.10 },
+    nickels: { count: 14, capacity: 100, value: 0.05 },
+    pennies: { count: 13, capacity: 100, value: 0.01 }
   });
 
-  // Triggered by child components
-  /** @param {string} screen */
-  function navigate(screen) {
-    currentScreen = screen;
+  // Track the last inserted coin for the reactive display popup
+  let insertedCoin = $state(null);
+  let lastDispensed = $state(null);
+
+  // Coin insertion simulation function
+  function simulateCoinDrop(coinType) {
+    // do not accept coins if the partition is full
+    if (coin[coinType].count < coin[coinType].capacity) {
+      coin[coinType].count += 1;
+      totalBalance += coin[coinType].value;
+      
+      // Reassign the object to trigger Svelte's reactivity engine 
+      // so child components (like YourBank and Goals) re-render immediately.
+      coin = { ...coin };
+
+      // Notify reactive display of the insertion
+      insertedCoin = {
+        type: coinType,
+        count: coin[coinType].count,
+        capacity: coin[coinType].capacity,
+        timestamp: Date.now()
+      };
+    } else {
+      alert(`Physical capacity reached for ${coinType}!`);
+    }
   }
 </script>
 
-<main class="mainContainer">
+<!-- Device Simulation: two screens side by side -->
+<div class="device-wrapper">
 
-  <!-- Control Display -->
-  <section class="controlDisplay">
-    {#if currentScreen === 'home'}
-      <Home />
-    {:else if currentScreen === 'lock'}
-      <Lock {navigate}/>
-    {:else if currentScreen === 'yourBank'}
-      <YourBank />
-    {:else if currentScreen === 'goals'}
-      <Goals />
-    {:else if currentScreen === 'dispense'}
-      <Dispense />
-    {:else if currentScreen === 'custom'}
-      <Custom />
+  <!-- Control Display (main screen) -->
+  <section class="control-display">
+    {#if activeScreen === 'lock'}
+      <Lock bind:activeScreen {totalBalance} {timeString}/>
+    {:else if activeScreen === 'pinpad'}
+      <Pinpad bind:activeScreen />
+    {:else if activeScreen === 'home'}
+      <Home bind:activeScreen {totalBalance} {timeString} {coin}/>
+    {:else if activeScreen === 'dispense'}
+      <Dispense bind:activeScreen bind:totalBalance bind:coin bind:lastDispensed />
+    {:else if activeScreen === 'goals'}
+      <Goals bind:activeScreen {totalBalance} />
+    {:else if activeScreen === 'custom'}
+      <Custom bind:activeScreen />
+    {:else if activeScreen === 'yourBank'}
+      <YourBank bind:activeScreen {totalBalance} {coin} />
     {/if}
   </section>
 
-  <!-- Testing UI -->
-  <aside class="testUI">
-    <details class="testDetails">
-      <summary>Testing Controls</summary>
-      <p>To simulate a coin insertion, click the buttons below</p>
-    </details>
-    <div class="testButtons">
-      <div class="testButton">
-        <button onclick={() => bankState.quarters++}>Insert Quarter</button>
-      </div>
-      <div class="testButton">
-        <button onclick={() => bankState.dimes++}>Insert Dime</button>
-      </div>
-      <div class="testButton">
-        <button onclick={() => bankState.nickels++}>Insert Nickel</button>
-      </div>
-      <div class="testButton">
-        <button onclick={() => bankState.pennies++}>Insert Penny</button>
-      </div>
-    </div>
-  </aside>
-</main>
+  <!-- Reactive Display (side screen, REQ-06) -->
+  <ReactiveDisplay {coin} {insertedCoin} {lastDispensed} />
+</div>
+
+<!-- Testing UI -->
+<aside class="testing-ui">
+  <details class="testDetails">
+    <summary>Testing Controls</summary>
+    <p>To simulate a coin insertion, click the buttons below</p>
+  </details>
+  <div class="coin-buttons">
+    <button onclick={() => simulateCoinDrop('quarters')}>25¢</button>
+    <button onclick={() => simulateCoinDrop('dimes')}>10¢</button>
+    <button onclick={() => simulateCoinDrop('nickels')}>5¢</button>
+    <button onclick={() => simulateCoinDrop('pennies')}>1¢</button>
+  </div>
+</aside>

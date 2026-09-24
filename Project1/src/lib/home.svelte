@@ -1,25 +1,32 @@
 <script>
-  let props = $props();
+  // Destructure the props that Control passes
+  // bind:activeScreen → needs $bindable() so we can write to it
+  // totalBalance      → read-only, just display it
+  // timeString        → read-only, displays the current time
+  let { activeScreen = $bindable(), totalBalance, timeString } = $props();
 </script>
 
-<section class="screenTemplate">
-  <div>
-    <h1>{props.time}</h1>
-    <button onclick={() => props.navigate('yourBank')}>Your Bank</button>
-    <button onclick={() => props.navigate('lock')}>lock</button>
+<section class="screen-template">
+  <!-- Top bar: Clock + navigation -->
+  <div class="screen-header">
+    <h1>{timeString}</h1>
+    <button onclick={() => activeScreen = 'yourBank'}>Your Bank</button>
+    <button onclick={() => activeScreen = 'lock'}>🔒</button>
   </div>
-  <div class="row">
-    <div class="column" id="balance">
-      <section>{props.balance}</section>
-      <button onclick={() => props.navigate('dispense')}>Dispense</button>
+
+  <!-- Main content: 3-column layout matching Lock -->
+  <div class="at-a-glance">
+    <div>
+      <p>${totalBalance.toFixed(2)}</p>
+      <button onclick={() => activeScreen = 'dispense'}>Dispense</button>
     </div>
-    <div class="column" id="customEntries">
-      <section></section>
-      <button onclick={() => props.navigate('custom')}>Custom Currency</button>
+    <div>
+      <p>Custom</p>
+      <button onclick={() => activeScreen = 'custom'}>Custom Currency</button>
     </div>
-    <div class="column" id="goals">
-      <section></section>
-      <button onclick={() => props.navigate('goals')}>Goals</button>
+    <div>
+      <p>Goals</p>
+      <button onclick={() => activeScreen = 'goals'}>Goals</button>
     </div>
   </div>
 </section>

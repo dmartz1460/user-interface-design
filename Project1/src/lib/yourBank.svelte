@@ -1,16 +1,23 @@
 <script>  
-  let props = $props();
+  // Destructure the props that Control passes
+  // bind:activeScreen → needs $bindable() so we can write to it
+  // totalBalance      → read-only, just display it
+  // coin              → read-only, displays the current coin counts and capacities
+  let { activeScreen = $bindable(), totalBalance, coin } = $props();
 </script>
 
-<section class="screenTemplate" >
-  <h1>Your Bank</h1>
-  <p class="homeScreenInfo" id="total">Total: ${props.balance.toFixed(2)}</p>
-  <div class="coinContainer">
+<section class="screen-template" >
+  <div class="screen-header">
+    <button class="back-btn" onclick={() => activeScreen = 'home'}>Back</button>
+    <h1>Your Bank</h1>
+  </div>
+  <div>
+    <p>Total: {totalBalance.toFixed(2)}</p>
     <ul>
-      <p>Pennies: {props.bankState.pennies * 0.01} cents, {props.bankState.pennies}/100 </p>
-      <p>Nickels: {props.bankState.nickels * 0.05} cents, {props.bankState.nickels}/100 </p>
-      <p>Dimes: {props.bankState.dimes * 0.10} cents, {props.bankState.dimes}/100 </p>
-      <p>Quarters: {props.bankState.quarters * 0.25} cents, {props.bankState.quarters}/100 </p>
+      <li>Pennies: {coin.pennies.count * 0.01} cents, {coin.pennies.count}/{coin.pennies.capacity} </li>
+      <li>Nickels: {coin.nickels.count * 0.05} cents, {coin.nickels.count}/{coin.nickels.capacity} </li>
+      <li>Dimes: {coin.dimes.count * 0.10} cents, {coin.dimes.count}/{coin.dimes.capacity} </li>
+      <li>Quarters: {coin.quarters.count * 0.25} cents, {coin.quarters.count}/{coin.quarters.capacity} </li>
     </ul>
   </div>
 </section>
