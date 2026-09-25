@@ -43,12 +43,14 @@
 
 <!-- Header -->
 <div class="screen-header">
-  <button class="cancel-btn" onclick={cancel}>Cancel</button>
+  <div><button class="cancel-btn" onclick={cancel}>Cancel</button></div>
   <h1>Enter PIN</h1>
 </div>
 
 <div> 
-  <p class="pin-dots">{dots}</p>
+  {#if !error}
+    <p class="pin-dots">{dots}</p>
+  {/if}
   {#if error}
     <p class="pin-error">{error}</p>
   {/if}

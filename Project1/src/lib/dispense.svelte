@@ -125,12 +125,11 @@
     onclick={bulkDecrement}
     disabled={!canBulkDecrement()}
   >▼</button>
-
 </div>
 
 <!-- Coin dispense columns -->
 <div class="dispense-grid">
-  <button class="cancel-btn" onclick={cancelDispense}>Cancel</button>
+  <div class="cancel-enter"><button class="cancel-btn" onclick={cancelDispense}>Cancel</button></div>
   {#each coinTypes as { key, label, icon }}
     <div class="dispense-coin-col">
       <button
@@ -150,5 +149,5 @@
       >▼</button>
     </div>
   {/each}
-  <button class="enter-btn" onclick={confirmDispense} disabled={dispenseTotal <= 0}>Enter</button>
+  <div class="cancel-enter"><button class="enter-btn" onclick={confirmDispense} disabled={dispenseTotal <= 0}>Enter</button></div>
 </div>
