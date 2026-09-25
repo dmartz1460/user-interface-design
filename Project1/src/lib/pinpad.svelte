@@ -41,34 +41,31 @@
   }
 </script>
 
-<section class="screen-template">
+<!-- Header -->
+<div class="screen-header">
+  <button class="cancel-btn" onclick={cancel}>Cancel</button>
+  <h1>Enter PIN</h1>
+</div>
 
-  <!-- Header -->
-  <div class="screen-header">
-    <button class="cancel-btn" onclick={cancel}>Cancel</button>
-    <h1>Enter PIN</h1>
-  </div>
+<div> 
+  <p class="pin-dots">{dots}</p>
+  {#if error}
+    <p class="pin-error">{error}</p>
+  {/if}
+</div>
 
-  <div> 
-    <p class="pin-dots">{dots}</p>
-    {#if error}
-      <p class="pin-error">{error}</p>
-    {/if}
-  </div>
-
-  <!-- Pinpad -->
-  <div class="pinpad-grid">
-    {#each [1, 2, 3] as digit}
-      <button class="pin-key" onclick={() => pressDigit(String(digit))}>{digit}</button>
-    {/each}
-    {#each [4, 5, 6] as digit}
-      <button class="pin-key" onclick={() => pressDigit(String(digit))}>{digit}</button>
-    {/each}
-    {#each [7, 8, 9] as digit}
-      <button class="pin-key" onclick={() => pressDigit(String(digit))}>{digit}</button>
-    {/each}
-    <button class="pin-key" onclick={backspace}>⌫</button>
-    <button class="pin-key" onclick={() => pressDigit('0')}>0</button>
-    <button class="pin-key pin-key-enter" onclick={submit}>✓</button>
-  </div>
-</section>
+<!-- Pinpad -->
+<div class="pinpad-grid">
+  {#each [1, 2, 3] as digit}
+    <button class="pin-key" onclick={() => pressDigit(String(digit))}>{digit}</button>
+  {/each}
+  {#each [4, 5, 6] as digit}
+    <button class="pin-key" onclick={() => pressDigit(String(digit))}>{digit}</button>
+  {/each}
+  {#each [7, 8, 9] as digit}
+    <button class="pin-key" onclick={() => pressDigit(String(digit))}>{digit}</button>
+  {/each}
+  <button class="pin-key" onclick={backspace}>⌫</button>
+  <button class="pin-key" onclick={() => pressDigit('0')}>0</button>
+  <button class="pin-key pin-key-enter" onclick={submit}>✓</button>
+</div>

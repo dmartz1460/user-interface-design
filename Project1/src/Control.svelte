@@ -3,11 +3,11 @@
   import Lock from './lib/lock.svelte'
   import YourBank from './lib/yourBank.svelte'
   import Pinpad from './lib/pinpad.svelte'
+  import Dispense from './lib/dispense.svelte'
+  import ReactiveDisplay from './Reactive.svelte'
   import Keyboard from './lib/keyboard.svelte'
   import Goals from './lib/goals.svelte'
-  import Dispense from './lib/dispense.svelte'
   import Custom from './lib/custom.svelte'
-  import ReactiveDisplay from './Reactive.svelte'
 
   let now = $state(new Date());
   $effect(() => {
@@ -38,7 +38,7 @@
 
   // Coin insertion simulation function
   function simulateCoinDrop(coinType) {
-    // do not accept coins if the partition is full
+    // Do not accept coins if the partition is full
     if (coin[coinType].count < coin[coinType].capacity) {
       coin[coinType].count += 1;
       totalBalance += coin[coinType].value;
@@ -66,23 +66,25 @@
   <!-- Control Display (main screen) -->
   <section class="control-display">
     {#if activeScreen === 'lock'}
-      <Lock bind:activeScreen {totalBalance} {timeString}/>
+      <Lock bind:activeScreen {totalBalance} {timeString} />
     {:else if activeScreen === 'pinpad'}
       <Pinpad bind:activeScreen />
     {:else if activeScreen === 'home'}
-      <Home bind:activeScreen {totalBalance} {timeString} {coin}/>
+      <Home bind:activeScreen {totalBalance} {timeString} />
     {:else if activeScreen === 'dispense'}
       <Dispense bind:activeScreen bind:totalBalance bind:coin bind:lastDispensed />
-    {:else if activeScreen === 'goals'}
-      <Goals bind:activeScreen {totalBalance} />
-    {:else if activeScreen === 'custom'}
-      <Custom bind:activeScreen />
     {:else if activeScreen === 'yourBank'}
       <YourBank bind:activeScreen {totalBalance} {coin} />
+    <!-- {:else if activeScreen === 'goals'}
+      <Goals />
+    {:else if activeScreen === 'custom'}
+      <Custom /> 
+    {:else if activeScreen === 'keyboard'}
+      <Keyboard /> -->
     {/if}
   </section>
 
-  <!-- Reactive Display (side screen, REQ-06) -->
+  <!-- Reactive Display -->
   <ReactiveDisplay {coin} {insertedCoin} {lastDispensed} />
 </div>
 

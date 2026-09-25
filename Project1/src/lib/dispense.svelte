@@ -25,7 +25,42 @@
     dispensedCoins.pennies  * 0.01
   );
 
-  // Can we add more of this coin? (grey out ▲ if not)
+  // Bulk increment by $1.00 using largest available coins first
+  function bulkIncrement() {
+    let remaining = 100; // work in cents to avoid floating point
+    for (const { key } of coinTypes) {
+      const available = coin[key].count - dispensedCoins[key]; // coins not yet selected
+      const coinCents = Math.round(coin[key].value * 100);
+      const toAdd = Math.min(available, Math.floor(remaining / coinCents));
+      dispensedCoins[key] += toAdd;
+      remaining -= toAdd * coinCents;
+      if (remaining <= 0) break;
+    }
+  }
+
+  // Bulk decrement by $1.00, removing largest selected coins first
+  function bulkDecrement() {
+    let remaining = 100;
+    for (const { key } of coinTypes) {
+      const coinCents = Math.round(coin[key].value * 100);
+      const toRemove = Math.min(dispensedCoins[key], Math.floor(remaining / coinCents));
+      dispensedCoins[key] -= toRemove;
+      remaining -= toRemove * coinCents;
+      if (remaining <= 0) break;
+    }
+  }
+
+  // Can we add at least 1¢ more? (for disabling arrow)
+  function canBulkIncrement() {
+    return coinTypes.some(({ key }) => dispensedCoins[key] < coin[key].count);
+  }
+
+  // Do we have at least 1¢ selected? (for disabling arrow)
+  function canBulkDecrement() {
+    return dispenseTotal > 0;
+  }
+
+  // Can we add more of this coin? (grey out arrow if not)
   function canIncrement(key) {
     return dispensedCoins[key] < coin[key].count;
   }
@@ -73,49 +108,47 @@
   }
 </script>
 
-<section class="screen-template">
+<!-- Dispense header with total and increment/decrement buttons -->
+<div class="dispense-header">
+  <button
+    class="arrow-btn"
+    onclick={bulkIncrement}
+    disabled={!canBulkIncrement()}
+  >▲</button>
 
-  <div class="dispense-header">
-    <button
-      class="arrow-btn"
-      onclick={() => increment(key)}
-      disabled={!canIncrement(key)}
-    >▲</button>
-    
-    <p class="dispense-total">
-      ${dispenseTotal.toFixed(2)} / ${totalBalance.toFixed(2)}
-    </p>
+  <p class="dispense-total">
+    ${dispenseTotal.toFixed(2)} / ${totalBalance.toFixed(2)}
+  </p>
 
-    <button
-      class="arrow-btn"
-      onclick={() => decrement(key)}
-      disabled={!canDecrement(key)}
-    >▼</button>
+  <button
+    class="arrow-btn"
+    onclick={bulkDecrement}
+    disabled={!canBulkDecrement()}
+  >▼</button>
 
-  </div>
+</div>
 
-  <!-- Per-coin columns: ▲ icon count ▼ -->
-  <div class="dispense-grid">
-    <button class="cancel-btn" onclick={cancelDispense}>Cancel</button>
-    {#each coinTypes as { key, label, icon }}
-      <div class="dispense-coin-col">
-        <button
-          class="arrow-btn"
-          onclick={() => increment(key)}
-          disabled={!canIncrement(key)}
-        >▲</button>
+<!-- Coin dispense columns -->
+<div class="dispense-grid">
+  <button class="cancel-btn" onclick={cancelDispense}>Cancel</button>
+  {#each coinTypes as { key, label, icon }}
+    <div class="dispense-coin-col">
+      <button
+        class="arrow-btn"
+        onclick={() => increment(key)}
+        disabled={!canIncrement(key)}
+      >▲</button>
 
-        <span class="coin-icon">{icon}</span>
-        <span class="coin-count">{dispensedCoins[key]}</span>
-        <span class="coin-label">{label}</span>
+      <span class="coin-icon">{icon}</span>
+      <span class="coin-count">{dispensedCoins[key]}</span>
+      <span class="coin-label">{label}</span>
 
-        <button
-          class="arrow-btn"
-          onclick={() => decrement(key)}
-          disabled={!canDecrement(key)}
-        >▼</button>
-      </div>
-    {/each}
-    <button class="enter-btn" onclick={confirmDispense} disabled={dispenseTotal <= 0}>Enter</button>
-  </div>
-</section>
+      <button
+        class="arrow-btn"
+        onclick={() => decrement(key)}
+        disabled={!canDecrement(key)}
+      >▼</button>
+    </div>
+  {/each}
+  <button class="enter-btn" onclick={confirmDispense} disabled={dispenseTotal <= 0}>Enter</button>
+</div>

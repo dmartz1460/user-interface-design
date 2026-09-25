@@ -1,7 +1,7 @@
 <script>
   let { coin, insertedCoin, lastDispensed } = $props();
 
-  // --- Capacity calculation (REQ-08.a) ---
+  // Capacity calculation
   let totalCount = $derived(
     coin.quarters.count + coin.dimes.count +
     coin.nickels.count + coin.pennies.count
@@ -16,10 +16,10 @@
     Math.round((totalCount / totalCapacity) * 100)
   );
 
-  // Warning if within 10% of max (REQ-08.b)
+  // Warning if within 10% of max 
   let isWarning = $derived(capacityPercent >= 90);
 
-  // --- Coin insertion popup (REQ-03.a) ---
+  // Coin insertion popup
   let showInsertPopup = $state(false);
 
   $effect(() => {
@@ -30,7 +30,7 @@
     }
   });
 
-  // --- Dispense popup ---
+  // Dispense popup
   let showDispensePopup = $state(false);
 
   $effect(() => {
@@ -43,6 +43,7 @@
 </script>
 
 <aside class="reactive-display">
+
   <!-- Capacity Bar -->
   <div class="capacity-section">
     <p class="capacity-label">Bank Capacity</p>
@@ -58,7 +59,7 @@
     </p>
   </div>
 
-  <!-- Coin Insertion Popup (REQ-03.a) -->
+  <!-- Coin Insertion Popup -->
   {#if showInsertPopup && insertedCoin}
     <div class="coin-popup">
       <p class="popup-title">Coin Inserted!</p>
@@ -69,7 +70,7 @@
     </div>
   {/if}
 
-  <!-- Dispense Popup (REQ-07) -->
+  <!-- Dispense Popup -->
   {#if showDispensePopup && lastDispensed}
     <div class="coin-popup dispense-popup">
       <p class="popup-title">Dispensed!</p>

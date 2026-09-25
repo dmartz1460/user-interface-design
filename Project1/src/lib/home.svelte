@@ -6,27 +6,36 @@
   let { activeScreen = $bindable(), totalBalance, timeString } = $props();
 </script>
 
-<section class="screen-template">
-  <!-- Top bar: Clock + navigation -->
-  <div class="screen-header">
-    <h1>{timeString}</h1>
-    <button onclick={() => activeScreen = 'yourBank'}>Your Bank</button>
-    <button onclick={() => activeScreen = 'lock'}>🔒</button>
+<!-- Top bar: Clock + navigation -->
+<div class="screen-header">
+  <p class="screen-time">{timeString}</p>
+  <button class="your-bank-btn" onclick={() => activeScreen = 'yourBank'}>Your Bank</button>
+  <button class="lock-icon" onclick={() => activeScreen = 'lock'}>🔒</button>
+</div>
+
+<!-- Main content: 3 equal columns, each with box above button -->
+<div class="glance-row">
+  <div class="glance-col">
+    <div class="glance-box">
+      <p class="glance-label">Balance</p>
+      <p class="glance-value">${totalBalance.toFixed(2)}</p>
+    </div>
+    <button class="glance-btn" onclick={() => activeScreen = 'dispense'}>Dispense</button>
   </div>
 
-  <!-- Main content: 3-column layout matching Lock -->
-  <div class="at-a-glance">
-    <div>
-      <p>${totalBalance.toFixed(2)}</p>
-      <button onclick={() => activeScreen = 'dispense'}>Dispense</button>
+  <div class="glance-col">
+    <div class="glance-box">
+      <p class="glance-label">Custom</p>
+      <p class="glance-value">—</p>
     </div>
-    <div>
-      <p>Custom</p>
-      <button onclick={() => activeScreen = 'custom'}>Custom Currency</button>
-    </div>
-    <div>
-      <p>Goals</p>
-      <button onclick={() => activeScreen = 'goals'}>Goals</button>
-    </div>
+    <button class="glance-btn" onclick={() => activeScreen = 'home'}>Custom Currency</button>
   </div>
-</section>
+
+  <div class="glance-col">
+    <div class="glance-box">
+      <p class="glance-label">Goals</p>
+      <p class="glance-value">—</p>
+    </div>
+    <button class="glance-btn" onclick={() => activeScreen = 'home'}>Goals</button>
+  </div>
+</div>
