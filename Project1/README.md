@@ -8,5 +8,10 @@ The idea of this project was to design a User Interface for a theoretical Smart 
 
 The design strategies for designing the Smart Bank's UI are outlined in [DESIGN.md](docs/DESIGN.md). These strategies follow a basic process to gather user needs and design requirements while also considering the assumptions and physical properties of the object. 
 
+## Implementation
+
+The Smart Bank UI's implementation decisions are outlined in [IMPLEMENTATION.md](docs/IMPLEMENTATION.md). These decisions reflect the design strategies detailed in the design document.
+
 ## Usage
 
+The instructions for testing the features of the UI are outlined in [USAGE.md](docs/USAGE.md). This document also covers how to set up your local system to use the UI.
