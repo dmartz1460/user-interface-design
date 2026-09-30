@@ -1,13 +1,13 @@
 <script>
-  import Home from './lib/home.svelte'
-  import Lock from './lib/lock.svelte'
-  import YourBank from './lib/yourBank.svelte'
-  import Pinpad from './lib/pinpad.svelte'
-  import Dispense from './lib/dispense.svelte'
+  import Home from './screens/home.svelte'
+  import Lock from './screens/lock.svelte'
+  import YourBank from './screens/yourBank.svelte'
+  import Pinpad from './screens/pinpad.svelte'
+  import Dispense from './screens/dispense.svelte'
   import ReactiveDisplay from './Reactive.svelte'
-  import Keyboard from './lib/keyboard.svelte'
-  import Goals from './lib/goals.svelte'
-  import Custom from './lib/custom.svelte'
+  import Keyboard from './screens/keyboard.svelte'
+  import Goals from './screens/goals.svelte'
+  import Custom from './screens/custom.svelte'
 
   let now = $state(new Date());
   $effect(() => {
@@ -24,13 +24,20 @@
   let activeScreen = $state('lock');
 
   // Variables to track coin state
-  let totalBalance = $state(23.51);
   let coin = $state({
     quarters: { count: 27, capacity: 100, value: 0.25 },
     dimes: { count: 15, capacity: 100, value: 0.10 },
     nickels: { count: 14, capacity: 100, value: 0.05 },
     pennies: { count: 13, capacity: 100, value: 0.01 }
   });
+
+  let totalBalance = $derived(
+    coin["quarters"].count * coin["quarters"].value +
+    coin["dimes"].count * coin["dimes"].value +
+    coin["nickels"].count * coin["nickels"].value +
+    coin["pennies"].count * coin["pennies"].value
+  );
+
 
   // Track the last inserted coin for the reactive display popup
   let insertedCoin = $state(null);
@@ -41,7 +48,6 @@
     // Do not accept coins if the partition is full
     if (coin[coinType].count < coin[coinType].capacity) {
       coin[coinType].count += 1;
-      totalBalance += coin[coinType].value;
       
       // Reassign the object to trigger Svelte's reactivity engine 
       // so child components (like YourBank and Goals) re-render immediately.
