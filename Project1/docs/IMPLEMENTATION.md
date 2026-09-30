@@ -6,7 +6,12 @@
 - [Svelte Architecture](#svelte-architecture)
 - [Navigation](#navigation)
 - [Features](#features)
+    - [Security](#security)
+    - [Banking](#banking)
+    - [Dispensing](#dispensing)
+    - [Reactive Display](#reactive-display)
 - [Future Work](#future-work)
+- [AI Usage](#ai-usage)
 
 ## Overview
 
