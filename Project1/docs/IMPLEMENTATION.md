@@ -63,7 +63,7 @@ Instead of typing in a dispense target using a pinpad, control over what coins a
 
 The reactive display provides a secondary interface that the user will use to monitor the current state of the bank. This display will react to coin insertions by signaling the user of how many coins were inserted through a pop-up window. The same window is also used to signal the user of current balance and how many coins were dispensed.
 
-Current capacity is also constantly displayed to the user and will react to any insert or dispense action.
+Current capacity is also constantly displayed to the user and will react to any insert or dispense action. To indicate a full coin partition, a warning popup is used to show the user which coin is at capacity. Another popup is used signal the Smart Bank is within 10% of its full capacity.
 
 ## Future Work
 

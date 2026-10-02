@@ -14,4 +14,4 @@ The Smart Bank UI's implementation decisions are outlined in [IMPLEMENTATION.md]
 
 ## Usage
 
-The instructions for testing the features of the UI are outlined in [USAGE.md](docs/USAGE.md). This document also covers how to set up your local system to use the UI.
+The instructions for testing the features of the UI are outlined in [USAGE.md](docs/USAGE.md). This document also covers how to set up your local system to use the UI to add additional features.
