@@ -224,7 +224,7 @@
   border: 2px dashed #666;
   border-radius: 8px;
   text-align: center;
-  width: 320px;
+  width: 400px;
   justify-content: center;;
 }
 
@@ -367,6 +367,7 @@
 
 .coin-buttons button {
   padding: 10px 15px;
+  margin: 4px;
   font-size: 14px;
   font-weight: bold;
   background-color: #4CAF50;
@@ -408,10 +409,6 @@
   transition: width 0.3s ease;
 }
 
-.capacity-bar-inner.warning {
-  background: #f44336;
-}
-
 .capacity-text {
   font-size: 22px;
   font-weight: bold;
@@ -419,8 +416,12 @@
   margin-top: 6px;
 }
 
-.capacity-text.warning {
-  color: #f44336;
+.capacity-warning {
+  display: grid; 
+  grid-template-columns: auto 1fr;
+  width: 100%;
+  border-bottom: 2px solid black;
+  align-items: center;
 }
 
 /* Coin insertion popup */

@@ -25,10 +25,10 @@
 
   // Variables to track coin state
   let coin = $state({
-    quarters: { count: 27, capacity: 100, value: 0.25 },
-    dimes: { count: 15, capacity: 100, value: 0.10 },
-    nickels: { count: 14, capacity: 100, value: 0.05 },
-    pennies: { count: 13, capacity: 100, value: 0.01 }
+    quarters: { count: 27, capacity: 100, value: 0.25, full: false},
+    dimes: { count: 15, capacity: 100, value: 0.10, full: false },
+    nickels: { count: 14, capacity: 100, value: 0.05, full: false },
+    pennies: { count: 13, capacity: 100, value: 0.01, full: false }
   });
 
   let totalBalance = $derived(
@@ -44,11 +44,13 @@
   let lastDispensed = $state(null);
 
   // Coin insertion simulation function
-  function simulateCoinDrop(coinType) {
+  function simulateCoinDrop(coinType, amount) {
     // Do not accept coins if the partition is full
-    if (coin[coinType].count < coin[coinType].capacity) {
-      coin[coinType].count += 1;
-      
+    if (coin[coinType].count < coin[coinType].capacity && amount <= (coin[coinType].capacity - coin[coinType].count)) {
+
+      coin[coinType].count += amount;
+      coin[coinType].full = coin[coinType].count === coin[coinType].capacity;
+
       // Reassign the object to trigger Svelte's reactivity engine 
       // so child components (like YourBank and Goals) re-render immediately.
       coin = { ...coin };
@@ -58,10 +60,16 @@
         type: coinType,
         count: coin[coinType].count,
         capacity: coin[coinType].capacity,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       };
     } else {
-      alert(`Physical capacity reached for ${coinType}!`);
+      // Insert pop-up at the top of the reactive display
+      insertedCoin = {
+        type: coinType,
+        count: coin[coinType].count,
+        capacity: coin[coinType].capacity,
+        timestamp: Date.now(),
+      };
     }
   }
 </script>
@@ -101,9 +109,15 @@
     <p>To simulate a coin insertion, click the buttons below</p>
   </details>
   <div class="coin-buttons">
-    <button onclick={() => simulateCoinDrop('quarters')}>25¢</button>
-    <button onclick={() => simulateCoinDrop('dimes')}>10¢</button>
-    <button onclick={() => simulateCoinDrop('nickels')}>5¢</button>
-    <button onclick={() => simulateCoinDrop('pennies')}>1¢</button>
+    <button onclick={() => simulateCoinDrop('quarters', 1)}>25¢</button>
+    <button onclick={() => simulateCoinDrop('dimes', 1)}>10¢</button>
+    <button onclick={() => simulateCoinDrop('nickels', 1)}>5¢</button>
+    <button onclick={() => simulateCoinDrop('pennies', 1)}>1¢</button>
+  </div>
+  <div class="coin-buttons">
+    <button onclick={() => simulateCoinDrop('quarters', 10)}>25¢ * 10</button>
+    <button onclick={() => simulateCoinDrop('dimes', 10)}>10¢ * 10</button>
+    <button onclick={() => simulateCoinDrop('nickels', 10)}>5¢ * 10</button>
+    <button onclick={() => simulateCoinDrop('pennies', 10)}>1¢ * 10</button>
   </div>
 </aside>

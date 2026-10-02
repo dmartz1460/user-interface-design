@@ -1,4 +1,5 @@
 <script>
+  import warningIcon from "./assets/warning.png";
   let { coin, insertedCoin, lastDispensed } = $props();
 
   // Capacity calculation
@@ -17,10 +18,21 @@
   );
 
   // Warning if within 10% of max 
-  let isWarning = $derived(capacityPercent >= 90);
+  let capacityWarning = $derived(capacityPercent >= 90);
+  let coinFullWarning = $derived(insertedCoin && coin[insertedCoin.type].full);
 
-  // Coin insertion popup
+  // Warning, insertion, and dispense popups
   let showInsertPopup = $state(false);
+  let showWarningPopup = $state(false);
+  let showDispensePopup = $state(false);
+
+  $effect(() => {
+    if (capacityWarning || coinFullWarning) {
+      showWarningPopup = true;
+      const timeout = setTimeout(() => { showWarningPopup = false; capacityWarning = false; coinFullWarning = false; }, 3000);
+      return () => clearTimeout(timeout);
+    }
+  });
 
   $effect(() => {
     if (insertedCoin) {
@@ -29,9 +41,6 @@
       return () => clearTimeout(timeout);
     }
   });
-
-  // Dispense popup
-  let showDispensePopup = $state(false);
 
   $effect(() => {
     if (lastDispensed) {
@@ -44,20 +53,19 @@
 
 <aside class="reactive-display">
 
-  <!-- Capacity Bar -->
-  <div class="capacity-section">
-    <p class="capacity-label">Bank Capacity</p>
-    <div class="capacity-bar-outer">
-      <div
-        class="capacity-bar-inner"
-        class:warning={isWarning}
-        style="width: {capacityPercent}%"
-      ></div>
+  <!-- Capacity Warning Popups -->
+  {#if capacityWarning && showWarningPopup}
+    <div class="capacity-warning">
+      <img src={warningIcon} alt="Warning" style="width: 40px; height: 40px;"/>
+      <p>Warning: Bank capacity is almost full!</p>
     </div>
-    <p class="capacity-text" class:warning={isWarning}>
-      {capacityPercent}%
-    </p>
-  </div>
+  {/if}
+  {#if coinFullWarning && showWarningPopup}
+    <div class="capacity-warning">
+      <img src={warningIcon} alt="Warning" style="width: 40px; height: 40px;"/>
+      <p>Warning: {insertedCoin.type} compartment is full!</p>
+    </div>
+  {/if}
 
   <!-- Coin Insertion Popup -->
   {#if showInsertPopup && insertedCoin}
@@ -88,4 +96,19 @@
       {/if}
     </div>
   {/if}
+
+  <!-- Capacity Bar -->
+  <div class="capacity-section">
+    <p class="capacity-label">Bank Capacity</p>
+    <div class="capacity-bar-outer">
+      <div
+        class="capacity-bar-inner"
+        style="width: {capacityPercent}%"
+      ></div>
+    </div>
+    <p class="capacity-text">
+      {capacityPercent}%
+    </p>
+  </div>
+
 </aside>
