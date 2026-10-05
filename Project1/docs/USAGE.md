@@ -2,6 +2,8 @@
 
 This document details how to run this project locally on your system so you can test and interact with the interface of the Smart Bank. These details include the required tools needed to run the interface and how to use the interface when once it's up and running.
 
+Deployment is also covered to detail how the webpage is hosted using GitHub Pages.
+
 ## Adding Features
 
 ### Dependencies
@@ -38,6 +40,6 @@ npm run dev
 
 Paste the resulting localhost address into your browser or `Ctrl + Click` on the link in your terminal to migrate to it automatically. 
 
-## Testing
+## Deployment 
 
-Now that you have launched the web server, you can begin interacting with interface.
+This UI is self hosted using GitHub's Pages platform. Upon a commit to the repo, `smart-bank-ui.yaml` will run to build and deploy the webpage to GitHub Pages under https://dmartz1460.github.io/user-interface-design/.
