@@ -104,10 +104,11 @@
 
 <!-- Testing UI -->
 <aside class="testing-ui">
-  <details class="testDetails">
+  <details class="test-details">
     <summary>Testing Controls</summary>
     <p>To simulate a coin insertion, click the buttons below</p>
   </details>
+  <h2 class="pin-code">Pin Code: 1234</h2>
   <div class="coin-buttons">
     <button onclick={() => simulateCoinDrop('quarters', 1)}>25¢</button>
     <button onclick={() => simulateCoinDrop('dimes', 1)}>10¢</button>

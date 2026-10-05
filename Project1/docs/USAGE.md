@@ -2,7 +2,9 @@
 
 This document details how to run this project locally on your system so you can test and interact with the interface of the Smart Bank. These details include the required tools needed to run the interface and how to use the interface when once it's up and running.
 
-## Dependencies
+## Adding Features
+
+### Dependencies
 
 Follow these steps to setup your local system:
 
@@ -19,7 +21,7 @@ Follow these steps to setup your local system:
     - npm Intellisense
     - HTML CSS Support
 
-## Running
+### Running
 
 Once your dependencies are installed, you can begin testing the interface. Run the following commands:
 

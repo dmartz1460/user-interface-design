@@ -37,7 +37,6 @@ This section covers the initial gathering of design needs and requirements of th
 | Two Displays (front and side) | Buttons to select number and letter characters |
 | Storage paritions for each coin type | Touch display to interact with UI |
 | Coin insertion slot |
-|  |  |  |  |
 
 ### Assumptions
 

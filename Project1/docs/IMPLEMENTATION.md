@@ -10,6 +10,7 @@
     - [Banking](#banking)
     - [Dispensing](#dispensing)
     - [Reactive Display](#reactive-display)
+    - [Test UI](#test-ui)
 - [Future Work](#future-work)
 - [AI Usage](#ai-usage)
 
@@ -23,13 +24,19 @@ The purpose of this document is to detail the implementation decisions for the f
 
 ## Svelte Architecture
 
-The software architecture of the Smart Bank UI is governed by the use of Svelte's ability to track the current `state` of a variable. The various screens in the UI are controlled using a state machine held in the root svelte component called `Control` with each screen hosted in its own component under `src/screens`. The variable state of the `activeScreen`, `ReactiveDisplay`, and `Testing-UI` objects are wrapped in the primary `bank-app (<main>)` HTML element in the index.HTML file. In addition, the Smart Bank's style sheet is strictly hosted under `bank.css`. Scripts for each component are held within their respective files.
+The software architecture of the Smart Bank UI is governed by the use of Svelte's ability to track the current `state` of a variable. The various screens in the UI are controlled using a state machine held in the root svelte component called `Control` with each screen hosted in its own component under `src/screens`. The variable state of the `activeScreen`, `ReactiveDisplay`, and `Testing-UI` objects are wrapped in the primary `bank-app (<main>)` HTML element in the index.HTML file. In addition, the Smart Bank's style sheet is strictly hosted under `bank.css`. Scripts for each component are held within their respective files. 
+
+The resulting UI appears is shown in the following screen shot: 
+![Lock Screen](SmartBankUI-Lock.png)
 
 ## Navigation
 
 Navigation of the Smart Bank's UI came to the decision to use menu selection or buttons to navigate screens. Since there are only 4 additional screens from `Home` which acts as an `At-a-Glance` screen for each feature, it was decided to use buttons underneath each At-a-Glance window to signal the user that additional features and options for the window reside on an additional screen. In additon, those who were interviewed requested that additional info about the contents of the bank should reside in a deeper menu screen. This screen is found under the `Your Bank` button which also acts as the header of the `Home/At-a-Glance` screen.
 
 To unlock the screen, an `Unlock` button was used instead of the traditional swipe-up action used by many smart devices since this device will most likely be used by children learning to bank. `Enter` and `Cancel/Back` buttons were also chosen over arrows to signal the action of the button. 
+
+![Home](SmartBankUI-Home.png)
+![Your Bank](SmartBankUI-YourBank.png)
 
 ## Features
 
@@ -47,6 +54,8 @@ The primary features of the Smart Bank's UI are the following:
 
 In order to unlock the Smart Bank from its lock screen, the user must select the unlock button to proceed to the `Pinpad` screen. There, the user must type in the correct pin code using a pinpad. Dots are used to indicate the number of digits in the pin and the number of digits currently entered. If the user enters the wrong pin, an `Incorrect Pin` prompt appears. 
 
+![Pin Code](SmartBankUI-Pin.png)
+
 ### Banking
 
 The additional features included in the Smart Bank that are absent from a standard piggy bank are the following: 
@@ -59,11 +68,25 @@ The additional features included in the Smart Bank that are absent from a standa
 
 Instead of typing in a dispense target using a pinpad, control over what coins are dispensed were given to the user with arrow selection. Arrows were placed above and below each coin type and to the left and right of the dispense target. The arrows closest to the dispense target allow the user to increment the target by $1.00 using the highest available coin value (eg. 4 quarters if 4 quarters are available). If selection is unavailable for a certain type (eg. out of quarters), the arrow is disabled and greyed out.
 
+![Dispense Screen](SmartBankUI-Dispense.png)
+
 ### Reactive Display
 
 The reactive display provides a secondary interface that the user will use to monitor the current state of the bank. This display will react to coin insertions by signaling the user of how many coins were inserted through a pop-up window. The same window is also used to signal the user of current balance and how many coins were dispensed.
 
+![Insert Coin](SmartBankUI-ReactiveDisplay-Insert.png)
+![Dispense Coin](SmartBankUI-ReactiveDisplay-Dispense.png)
+![Capacity Warning](SmartBankUI-ReactiveDisplay-Warning.png)
+
 Current capacity is also constantly displayed to the user and will react to any insert or dispense action. To indicate a full coin partition, a warning popup is used to show the user which coin is at capacity. Another popup is used signal the Smart Bank is within 10% of its full capacity.
+
+![Reactive Display](SmartBankUI-ReactiveDisplay.png)
+
+### Test UI
+
+To simulate a coin insertion action, a Test UI console was included to enable the user to test the reactivity features of the UI. The user has the ability to insert one at a time or insert ten of one coin to quickly test the capacity warning features of the Reactive Display.
+
+![Test UI](SmartBankUI-TestUI.png)
 
 ## Future Work
 

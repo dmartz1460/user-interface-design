@@ -12,8 +12,8 @@
 </div>
 <div class="your-bank">
   <p>Total: {totalBalance.toFixed(2)}</p>
-  <p>Pennies: {coin.pennies.count * 0.01} cents, {coin.pennies.count}/{coin.pennies.capacity} </p>
-  <p>Nickels: {coin.nickels.count * 0.05} cents, {coin.nickels.count}/{coin.nickels.capacity} </p>
-  <p>Dimes: {coin.dimes.count * 0.10} cents, {coin.dimes.count}/{coin.dimes.capacity} </p>
-  <p>Quarters: {coin.quarters.count * 0.25} cents, {coin.quarters.count}/{coin.quarters.capacity} </p>
+  <p>Pennies: {(coin.pennies.count * coin.pennies.value).toFixed(2)} cents, {coin.pennies.count}/{coin.pennies.capacity} </p>
+  <p>Nickels: {(coin.nickels.count * coin.nickels.value).toFixed(2)} cents, {coin.nickels.count}/{coin.nickels.capacity} </p>
+  <p>Dimes: {(coin.dimes.count * coin.dimes.value).toFixed(2)} cents, {coin.dimes.count}/{coin.dimes.capacity} </p>
+  <p>Quarters: {(coin.quarters.count * coin.quarters.value).toFixed(2)} cents, {coin.quarters.count}/{coin.quarters.capacity} </p>
 </div>

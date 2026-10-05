@@ -10,7 +10,7 @@
 <div class="screen-header">
   <p class="screen-time">{timeString}</p>
   <button class="your-bank-btn" onclick={() => activeScreen = 'yourBank'}>Your Bank</button>
-  <button class="lock-icon" onclick={() => activeScreen = 'lock'}>🔒</button>
+  <button class="lock-button" onclick={() => activeScreen = 'lock'}>🔒</button>
 </div>
 
 <!-- Main content: 3 equal columns, each with box above button -->
