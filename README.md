@@ -29,3 +29,5 @@ Languages Used:
 - CSS
 - JavaScript
 - Svelte
+
+### [Project 2: UI Redesign](/Project2/)
