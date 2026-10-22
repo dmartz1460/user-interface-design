@@ -2,6 +2,8 @@ name: Deploy Smart Bank UI
 
 on:
   push:
+    branches:
+      - main
 
 permissions:
   contents: read
@@ -13,6 +15,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+
   build-and-deploy:
 
     runs-on: ubuntu-latest
