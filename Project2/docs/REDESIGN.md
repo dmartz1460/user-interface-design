@@ -87,6 +87,22 @@ While solving these challenges, the user may encounter the following problems:
 2. The user may not be able to delete their reservation.
 3. For challenge 2, if the user uses the search tab, they may attempt to schedule rooms not available via the express scheduler, which will bring them to the Event Wizard and require a sponsoring organization. They would have to click through rooms 1 by 1 until they find one they can schedule. If they user the express scheduler in the dashboard, this challenge will be easy.
 
+
+### Survey Questions
+
+- What is your role at UC?
+- How often do you use 25Live?
+- What do you use 25Live for?
+- What are your thoughts on the design of 25Live?
+- How easy is it to complete tasks in 25Live?
+- How satisfied are you with 25Live?
+- What features in 25Live need the most improvement?
+- What is the most frustrating part about using 25Live?
+- What do you like about using 25Live? 
+
+Survey Link: https://forms.gle/R9xwjFvTYdHHdNV97
+
+
 ### User Feedback of Current 
 
 ### Redesign Target
