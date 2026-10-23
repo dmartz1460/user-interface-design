@@ -31,7 +31,32 @@ In addition, the menu dropdown in the dashboard provides additional methods of t
 
 ![alt text](dashboard.png)
 
-### User Feedback of Current Design
+### Observational Study Setup
+
+**Research Goals:**
+
+- Assign users with "challenges" that they must solve by using 25Live
+- Diagnose problems with 25Live by observing how users solve the presented challenges and what struggles they encounter
+- Document struggles to influence redesign
+
+**User Challenges:**
+
+Each study participant will be observed solving the following 2 challenges:
+
+1. Schedule an event in Langsam 520 for the earliest timeslot available. Once it is scheduled, cancel the booking.
+2. Schedule an event for 11/01/2026 at 5 p.m. in any available space. The space must be able to be scheduled without providing a sponsoring organization. (The user does not need to actually schedule the event. Rather, go through the steps as if they were to schedule. This is to prevent reserving a room that someone else may actually need.)
+
+Watch as the user solves these challenges. Have them think aloud and express any problems they encounter or confusion they may have. If the user has never used 25Live before, there will be a learning curve. For example, they may not know where to start, where to find things, etc. Having them express this in real-time will be useful for diagnosing UI learnability issues.
+
+**Potential Issues:**
+
+While solving these challenges, the user may encounter the following problems:
+
+1. Using express scheduler, it may be difficult to find the earliest available timeslot for a location. Challenge 1 may require the user to use the search tab instead.
+2. The user may not be able to delete their reservation.
+3. For challenge 2, if the user uses the search tab, they may attempt to schedule rooms not available via the express scheduler, which will bring them to the Event Wizard and require a sponsoring organization. They would have to click through rooms 1 by 1 until they find one they can schedule. If they user the express scheduler in the dashboard, this challenge will be easy.
+
+### User Feedback of Current 
 
 ### Redesign Target
 
