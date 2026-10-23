@@ -1,15 +1,19 @@
 # Redesign
 
+- [Overview](#overview)
+- [Initial Design Analysis](#initial-design-analysis)
+    - [Design Flaws](#design-flaws)
+
 ## Overview
 
 This document covers the following topics:
 - Initial observation of design flaws
-- Observational feedback from various users
+- User Feedback
 - Redesign target
 - Redesign decisions
 - Redesign feedback
 
-## Redesign Research
+## Initial Design Analysis
 
 ### Design Flaws
 
@@ -21,15 +25,42 @@ Upon entering the 25Live dashboard, a user is considered a guest and is presente
 
 The design choice of the icons representing `Events`, `Organizations`, `Locations`, and `Resources` are poor as they have now universal meaning behind them in a general sense to the user. 
 
-![alt text](icons.png)
+<p align="center">
+  <img src="icons.png" width="250px"></img>
+</p>
 
 `Dashboard Organization`
 
-Upon entering the dashboard screen, the user is presented with a wide range of unnecesary dropdown menus pertaining to a user's events, resources, etc. The user has the ability to move these dropdown menus around the screen and add/remove dropdown menus to provide customizability. If the design goal was to provide enhanced customization to the user, the designer failed to consider that these options provide increased complexity to what the user should have control of. 
+Upon entering the dashboard screen, the user is presented with a wide range of unnecessary dropdown menus pertaining to a user's events, resources, etc. The user has the ability to move these dropdown menus around the screen and add/remove dropdown menus to provide customizability. If the design goal was to provide enhanced customization to the user, the designer failed to consider that these options come with increased complexity to what the user should have control of. 
 
-In addition, the menu dropdown in the dashboard provides additional methods of travelling to the same screens that the dashboard menu dropdowns provide. As a result, this design lacks simplicity in providing the shortest path to an option screen from the dashboard.
+<p align="center">
+  <img src="customization.png" width="650px"></img>
+</p>
 
-![alt text](dashboard.png)
+`Menu Options`
+
+In addition, the menu dropdown in the dashboard provides additional methods of traveling to the same screens that the dashboard menu dropdowns provide. As a result, this design lacks simplicity of providing the shortest path to an option screen from the dashboard. For the case of the `Reports` screen, a user is able to travel to that screen using two different buttons from the menu creating unnecessary redundancy.
+
+<p align="center">
+  <img src="menu.png" width="200px"></img>
+</p>
+
+`Search Options`
+
+Searching 25Live can be done with the following options:
+- Click on the `Go to Search` at the top of the dashboard.
+- Click on `Search` under the menu
+- Click on one of the following menu options for a targeted Search
+    - `Availability`
+    - `Calendar`
+    - `List`
+- Use the `Quick Search` dropdown
+
+If the goal of these options was to provide enhanced filter methods of searching, this goal is achieved. However, it comes at the expense of simplicity to access these methods.
+
+<p align="center">
+  <img src="search_options.png" width="650px"></img>
+</p>
 
 ### Observational Study Setup
 
