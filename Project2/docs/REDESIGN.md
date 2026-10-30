@@ -91,50 +91,6 @@ While solving these challenges, the user may encounter the following problems:
 2. The user may not be able to delete their reservation.
 3. For challenge 2, if the user uses the search tab, they may attempt to schedule rooms not available via the express scheduler, which will bring them to the Event Wizard and require a sponsoring organization. They would have to click through rooms 1 by 1 until they find one they can schedule. If they user the express scheduler in the dashboard, this challenge will be easy.
 
-### Observational Study Results
-
-`Interview 1`
-
-**Task 1**
-- **1st Attempt**: selected `Events`, searched Langsam 520, attempted to use `Event Forms`
-- **2nd Attempt**: searched by `Location`, used `Express Scheduling`, booked 6:30-7pm, confirmed. Went into event details, selected `Cancelled` under the dropdown to cancel the event
-
-**Task 2**
-- **1st Attempt**: User knew not to use the `Event Form`, searched Old Chem as a building.
-- **2nd Attempt**: Used `Express Scheduling` on dashboard, booked Langsam 414 at 5pm. Cancelled event
-
-`Interview 2`
-
-**Task 1**
-- **1st Attempt**: started from browser, searched UC Langsam, launched 25 live through UC website, went to `Locations`, `Availability` in `Search` screen, clicked on room 520, booked room at 6:30 to 7pm. Could not find how to cancel.
-
-**Task 2**
-- **1st Attempt**: Went to `Event Forms`, did not have an `organization`
-- **2nd Attempt**: Used `Express Scheduling` on `Dashboard`, booked Langsam 602 at 5:00pm
-
-**Notes**: User did not notice that the date was reset to Oct 29th (current day) instead of the required Nov 2nd.
-
-`Interview 3` 
-
-**Task 1** 
-- Searched Langsam 520 from the dashboard, navigated to `Availability (Daily)`, then `List`, then `Details`
-- Signed In
-- Navigated back to `Availability`, clicked a timeslot, and scheduled. Could not find where to cancel
-
-**Task 2**
-- Used `I know when my event should take place - help me find a location` from the home screen. Followed the event scheduling form.
-
-`Interview 4` 
-**Task 1**
-- Used `Express Scheduling`, clicked through timeslots until one worked for Langsam 520.
-- Clicked on the `confirmed` box but didn't understand the `cancelled` button. 
-- Left the event screen and couldn't find his way back.
-
-**Task 2**
-- Used `I know when my event should take place - help me find a location` from the home screen. Clicked on the room instead of `Use this Location` after the search and navigated to the wrong screen.
-- Repeated the first step and followed the event scheduling form.
-
-
 ### Survey Questions
 
 - What is your role at UC?
@@ -149,16 +105,9 @@ While solving these challenges, the user may encounter the following problems:
 
 Survey Link: https://forms.gle/R9xwjFvTYdHHdNV97
 
-### Survey Results
+### Results
 
-| What is your role at UC? | How often do you use 25Live? | What do you use 25Live for? | What are your thoughts on the design of 25Live? | How easy is it to complete tasks in 25Live? | How satisfied are you with 25Live? | What features in 25Live need the most improvement? | What is the most frustrating part about using 25Live? | What do you like about using 25Live? |
-|---|---|---|---|---:|---:|---|---|---|
-| Student | A few times per semester | Event Scheduling, Reserving Rooms | it can be a b it slow, and it is not very user friendly. For example, as a student, it is very hard to find a room that is open | 3 | 4 | Searching, Layout/Navigation | finding an open room in a specific building | I like how you can search by building |
-| Student | Rarely | Reserving Rooms | Generally unhelpful, cluttered, and difficult to navigate simple menus (Example, cancelling a scheduled room reservation) | 2 | 1 | Room reservations, Event scheduling, Design, Layout/Navigation | Express scheduling and the main scheduling form have a disconnect between requirements, Cancelling events / room scheduling is unintuitive and clunky, and the main page is poorly optimized and causes information overload. | The feature of being able to click a spot on the availability calendar and directly booking the room for an event is nice. |
-| Non student | Never | N/A | There are too many words. I think I would be able to book a room, but there's too much to look at. Also, the UC logo is blurry. | 3 | 3 | Design, Layout/Navigation | After cancelling a room, the event still shows up on the dashboard like it wasn't cancelled. | It works? |
-| Student | Rarely | Event Scheduling | Confusing, looks lame, not exciting. It doesn’t make me want to reserve rooms | 2 | 1 | Searching, Design, Layout/Navigation, Show other options when searching, more photos | Visually overwhelming, not intuitive. Hated trying to cancel something | I like the I know when or I know where features in the Home Screen |
-| Graduated | Never | Haven’t used it | It feels “half-baked”. Not intuitive. No flow to where I’m supposed to start or go. Dashboard tiles are confusing to look at. The color coding makes no sense. Customizing the dashboard feels confusing. Too much information here. | 1 | 1 | Searching, Design, Layout/Navigation | Workflow is unclear, design doesn’t point the user to the tasks intuitively | The express scheduling “wasn’t terrible” |
-| N/A | Never | N/A | It's very confusing. What are events, locations, resources, and organizations? Why are there so many things to choose from? It also looks outdated. | 4 | 3 | Searching, Layout/Navigation | There are too many ways to search. | It allows you to see all the options for rooms and gives you many choices. |
+Results of the observational studies and interviews can be found in [USER_RESEARCH.md](USER_RESEARCH.md).
 
 ### Expert Heuristic Evaluation
 
