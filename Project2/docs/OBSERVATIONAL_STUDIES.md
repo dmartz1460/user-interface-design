@@ -1,8 +1,13 @@
 # Observation Study Results
 
+## Challenges
+
+1. Schedule an event in Langsam 520 for the earliest timeslot available. Once it is scheduled, cancel the booking.
+2. Schedule an event for 11/01/2026 at 5 p.m. in any available space. The space must be able to be scheduled without providing a sponsoring organization.
+
 ## First Person
 
-### Challenge 1 (book Langsam 520)
+### Challenge 1
 
 - The user immediately tried using Express Scheduling tile.
 - The user tried typing into Express Locations search bar "langsam5".
@@ -18,7 +23,7 @@
 - However, with little feedback, the user assumed the booking did not actually cancel all the way.
 - On the dashboard, they noticed (and didn't like) that the event still appeared in the Your Upcoming Events tile, persisting even after refresh.
 
-### Challenge 2 (book on Nov. 1st)
+### Challenge 2
 
 - The user immediately returned to the Express Scheduling tile on the dashboard.
 - In one act with no hiccups, they scheduled a room for 11/01/2026 at 5 p.m.
@@ -40,3 +45,43 @@
 - Given their previous experience, they new this was incorrect. They pressed Cancel and tried again but got the same result. After a bit of inspecting, I informed the user that this would not work, as this room requires a Sponsoring Organization to book.
 - The user then returned to search, searched for Langsam again, and proceeded to book Langsam 520 again without issue, completing the challenge.
 - Tester observation: The Event Wizard vs. Express Scheduling confusion may result in some users always booking the same room they're familiar with for convenience, potentially even if there may be better options available.
+
+## Third Person
+
+### Challenge 1
+
+
+
+### Challenge 2
+
+
+
+## Forth Person
+
+### Challenge 1
+
+
+
+### Challenge 2
+
+
+
+## Fifth Person
+
+### Challenge 1
+
+
+
+### Challenge 2
+
+
+
+## Sixth Person
+
+### Challenge 1
+
+
+
+### Challenge 2
+
+
