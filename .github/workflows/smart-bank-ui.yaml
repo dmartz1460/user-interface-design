@@ -1,9 +1,13 @@
 name: Deploy Smart Bank UI
 
 on:
-  push:
-    branches:
-      - main
+
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to deploy'
+        required: true
+        default: 'main'
 
 permissions:
   contents: read
