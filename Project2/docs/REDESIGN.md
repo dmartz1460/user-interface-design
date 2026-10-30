@@ -62,6 +62,10 @@ If the goal of these options was to provide enhanced filter methods of searching
   <img src="search_options.png" width="650px"></img>
 </p>
 
+`Event Management` 
+
+Once an event/room has been booked, the user has the ability to cancel the event. However, this feature is hidden behind a dropdown affordance which poorly signifies the ability to cancel an event. User feedback is also not sufficiently given to the user upon cancellation. The event still appears under a user's events and can also be moved to a `Tentative` state which has an unclear purpose. The user cannot move the event back to `Confirmed`.
+
 ### Observational Study Setup
 
 **Research Goals:**
@@ -161,13 +165,18 @@ Survey Link: https://forms.gle/R9xwjFvTYdHHdNV97
 **Jakob Neilsen's 10 Usability Heuristics**
 
 25Live fails the following usability heuristics:
-- User Control and Freedom
-- Consistency and Standards
-- Recognition rather than Recall
-- Flexibility and Efficiency of Use
-- Aesthetic and Minimalistic Design
+- `User Control and Freedom`: event cancellation is not clearly marked to the user (2 of 6 interviewees successfully cancelled an event)
+- `Consistency and Standards`: Users could not differentiate between Express Scheduling and the Event Form.
+- `Recognition rather than Recall`: Users often had to remember where to go in order to get to the most familiar method to book a room. This was due to vast number of menu options/methods for searching rooms.
+- `Flexibility and Efficiency of Use`: New users were overwhelmed by the number of options to search and book a room. Users found themselves jumping between different search options to successfully book a room.
+- `Aesthetic and Minimalistic Design`: User have the ability to customize the 25Live Dashboard with various dropdown menus. These menus were found to overwhelm the user and cluttered the dashboard with unnecessary options that take away from its minimalism.
 
 ### Redesign Target
+
+The following features and screens will be the target of this project's redesign goal.
+- Rework the 25Live `Dashboard` to provide a minimalist design and simplify navigation. Provide more in-depth "At-a-glance" details about a user's events.
+- Reduce `Menu` options so it is clear where and how to access various features.
+- Rework `Search` screen to host all filter options and scheduling features there.
 
 ## Redesign Decisions
 
