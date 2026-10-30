@@ -1,14 +1,13 @@
-name: Deploy Smart Bank UI
+name: Deploy 25Live Redesign
 
 on:
 
   workflow_dispatch:
-
     inputs:
       branch:
         description: 'Branch to deploy'
         required: true
-        default: 'project2'
+        default: 'main'
 
 permissions:
   contents: read
