@@ -129,4 +129,8 @@ The following features and screens will be the target of this project's redesign
 
 ## Redesign Decisions
 
+### Sketches
+
+Sketches of the new dashboard UI, menu, and dashboard pop-up windows can be found in [dashboard_final_sketches.pdf](dashboard_final_sketches.pdf).
+
 ### User Feedback of New Design
