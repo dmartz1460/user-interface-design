@@ -2,7 +2,21 @@
 
 - [Overview](#overview)
 - [Initial Design Analysis](#initial-design-analysis)
-    - [Design Flaws](#design-flaws)
+  - [Design Flaws](#design-flaws)
+  - [Observational Study Setup](#observational-study-setup)
+  - [Survey Questions](#survey-questions)
+  - [Results](#results)
+  - [Expert Heuristic Evaluation](#expert-heuristic-evaluation)
+  - [Redesign Target](#redesign-target)
+- [Redesign Decisions](#redesign-decisions)
+  - [Tier-based User Experience](#tier-based-user-experience)
+  - [Feature Removal](#feature-removal)
+  - [Force Sign-in Action](#force-sign-in-action)
+- [Sketching](#sketching)
+  - [Iteration 1](#iteration-1)
+  - [Final Sketch Mockup](#final-sketch-mockup)
+
+---
 
 ## Overview
 
@@ -12,6 +26,8 @@ This document covers the following topics:
 - Redesign target
 - Redesign decisions
 - Redesign feedback
+
+---
 
 ## Initial Design Analysis
 
@@ -114,7 +130,7 @@ Results of the observational studies and interviews can be found in [USER_RESEAR
 **Jakob Neilsen's 10 Usability Heuristics**
 
 25Live fails the following usability heuristics:
-- `User Control and Freedom`: event cancellation is not clearly marked to the user (2 of 6 interviewees successfully cancelled an event)
+- `User Control and Freedom`: Event cancellation is not clearly marked to the user (2 of 6 interviewees successfully cancelled an event)
 - `Consistency and Standards`: Users could not differentiate between Express Scheduling and the Event Form.
 - `Recognition rather than Recall`: Users often had to remember where to go in order to get to the most familiar method to book a room. This was due to vast number of menu options/methods for searching rooms.
 - `Flexibility and Efficiency of Use`: New users were overwhelmed by the number of options to search and book a room. Users found themselves jumping between different search options to successfully book a room.
@@ -125,8 +141,48 @@ Results of the observational studies and interviews can be found in [USER_RESEAR
 The following features and screens will be the target of this project's redesign goal.
 - Rework the 25Live `Dashboard` to provide a minimalist design and simplify navigation. Provide more in-depth "At-a-glance" details about a user's events.
 - Reduce `Menu` options so it is clear where and how to access various features.
-- Rework `Search` screen to host all filter options and scheduling features there.
+- Rework `Search` screen to host all filter options and scheduling features.
+
+---
 
 ## Redesign Decisions
 
-### User Feedback of New Design
+The primary goal of the 25Live redesign is to prioritize simplicity and learnability. The initial design presents a large set of complex search features and filters, some rendered useless without specific privileges. The redesign will allow users to distinguish certain features from others and tailor the experience to a user's Organizational membership status. The UI will also be redesigned to present a more conventional look by following university styling and color schemes. The following sections detail the various redesign decisions to support this goal.
+
+### Tier-based User Experience
+
+The primary target of the 25Live redesign is inspired by the complex and overwhelming amount of features of the site. Specifically, the various search features in the `Menu` and `Dashboard` force the user recognize the previous steps taken to book a room or search an event. However, some of these features are only available under specific privileges. For example, a user who is not an `Organization` administrator has no use for the `Event Wizard` or `Resources`. These features require the user to book an event associated with an `Organization`.
+
+To simply a user's experience of searching 25Live, a Tier-based system will allow the site to filter out privileged features for lower tier users. The tier-based system is detailed in the following table.
+
+| Tier | Criteria | Available Features | 
+| ---- | -------- | ------------------ |
+| 1 | Non-org Member or Admin | `Location` Booking, `Organization` and `Event` Searching | 
+| 2 | Org Member, Non-Admin | Tier 1 + `Your Organizations` quick-view |
+| 3 | Org Admin | Tier 2 + `Organization` Scheduling, `Resource` Booking, `Event Wizard` | 
+
+### Feature Removal
+
+The following features will be deprecated as a result of the following justifications:
+
+| Feature | Overview | Justification | 
+| ------- | -------- | ------------- |
+| Calendar View | View `Events`, `Locations`, `Orgs` in a `Calendar` view | Information overload |
+| Dashboard Customizability | Add, Remove, Move `Dashboard` option dropdowns | Clunky UI, introduces complexity and increased learnability |
+| Tasks | Assign Tasks as Action Items for an `Org` or for yourself | Feature is not relevant to `Event Scheduling` or `Organization Management`, external tools provide better solutions |
+
+### Force Sign-in Action
+
+Following the same approach from some University websites like Canvas and Catalyst, user's will be forced to sign in to 25Live upon entry.
+
+---
+
+## Sketching 
+
+### Iteration 1
+
+Each group member was tasked with sketching an initial design of each of the reworked features. 
+
+| [`Sketch 0`](/Project2/docs/first-sketch-iterations/sketch0.pdf) | [`Sketch 1`](/Project2/docs/first-sketch-iterations/sketch1.pdf) | [`Sketch 2`](/Project2/docs/first-sketch-iterations/sketch2.pdf) |
+
+### Final Sketch Mockup
