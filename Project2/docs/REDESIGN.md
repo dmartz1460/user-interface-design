@@ -147,11 +147,6 @@ The following features and screens will be the target of this project's redesign
 
 ## Redesign Decisions
 
-### Sketches
-
-Sketches of the new dashboard UI, menu, and dashboard pop-up windows can be found in [dashboard_final_sketches.pdf](dashboard_final_sketches.pdf). Additionally, sketches for the Search window are located in [Final-Search-Sketch.pdf](Final-Search-Sketch.pdf)
-
-### User Feedback of New Design
 The primary goal of the 25Live redesign is to prioritize simplicity and learnability. The initial design presents a large set of complex search features and filters, some rendered useless without specific privileges. The redesign will allow users to distinguish certain features from others and tailor the experience to a user's Organizational membership status. The UI will also be redesigned to present a more conventional look by following university styling and color schemes. The following sections detail the various redesign decisions to support this goal.
 
 ### Tier-based User Experience
@@ -189,5 +184,9 @@ Following the same approach from some University websites like Canvas and Cataly
 Each group member was tasked with sketching an initial design of each of the reworked features. 
 
 | [`Sketch 0`](/Project2/docs/first-sketch-iterations/sketch0.pdf) | [`Sketch 1`](/Project2/docs/first-sketch-iterations/sketch1.pdf) | [`Sketch 2`](/Project2/docs/first-sketch-iterations/sketch2.pdf) |
+
+### Iteration 2 
+
+Sketches of the new dashboard UI, menu, and dashboard pop-up windows can be found in [dashboard_final_sketches.pdf](dashboard_final_sketches.pdf). Additionally, sketches for the Search window are located in [Final-Search-Sketch.pdf](Final-Search-Sketch.pdf)
 
 ### Final Sketch Mockup
