@@ -8,7 +8,7 @@ Projects from CS-5167: User Interface. The purpose of this repo is to host all p
 
 ### [HW1](/HW1)
 
-Design a simple journaling platform to document an image of the day and use arrays to store journal entries.
+Design a simple journalism platform to document an image of the day and use arrays to store journal entries.
 
 Languages Used:
 - HTML
