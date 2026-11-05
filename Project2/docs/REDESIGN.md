@@ -42,7 +42,7 @@ Upon entering the 25Live dashboard, a user is considered a guest and is presente
 The design choice of the icons representing `Events`, `Organizations`, `Locations`, and `Resources` are poor as they have no universal meaning behind them in a general sense to the user. 
 
 <p align="center">
-  <img src="icons.png" width="250px"></img>
+  <img src="design-critiques/icons.png" width="250px"></img>
 </p>
 
 `Dashboard Organization`
@@ -50,7 +50,7 @@ The design choice of the icons representing `Events`, `Organizations`, `Location
 Upon entering the dashboard screen, the user is presented with a wide range of unnecessary dropdown menus pertaining to a user's events, resources, etc. The user has the ability to move these dropdown menus around the screen and add/remove dropdown menus to provide customizability. If the design goal was to provide enhanced customization to the user, the designer failed to consider that these options come with increased complexity to what the user should have control of. 
 
 <p align="center">
-  <img src="customization.png" width="650px"></img>
+  <img src="design-critiques/customization.png" width="650px"></img>
 </p>
 
 `Menu Options`
@@ -58,7 +58,7 @@ Upon entering the dashboard screen, the user is presented with a wide range of u
 In addition, the menu dropdown in the dashboard presents additional methods of navigating to the same screens that the dashboard menu dropdowns provide. As a result, this design lacks simplicity of its navigational features. For the case of the `Reports` screen, a user is able to travel to that screen using two different buttons from the menu creating redundancy.
 
 <p align="center">
-  <img src="menu.png" width="200px"></img>
+  <img src="design-critiques/menu.png" width="200px"></img>
 </p>
 
 `Search Options`
@@ -75,7 +75,7 @@ Searching 25Live can be done with the following options:
 If the goal of these options was to provide enhanced filter methods of searching, this goal is achieved. However, it comes at the expense of simplicity to access these methods.
 
 <p align="center">
-  <img src="search_options.png" width="650px"></img>
+  <img src="design-critiques/search_options.png" width="650px"></img>
 </p>
 
 `Event Management` 
@@ -187,6 +187,49 @@ Each group member was tasked with sketching an initial design of each of the rew
 
 ### Iteration 2 
 
-Sketches of the new dashboard UI, menu, and dashboard pop-up windows can be found in [dashboard_final_sketches.pdf](dashboard_final_sketches.pdf). Additionally, sketches for the Search window are located in [Final-Search-Sketch.pdf](Final-Search-Sketch.pdf)
+Sketches of the new dashboard UI, menu, and dashboard pop-up windows can be found in [dashboard_final_sketches.pdf](/Project2/docs/final-vanilla-sketches/dashboard_final_sketches.pdf). Additionally, sketches for the Search window are located in [search_final_sketch.pdf](/Project2/docs/final-vanilla-sketches/search_final_sketch.pdf)
 
-### Final Sketch Mockup
+### Final Sketch Mockups
+
+Final Design mockups were created for each of the following components. The strategy for creating these design mockups followed an iterative design approach using various AI models. Each group member attempted to create each of components using a different model. The model was tasked with creating 3 iterations of each component based on the [final design mockups](/Project2/docs/final-design-mockups/). The models used were as follows: 
+
+- Gemini 4 Argon
+- Claude 
+- Chat-GPT
+
+After reviewing the outputs of each of the models, it was determined that Claude provided the most accurate representation of our final design target. Gemini also provided some smaller design details to add to the Claude mockups.
+
+**Dashboard**
+<p align="center">
+    <img src="final-design-mockups/dashboard-C-red-header-calendar.svg" width="650px"></img>
+</p>
+
+**Menu**
+<p align="center">
+    <img src="final-design-mockups/menu-B-profile-card.svg" width="650px"></img>
+</p>
+
+**Event Details Pop-up**
+<p align="center">
+    <img src="final-design-mockups/popup-event-details.svg" width="650px"></img>
+</p>
+
+**All Recents Pop-up**
+<p align="center">
+    <img src="final-design-mockups/popup-view-all-recents.svg" width="650px"></img>
+</p>
+
+**Search List View**
+<p align="center">
+    <img src="final-design-mockups/search-A-list-view.svg" width="650px"></img>
+</p>
+
+**Search Daily View**
+<p align="center">
+    <img src="final-design-mockups/search-B-daily-view.svg" width="650px"></img>
+</p>
+
+**Search Weekly View**
+<p align="center">
+    <img src="final-design-mockups/search-C-weekly-light.svg" width="650px"></img>
+</p>
