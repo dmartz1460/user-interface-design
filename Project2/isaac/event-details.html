@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Event details mockup</title>
+    <link rel="stylesheet" href="mockups.css">
+    <script src="mockups.js" defer></script>
+  </head>
+  <body class="popup-preview">
+    <main class="popup event-details" aria-labelledby="event-title">
+      <header class="popup-header">
+        <h1 id="event-title">Event details</h1>
+        <button class="close-button" type="button" aria-label="Close event details" aria-disabled="true">&times;</button>
+      </header>
+      <!-- Replace these example values and the confirmation text with the selected event. -->
+      <dl class="event-fields">
+        <div class="event-field">
+          <dt>Name</dt>
+          <dd><span class="event-marker" aria-hidden="true"></span><strong>Project</strong></dd>
+        </div>
+        <div class="event-field">
+          <dt>Location</dt>
+          <dd class="location-value"><span class="dot dot-location" aria-hidden="true"></span><strong>Aronoff Center, Studio 6480A</strong></dd>
+        </div>
+        <div class="event-field">
+          <dt>Date</dt>
+          <dd>Tue, Nov 3, 2026</dd>
+        </div>
+        <div class="event-field">
+          <dt>Time</dt>
+          <dd>5:00–6:00 PM</dd>
+        </div>
+      </dl>
+      <footer class="popup-actions">
+        <button class="action action-modify" type="button" aria-disabled="true">Modify</button>
+        <button class="action action-cancel" type="button" id="cancel-event">Cancel event</button>
+      </footer>
+      <p class="event-status" role="status" hidden></p>
+    </main>
+    <dialog class="confirm-dialog" aria-labelledby="confirm-title" aria-describedby="confirm-description">
+      <h2 id="confirm-title">Cancel event?</h2>
+      <p id="confirm-description">Are you sure you want to cancel Project? This is a mockup and will not affect a real event.</p>
+      <div class="confirm-actions">
+        <button class="action action-secondary" type="button" id="keep-event">Keep event</button>
+        <button class="action action-cancel" type="button" id="confirm-cancel">Cancel event</button>
+      </div>
+    </dialog>
+  </body>
+</html>
