@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>View all recents mockup</title>
+    <link rel="stylesheet" href="mockups.css">
+    <script src="mockups.js" defer></script>
+  </head>
+  <body class="popup-preview">
+    <main class="popup recents" aria-labelledby="recents-title">
+      <header class="recents-header">
+        <div>
+          <h1 id="recents-title">Recents</h1>
+          <p>Your 10 latest searches</p>
+        </div>
+        <button class="close-button" type="button" aria-label="Close recents" aria-disabled="true">&times;</button>
+      </header>
+      <!-- Populated by the shared recents renderer in mockups.js, also used by Search History. -->
+      <div class="recent-browser" data-recents></div>
+    </main>
+  </body>
+</html>
