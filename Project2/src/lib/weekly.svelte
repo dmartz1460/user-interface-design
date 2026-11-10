@@ -1,14 +1,24 @@
 <script>
-  let { search_results, results_per_page, date, locations} = $props();
+  let { search_results, results_per_page, date, locations, weekStart } = $props();
 
   let hours = $state([
     '7am', '8am', '9am', '10am', '11am', '12pm', '1pm',
     '2pm', '3pm', '4pm', '5pm', '6pm', '7pm', '8pm', '9pm'
   ]);
 
-  let days = ([
+  let dayNames = ([
     'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
   ]);
+
+  // Build day headers with actual dates from the selected week
+  let days = $derived(
+    dayNames.map((name, i) => {
+      const d = new Date(weekStart);
+      d.setDate(d.getDate() + i);
+      const label = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      return `${name} ${label}`;
+    })
+  );
 
   // Slider state (indices into hours[])
   let startHours = $state(0);
@@ -117,7 +127,7 @@
           </div>
         </th>
         {#each days as day}
-          <th>{day}</th>
+          <th class="day-header">{day.name}</th>
         {/each}
       </tr>
     </thead>
@@ -152,7 +162,13 @@
     border-top: 2px solid #ddd;
   }
 
-  /* ── Time Slider ── */
+  .day-header {
+    text-align: center;
+    font-weight: bold;
+    background-color:rgb(212, 230, 226);
+  }
+
+  /* Time Slider  */
   .time-slider {
     position: relative;
     height: 60px;
