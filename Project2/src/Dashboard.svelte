@@ -1,4 +1,6 @@
 <script>
+  import Menu from './lib/menu.svelte';
+
   const recentItems = [
     { name: 'Langsam 520', type: 'Location', tone: 'blue' },
     { name: 'Euchre Club at UC', type: 'Organization', tone: 'gold' },
@@ -75,6 +77,7 @@
   let bookingMessage = '';
   let dateInput;
   let bookingMessageTimeout;
+  let menuTrigger;
   const eventsPerPage = 4;
 
   function eventStartTime(event) {
@@ -154,11 +157,6 @@
     window.alert('The Favorites popup will be connected here.');
   }
 
-  function openMenu() {
-    // TODO: Replace this placeholder with the menu component when it is implemented.
-    window.alert('The menu will be connected here.');
-  }
-
 </script>
 
 <svelte:head>
@@ -172,13 +170,15 @@
   </a>
   <div class="header-actions">
     <button class="icon-button help-button" type="button" aria-label="Help" onclick={() => window.alert('Help will be connected here.')}>?</button>
-    <button class="profile-button" type="button" aria-label="Open profile and menu" onclick={openMenu}>
+    <button class="profile-button" type="button" aria-label="Open profile and menu" popovertarget="profile-menu" bind:this={menuTrigger}>
       <span class="avatar" aria-hidden="true">
         <svg viewBox="0 0 24 24" role="presentation"><circle cx="12" cy="8" r="3.25"></circle><path d="M5.5 19c.6-3.1 2.8-4.8 6.5-4.8s5.9 1.7 6.5 4.8"></path></svg>
       </span>
     </button>
   </div>
 </header>
+
+<Menu trigger={menuTrigger} />
 
 <main class="dashboard">
   <section class="card scheduler-card" aria-labelledby="scheduler-title">
