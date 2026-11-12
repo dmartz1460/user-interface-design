@@ -13,19 +13,26 @@ const recentItems = [
   { name: 'Dance Team', type: 'org' },
 ];
 
+// Replace this sample data with favorites from the application.
+const favoriteItems = [
+  { name: 'Langsam 520', type: 'location', favorite: true },
+  { name: 'Math 1061', type: 'event', favorite: true },
+  { name: 'Chess Club', type: 'org', favorite: true },
+  { name: 'Dance Team', type: 'org', favorite: true },
+];
+
 const typeLabels = { location: 'Location', event: 'Event', org: 'Organization' };
 
-// Shared by the recents popup and the search History tab; each instance has its own filter state.
-function createRecents(container) {
+function createItemBrowser(container, items, filterLabel, listLabel, emptyMessage) {
   container.innerHTML = `
-    <div class="recent-filters" role="group" aria-label="Recent search types">
+    <div class="recent-filters" role="group" aria-label="${filterLabel}">
       <button class="recent-filter is-selected" type="button" data-type="all" aria-pressed="true">All</button>
       <button class="recent-filter" type="button" data-type="location" aria-pressed="false"><span class="dot dot-location" aria-hidden="true"></span>Locations</button>
       <button class="recent-filter" type="button" data-type="event" aria-pressed="false"><span class="dot dot-event" aria-hidden="true"></span>Events</button>
       <button class="recent-filter" type="button" data-type="org" aria-pressed="false"><span class="dot dot-org" aria-hidden="true"></span>Orgs</button>
     </div>
     <div class="recent-table-heading" aria-hidden="true"><span>Name</span><span>Type</span></div>
-    <div class="recent-list" tabindex="0" aria-label="Recent searches"><ul></ul><p class="empty-recents" hidden>No matching recent searches.</p></div>
+    <div class="recent-list" tabindex="0" aria-label="${listLabel}"><ul></ul><p class="empty-recents" hidden>${emptyMessage}</p></div>
   `;
   const list = container.querySelector('ul');
   const empty = container.querySelector('.empty-recents');
@@ -33,12 +40,29 @@ function createRecents(container) {
   let selectedType = 'all';
   let query = '';
 
-  for (const item of recentItems) {
+  for (const item of items) {
     const row = document.createElement('li');
     row.dataset.type = item.type;
     row.dataset.name = item.name.toLowerCase();
     row.innerHTML = `<span class="recent-name"><span class="dot dot-${item.type}" aria-hidden="true"></span></span><span class="badge badge-${item.type}"></span>`;
-    row.querySelector('.recent-name').append(document.createTextNode(item.name));
+    const name = row.querySelector('.recent-name');
+    if ('favorite' in item) {
+      const favoriteButton = document.createElement('button');
+      favoriteButton.className = 'favorite-toggle';
+      favoriteButton.type = 'button';
+      const updateFavoriteButton = () => {
+        favoriteButton.textContent = item.favorite ? '★' : '☆';
+        favoriteButton.setAttribute('aria-label', `${item.favorite ? 'Remove' : 'Add'} ${item.name} ${item.favorite ? 'from' : 'to'} favorites`);
+        favoriteButton.setAttribute('aria-pressed', String(item.favorite));
+      };
+      favoriteButton.addEventListener('click', () => {
+        item.favorite = !item.favorite;
+        updateFavoriteButton();
+      });
+      updateFavoriteButton();
+      name.append(favoriteButton);
+    }
+    name.append(document.createTextNode(item.name));
     row.querySelector('.badge').textContent = typeLabels[item.type];
     list.append(row);
   }
@@ -74,9 +98,18 @@ function createRecents(container) {
   };
 }
 
+// Shared by the recents popup and the search History tab; each instance has its own filter state.
 const recents = new Map();
 for (const container of document.querySelectorAll('[data-recents]')) {
-  recents.set(container, createRecents(container));
+  recents.set(container, createItemBrowser(
+    container, recentItems, 'Recent search types', 'Recent searches', 'No matching recent searches.',
+  ));
+}
+
+for (const container of document.querySelectorAll('[data-favorites]')) {
+  createItemBrowser(
+    container, favoriteItems, 'Favorite types', 'Favorite items', 'No matching favorites.',
+  );
 }
 
 const cancelEvent = document.querySelector('#cancel-event');

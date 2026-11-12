@@ -345,6 +345,15 @@ summary:focus-visible,
   font-weight: 600;
 }
 
+.favorite-toggle {
+  border: 0;
+  padding: 0;
+  color: #d99000;
+  background: transparent;
+  font-size: 20px;
+  line-height: 1;
+}
+
 .badge {
   flex: none;
   padding: 6px 12px;
