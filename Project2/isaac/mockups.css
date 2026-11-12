@@ -380,9 +380,9 @@ summary:focus-visible,
 
 .search-tabs {
   display: flex;
-  gap: 32px;
+  flex-wrap: wrap;
+  column-gap: 32px;
   padding: 0 24px;
-  overflow-x: auto;
   border-bottom: 1px solid #e3e3e6;
   border-radius: 14px 14px 0 0;
 }
@@ -577,7 +577,7 @@ summary:focus-visible,
   }
 
   .search-tabs {
-    gap: 24px;
+    column-gap: 24px;
   }
 
   .event-field {
