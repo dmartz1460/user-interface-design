@@ -162,7 +162,13 @@
   <div class="results-header">
     <div class="results">
       <p style="font-size: 22px; font-weight: bold;">Results</p>
-      <p class="result-count" style="font-size: 14px; font-weight: normal;">
+      <p
+        class="result-count"
+        class:result-count-location={activeCategory === 'locations'}
+        class:result-count-event={activeCategory === 'events'}
+        class:result-count-org={activeCategory === 'organizations'}
+        style="font-size: 14px; font-weight: normal;"
+      >
         {filteredResults().length} {categoryLabels[activeCategory] ?? activeCategory}
       </p>
     </div>
@@ -314,9 +320,25 @@
     border: 1px solid rgb(180, 206, 207);
     border-radius: 15px;
     padding: 2px 10px;
-    background-color: rgba(47, 111, 237, 0.12);
-    color: #2f6fed;
     font-weight: 700;
+  }
+
+  .result-count-location {
+    background-color: #dbeafe;
+    border-color: #2f6fed;
+    color: #1e40af;
+  }
+
+  .result-count-event {
+    background-color: #dcfce7;
+    border-color: #16a34a;
+    color: #166534;
+  }
+
+  .result-count-org {
+    background-color: #fef9c3;
+    border-color: #facc15;
+    color: #854d0e;
   }
 
   .view-by {

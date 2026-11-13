@@ -29,7 +29,6 @@
         <th>Formal Name</th>
         <th>Type</th>
         <th>Category</th>
-        <th>Status</th>
       {:else}
         <!-- history / fallback -->
         <th>Name</th>
@@ -63,7 +62,7 @@
           <td style="font-weight: bold;">{result.formal_name}</td>
           <td>{result.organization ?? '—'}</td>
           <td>{result.category ?? '—'}</td>
-          <td><span class="badge badge-{result.eventType}">{result.eventType ?? '—'}</span></td>
+          <td>{result.eventType ?? '—'}</td>
           <td>{result.date ?? '—'}</td>
 
         {:else if activeCategory === 'organizations'}
@@ -76,7 +75,6 @@
           <td style="font-weight: bold;">{result.formal_name}</td>
           <td>{result.orgType ?? '—'}</td>
           <td>{result.category ?? '—'}</td>
-          <td><span class="badge badge-status-{result.status}">{result.status ?? '—'}</span></td>
 
         {:else}
           <td>{result.name}</td>
