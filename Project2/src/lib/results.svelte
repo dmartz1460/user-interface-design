@@ -5,8 +5,8 @@
 
   // ── Props from parent Search component ──
   // searchResults:  the full array of result objects
-  // activeFilters:  { spaces, features, layouts, capacity } from the filter bar
-  // activeCategory: which search tab is active ('locations', 'events', etc.)
+  // activeFilters:  { spaces, features, layouts, capacity, dateRange, category, status, orgType, orgStatus }
+  // activeCategory: which search tab is active ('locations', 'events', 'organizations', 'history')
   // searchQuery:    the current text in the search input
   let {
     searchResults = [],
@@ -19,14 +19,12 @@
 
   // ── Date formatting helpers ──
   // formatLongDate: full display like "Monday, Nov 10, 2026"
-  // formatShortDate: compact like "11/10"
   function formatLongDate(d) {
     return d.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' });
   }
 
   // ── getWeekStart(d) ──
   // Returns the Sunday that starts the week containing date `d`.
-  // Used to label the Weekly view header.
   function getWeekStart(d) {
     const copy = new Date(d);
     copy.setDate(copy.getDate() - copy.getDay());
@@ -38,15 +36,12 @@
   let weekLabel = $derived(formatLongDate(weekStart));
 
   // ── Day/week navigation ──
-  // Each function creates a new Date offset by ±1 day or ±7 days,
-  // which re-derives `date` and `weekLabel` automatically.
   function prevDay()  { currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() - 1); }
   function nextDay()  { currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 1); }
   function prevWeek() { currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() - 7); }
   function nextWeek() { currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 7); }
 
   // ── View switcher ──
-  // `views` is the static list of view modes; `viewBy` tracks which is active.
   const views = [
     { id: 'List',   icon: 'list' },
     { id: 'Daily',  icon: 'calendar-day' },
@@ -54,18 +49,88 @@
   ];
   let viewBy = $state(views[0]);
 
-  // ── Locations (used by Weekly view) ──
-  let locations = $state([
-    { name: 'Location 1', formal_name: 'location 1', spaces: 'Type A', features: 'table', layouts: 'Layout 1', capacity: 100, favorite: true,  type: 'location' },
-    { name: 'Location 2', formal_name: 'location 1', spaces: 'Type B', features: 'chair', layouts: 'Layout 2', capacity: 50,  favorite: false, type: 'location' },
-    { name: 'Location 3', formal_name: 'location 1', spaces: 'Type A', features: 'table', layouts: 'Layout 1', capacity: 100, favorite: true,  type: 'location' },
-    { name: 'Location 4', formal_name: 'location 1', spaces: 'Type C', features: 'stage', layouts: 'Layout 3', capacity: 200, favorite: false, type: 'location' },
-    { name: 'Location 5', formal_name: 'location 1', spaces: 'Type B', features: 'chair', layouts: 'Layout 2', capacity: 50,  favorite: true,  type: 'location' },
-  ]);
+  // ── Filtered results by category + search query + active filters ──
+  let filteredResults = $derived(() => {
+    // 1. Filter by category type
+    const typeMap = { locations: 'location', events: 'event', organizations: 'org' };
+    const targetType = typeMap[activeCategory];
+    let results = targetType
+      ? searchResults.filter(r => r.type === targetType)
+      : searchResults;
+
+    // 2. Filter by search query
+    const q = searchQuery.trim().toLowerCase();
+    if (q) {
+      results = results.filter(r =>
+        r.name.toLowerCase().includes(q) ||
+        (r.formal_name && r.formal_name.toLowerCase().includes(q))
+      );
+    }
+
+    // 3. Location-specific filters
+    if (activeCategory === 'locations') {
+      if (activeFilters.spaces?.length) {
+        results = results.filter(r => activeFilters.spaces.includes(r.spaces));
+      }
+      if (activeFilters.features?.length) {
+        results = results.filter(r => activeFilters.features.includes(r.features));
+      }
+      if (activeFilters.layouts?.length) {
+        results = results.filter(r => activeFilters.layouts.includes(r.layouts));
+      }
+      if (activeFilters.capacity) {
+        results = results.filter(r => r.capacity >= Number(activeFilters.capacity));
+      }
+    }
+
+    // 4. Event-specific filters
+    if (activeCategory === 'events') {
+      if (activeFilters.category?.length) {
+        results = results.filter(r => activeFilters.category.includes(r.category));
+      }
+      if (activeFilters.status) {
+        results = results.filter(r => r.status === activeFilters.status);
+      }
+    }
+
+    // 5. Organization-specific filters
+    if (activeCategory === 'organizations') {
+      if (activeFilters.orgType?.length) {
+        results = results.filter(r => activeFilters.orgType.includes(r.orgType));
+      }
+      if (activeFilters.orgStatus) {
+        results = results.filter(r => r.orgStatus === activeFilters.orgStatus);
+      }
+    }
+
+    return results;
+  });
 
   // ── Pagination ──
-  let results_per_page = $state(1);
+  let results_per_page = $state(10);
   let current_page = $state(1);
+
+  // Locations array for Weekly view (location-type results only)
+  let locations = $derived(filteredResults().filter(r => r.type === 'location'));
+
+  // Reset to page 1 whenever the filtered set changes
+  $effect(() => {
+    filteredResults();
+    current_page = 1;
+  });
+
+  let totalPages = $derived(Math.max(1, Math.ceil(filteredResults().length / results_per_page)));
+  let pagedResults = $derived(
+    filteredResults().slice((current_page - 1) * results_per_page, current_page * results_per_page)
+  );
+
+  // Count pill label for each category
+  const categoryLabels = {
+    locations: 'locations',
+    events: 'events',
+    organizations: 'organizations',
+    history: 'results',
+  };
 </script>
 
 <section class="results-container">
@@ -73,22 +138,23 @@
     <div class="results">
       <p style="font-size: 22px; font-weight: bold;">Results</p>
       <p class="result-count" style="font-size: 14px; font-weight: normal;">
-        {searchResults.length} {activeCategory}
+        {filteredResults().length} {categoryLabels[activeCategory] ?? activeCategory}
       </p>
     </div>
 
+    <!-- Date navigator shown for Daily / Weekly views -->
     {#if viewBy.id === 'Daily'}
       <div class="date-header">
-        <a href="#" onclick={(e) => { e.preventDefault(); prevDay(); }}>&laquo;</a>
-        <p>{date}</p>
-        <a href="#" onclick={(e) => { e.preventDefault(); nextDay(); }}>&raquo;</a>
+        <button class="date-nav-btn" onclick={prevDay} aria-label="Previous day">‹</button>
+        <span class="date-pill">{date}</span>
+        <button class="date-nav-btn" onclick={nextDay} aria-label="Next day">›</button>
       </div>
     {:else if viewBy.id === 'Weekly'}
       <div class="date-header">
-        <p>Week of:</p>
-        <a href="#" onclick={(e) => { e.preventDefault(); prevWeek(); }}>&laquo;</a>
-        <p>{weekLabel}</p>
-        <a href="#" onclick={(e) => { e.preventDefault(); nextWeek(); }}>&raquo;</a>
+        <span class="date-pill-label">Week of:</span>
+        <button class="date-nav-btn" onclick={prevWeek} aria-label="Previous week">‹</button>
+        <span class="date-pill">{weekLabel}</span>
+        <button class="date-nav-btn" onclick={nextWeek} aria-label="Next week">›</button>
       </div>
     {/if}
 
@@ -97,7 +163,7 @@
       <div class="view-by-buttons">
         {#each views as view}
           <button class:active={viewBy.id === view.id} onclick={() => viewBy = view}>
-            <i class={view.icon}></i> {view.id}
+            {view.id}
           </button>
         {/each}
       </div>
@@ -106,46 +172,83 @@
 
   <div class="results-body">
     {#if viewBy.id === 'List'}
-      <List search_results={searchResults} {results_per_page} />
+      <List search_results={pagedResults} {results_per_page} />
     {:else if viewBy.id === 'Daily'}
-      <Daily search_results={searchResults} {results_per_page} {date} />
+      <Daily search_results={pagedResults} {results_per_page} {date} />
     {:else if viewBy.id === 'Weekly'}
-      <Weekly search_results={searchResults} {results_per_page} {date} {locations} {weekStart} />
+      <Weekly search_results={pagedResults} {results_per_page} {date} {locations} {weekStart} />
     {/if}
   </div>
 
-  <div class="results-pagination">
-    <a href="#" onclick={(e) => { e.preventDefault(); current_page = Math.max(1, current_page - 1); }}>&laquo;</a>
-    <p>{current_page}</p>
-    <p>of</p>
-    <p>{Math.ceil(searchResults.length / results_per_page)}</p>
-    <a href="#" onclick={(e) => { e.preventDefault(); current_page = Math.min(Math.ceil(searchResults.length / results_per_page), current_page + 1); }}>&raquo;</a>
-  </div>
+  <!-- Pagination -->
+  {#if totalPages > 1}
+    <div class="results-pagination">
+      <button
+        class="page-nav-btn"
+        disabled={current_page === 1}
+        onclick={() => { if (current_page > 1) current_page--; }}
+        aria-label="Previous page"
+      >«</button>
+
+      {#each Array.from({ length: totalPages }, (_, i) => i + 1) as page}
+        <button
+          class="page-btn"
+          class:active={current_page === page}
+          onclick={() => current_page = page}
+          aria-current={current_page === page ? 'page' : undefined}
+        >{page}</button>
+      {/each}
+
+      <button
+        class="page-nav-btn"
+        disabled={current_page === totalPages}
+        onclick={() => { if (current_page < totalPages) current_page++; }}
+        aria-label="Next page"
+      >»</button>
+    </div>
+  {/if}
 </section>
 
 <style>
   .date-header {
     display: flex;
-    justify-content: left;
-    flex-direction: row;
     align-items: center;
+    gap: 6px;
   }
 
-  .date-header a {
-    margin: 0 5px;
-    text-decoration: none;
-    color: black;
-    font-weight: bold;
+  .date-pill-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #64748b;
+    margin-right: 2px;
   }
 
-  .date-header p {
-    margin: 0 5px;
-    border: 1px solid black;
-    background-color: red;
+  .date-pill {
+    padding: 5px 14px;
+    background-color: #e00122;
     color: white;
-    border-radius: 30px;
-    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
   }
+
+  .date-nav-btn {
+    background: #f1f5f9;
+    border: 1px solid #e3e3e6;
+    border-radius: 6px;
+    width: 28px;
+    height: 28px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #334155;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+  }
+  .date-nav-btn:hover { background: #e2e8f0; }
 
   .results-container {
     display: flex;
@@ -155,6 +258,7 @@
     border-radius: 15px;
     margin: 10px;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    gap: 12px;
   }
 
   .results-header {
@@ -162,7 +266,8 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 10px;
   }
 
   .results-body {
@@ -172,6 +277,7 @@
   .results {
     display: flex;
     flex-direction: row;
+    align-items: center;
   }
 
   .results p {
@@ -182,9 +288,10 @@
   .result-count {
     border: 1px solid rgb(180, 206, 207);
     border-radius: 15px;
-    padding: 2px 6px;
-    background-color: rgb(194, 189, 236);
-    color: rgb(152, 42, 241);
+    padding: 2px 10px;
+    background-color: rgba(47, 111, 237, 0.12);
+    color: #2f6fed;
+    font-weight: 700;
   }
 
   .view-by {
@@ -204,7 +311,7 @@
   }
 
   .view-by button.active {
-    background-color: red;
+    background-color: #e00122;
     color: white;
     border: 1px solid black;
     border-radius: 5px;
@@ -216,33 +323,60 @@
     margin: 2px;
     border: none;
     cursor: pointer;
-    padding: 5px;
+    padding: 5px 10px;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 4px;
   }
 
   .view-by p {
     font-weight: bold;
+    margin: 0;
   }
 
+  /* ── Pagination ── */
   .results-pagination {
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
+    gap: 4px;
+    padding-top: 8px;
   }
 
-  .results-pagination a {
-    margin: 0 5px;
-    text-decoration: none;
-    color: black;
-    font-weight: bold;
+  .page-nav-btn {
+    background: transparent;
+    border: 1px solid #e3e3e6;
+    border-radius: 6px;
+    width: 32px;
+    height: 32px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #334155;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
+  .page-nav-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .page-nav-btn:hover:not(:disabled) { background: #f1f5f9; }
 
-  .results-pagination p {
-    margin: 0 5px;
-    border: 1px solid black;
-    background-color: red;
+  .page-btn {
+    min-width: 32px;
+    height: 32px;
+    padding: 0 6px;
+    background: transparent;
+    border: 1px solid #e3e3e6;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #334155;
+    cursor: pointer;
+  }
+  .page-btn:hover { background: #f1f5f9; }
+  .page-btn.active {
+    background: #e00122;
     color: white;
-    border-radius: 30px;
-    padding: 8px 12px;
+    border-color: #e00122;
   }
 </style>

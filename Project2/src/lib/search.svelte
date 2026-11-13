@@ -24,10 +24,8 @@
   );
 
   // ── Filter definitions ──
-  // Each filter group has a name, a mode ('checkbox' or 'radio'), and its
-  // options. The `checked` field on each option is reactive state that the
-  // checkboxes/radios bind to directly.
-  let filters = $state([
+  // Location filters (Spaces, Features, Layouts, Capacity)
+  let locationFilters = $state([
     {
       name: 'Spaces',   mode: 'checkbox', open: false,
       options: [
@@ -61,54 +59,126 @@
     },
   ]);
 
+  // Events filters
+  let eventFilters = $state([
+    {
+      name: 'Date range', mode: 'radio', open: false,
+      options: [
+        { label: 'Today',      value: 'today',   checked: false },
+        { label: 'This week',  value: 'week',    checked: false },
+        { label: 'This month', value: 'month',   checked: false },
+      ],
+    },
+    {
+      name: 'Category', mode: 'checkbox', open: false,
+      options: [
+        { label: 'Academic',  value: 'academic',  checked: false },
+        { label: 'Social',    value: 'social',    checked: false },
+        { label: 'Sports',    value: 'sports',    checked: false },
+        { label: 'Arts',      value: 'arts',      checked: false },
+      ],
+    },
+    {
+      name: 'Status', mode: 'radio', open: false,
+      options: [
+        { label: 'Confirmed', value: 'confirmed', checked: false },
+        { label: 'Tentative', value: 'tentative', checked: false },
+      ],
+    },
+  ]);
+
+  // Organizations filters
+  let orgFilters = $state([
+    {
+      name: 'Type', mode: 'checkbox', open: false,
+      options: [
+        { label: 'Student org', value: 'student', checked: false },
+        { label: 'Academic',    value: 'academic', checked: false },
+        { label: 'Athletics',   value: 'athletics', checked: false },
+      ],
+    },
+    {
+      name: 'Status', mode: 'radio', open: false,
+      options: [
+        { label: 'Active',   value: 'active',   checked: false },
+        { label: 'Inactive', value: 'inactive', checked: false },
+      ],
+    },
+  ]);
+
+  // Active filter set for current category
+  let filters = $derived(
+    activeCategory === 'locations'     ? locationFilters :
+    activeCategory === 'events'        ? eventFilters :
+    activeCategory === 'organizations' ? orgFilters :
+    []
+  );
+
   // ── chipLabel(filter) ──
-  // Builds the text shown on each filter chip. For Capacity (radio) it
+  // Builds the text shown on each filter chip. For radio filters it
   // shows the selected value; for checkboxes it shows the count.
   // Called inline in the {#each filters} template block.
   function chipLabel(filter) {
     const selected = filter.options.filter(o => o.checked);
     if (!selected.length) return `${filter.name} +`;
-    if (filter.name === 'Capacity') return `${filter.name}: ${selected[0].value}`;
+    if (filter.mode === 'radio') return `${filter.name}: ${selected[0].label}`;
     return `${filter.name}: ${selected.length}`;
   }
 
   // ── toggleMenu(index) ──
-  // Opens one filter dropdown and closes the rest. Bound to each <summary>
-  // click so only one dropdown is open at a time.
+  // Opens one filter dropdown and closes the rest.
   function toggleMenu(index) {
-    filters = filters.map((f, i) => ({ ...f, open: i === index ? !f.open : false }));
+    const src =
+      activeCategory === 'locations'     ? locationFilters :
+      activeCategory === 'events'        ? eventFilters :
+      activeCategory === 'organizations' ? orgFilters : [];
+    const updated = src.map((f, i) => ({ ...f, open: i === index ? !f.open : false }));
+    if (activeCategory === 'locations')     locationFilters = updated;
+    else if (activeCategory === 'events')   eventFilters    = updated;
+    else if (activeCategory === 'organizations') orgFilters  = updated;
   }
 
   // ── clearFilters() ──
   // Unchecks every option across all filter groups and closes dropdowns.
-  // Bound to the "Clear" button in the filter bar.
   function clearFilters() {
-    filters = filters.map(f => ({
+    const reset = (arr) => arr.map(f => ({
       ...f,
       open: false,
       options: f.options.map(o => ({ ...o, checked: false })),
     }));
+    locationFilters = reset(locationFilters);
+    eventFilters    = reset(eventFilters);
+    orgFilters      = reset(orgFilters);
   }
 
   // ── selectRadio(filterIndex, optionIndex) ──
   // For radio-mode filters, ensures only one option is checked at a time.
-  // Bound to onclick on radio inputs inside the Capacity filter.
   function selectRadio(filterIndex, optionIndex) {
-    filters[filterIndex].options = filters[filterIndex].options.map((o, i) => ({
+    const src =
+      activeCategory === 'locations'     ? locationFilters :
+      activeCategory === 'events'        ? eventFilters :
+      activeCategory === 'organizations' ? orgFilters : [];
+    src[filterIndex].options = src[filterIndex].options.map((o, i) => ({
       ...o,
       checked: i === optionIndex,
     }));
+    if (activeCategory === 'locations')     locationFilters = [...src];
+    else if (activeCategory === 'events')   eventFilters    = [...src];
+    else if (activeCategory === 'organizations') orgFilters  = [...src];
   }
 
   // ── Active filter values ──
-  // Derived object that summarizes current filter selections. This is
-  // passed down to the <Results> child component so it knows what filters
-  // are applied without reaching back up into this component.
+  // Derived object summarizing current filter selections, passed to <Results>.
   let activeFilters = $derived({
-    spaces:   filters[0].options.filter(o => o.checked).map(o => o.value),
-    features: filters[1].options.filter(o => o.checked).map(o => o.value),
-    layouts:  filters[2].options.filter(o => o.checked).map(o => o.value),
-    capacity: filters[3].options.find(o => o.checked)?.value ?? null,
+    spaces:    locationFilters[0].options.filter(o => o.checked).map(o => o.value),
+    features:  locationFilters[1].options.filter(o => o.checked).map(o => o.value),
+    layouts:   locationFilters[2].options.filter(o => o.checked).map(o => o.value),
+    capacity:  locationFilters[3].options.find(o => o.checked)?.value ?? null,
+    dateRange: eventFilters[0].options.find(o => o.checked)?.value ?? null,
+    category:  eventFilters[1].options.filter(o => o.checked).map(o => o.value),
+    status:    eventFilters[2].options.find(o => o.checked)?.value ?? null,
+    orgType:   orgFilters[0].options.filter(o => o.checked).map(o => o.value),
+    orgStatus: orgFilters[1].options.find(o => o.checked)?.value ?? null,
   });
 
   // ── Recent-search history ──
@@ -145,11 +215,21 @@
   // This is the master list passed down to <Results>. In a real app you
   // would fetch this from an API based on `searchQuery` and `activeFilters`.
   let searchResults = $state([
-    { name: 'Event 1', formal_name: 'event 1', spaces: 'Type A', features: 'table', layouts: 'Layout 1', capacity: 100, favorite: true,  type: 'location' },
-    { name: 'Event 2', formal_name: 'event 1', spaces: 'Type B', features: 'chair', layouts: 'Layout 2', capacity: 50,  favorite: false, type: 'location' },
-    { name: 'Event 3', formal_name: 'event 1', spaces: 'Type A', features: 'table', layouts: 'Layout 1', capacity: 100, favorite: true,  type: 'location' },
-    { name: 'Event 4', formal_name: 'event 1', spaces: 'Type C', features: 'stage', layouts: 'Layout 3', capacity: 200, favorite: false, type: 'location' },
-    { name: 'Event 5', formal_name: 'event 1', spaces: 'Type B', features: 'chair', layouts: 'Layout 2', capacity: 50,  favorite: true,  type: 'location' },
+    // Locations
+    { name: 'Langsam 520',     formal_name: 'Langsam Library 520',  spaces: 'single',   features: 'projector', layouts: 'classroom', capacity: 30,  favorite: true,  type: 'location' },
+    { name: 'Braunstein 140A', formal_name: 'Braunstein Hall 140A', spaces: 'single',   features: 'whiteboard', layouts: 'seminar', capacity: 20,  favorite: false, type: 'location' },
+    { name: 'Aronoff 6480A',   formal_name: 'Aronoff Center 6480A', spaces: 'multiple', features: 'zoom',      layouts: 'lecture',  capacity: 80,  favorite: true,  type: 'location' },
+    { name: 'Math 1061',       formal_name: 'Math Sciences 1061',   spaces: 'single',   features: 'projector', layouts: 'lecture',  capacity: 120, favorite: false, type: 'location' },
+    { name: 'TUC Cinema',      formal_name: 'Tangeman Cinema Hall',  spaces: 'single',   features: 'projector', layouts: 'lecture',  capacity: 200, favorite: false, type: 'location' },
+    // Events
+    { name: 'Euchre Club at UC',  formal_name: 'Weekly Euchre Club',    category: 'social',   status: 'confirmed', favorite: false, type: 'event' },
+    { name: 'Calculus Review',    formal_name: 'Math 1061 Review',       category: 'academic', status: 'confirmed', favorite: true,  type: 'event' },
+    { name: 'Chess Club Meet',    formal_name: 'UC Chess Club Meeting',  category: 'social',   status: 'tentative', favorite: false, type: 'event' },
+    { name: 'Dance Team Practice',formal_name: 'UC Dance Team Practice', category: 'arts',     status: 'confirmed', favorite: false, type: 'event' },
+    // Organizations
+    { name: 'Chess Club',        formal_name: 'UC Chess Club',          orgType: 'student',   orgStatus: 'active',   favorite: false, type: 'org' },
+    { name: 'Dance Team',        formal_name: 'UC Dance Team',          orgType: 'athletics', orgStatus: 'active',   favorite: false, type: 'org' },
+    { name: 'Math Society',      formal_name: 'Math Academic Society',  orgType: 'academic',  orgStatus: 'active',   favorite: true,  type: 'org' },
   ]);
 </script>
 
@@ -190,12 +270,12 @@
         >
       </label>
 
-      <!-- ── Location filters ──
-           Only shown when the "locations" tab is active.
-           Each filter group renders as a <details>-like chip that toggles
-           its dropdown. Checkbox/radio inputs bind to option.checked. -->
-      {#if activeCategory === 'locations'}
-        <div class="location-filters" aria-label="Location filters">
+      <!-- ── Category filters ──
+           Shown for locations, events, and organizations tabs.
+           Each filter group renders as a chip that toggles its dropdown.
+           Checkbox/radio inputs bind to option.checked. -->
+      {#if activeCategory === 'locations' || activeCategory === 'events' || activeCategory === 'organizations'}
+        <div class="location-filters" aria-label="{activeCategory} filters">
           {#each filters as filter, fi}
             <div class="filter-menu" class:is-open={filter.open}>
               <button
@@ -214,7 +294,7 @@
                       {#if filter.mode === 'radio'}
                         <input
                           type="radio"
-                          name={filter.name}
+                          name="{activeCategory}-{filter.name}"
                           checked={option.checked}
                           onclick={() => selectRadio(fi, oi)}
                         >
