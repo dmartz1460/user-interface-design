@@ -197,7 +197,7 @@
 
   <div class="results-body">
     {#if viewBy.id === 'List'}
-      <List search_results={pagedResults} {results_per_page} />
+      <List search_results={pagedResults} {results_per_page} {activeCategory} />
     {:else if viewBy.id === 'Daily'}
       <Daily search_results={pagedResults} {results_per_page} {date} />
     {:else if viewBy.id === 'Weekly'}

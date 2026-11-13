@@ -29,27 +29,30 @@
     {
       name: 'Buildings',   mode: 'checkbox', open: false,
       options: [
-        { label: 'Langsam',    value: 'langsam',   checked: false },
-        { label: 'Lindner Hall', value: 'lindner hall',  checked: false },
-        { label: 'Old Chem',    value: 'old chem',   checked: false },
-        { label: '60 West Charlton', value: '60 west charlton',  checked: false },
+        { label: 'Langsam',           value: 'langsam',          checked: false },
+        { label: 'Braunstein Hall',   value: 'braunstein hall',  checked: false },
+        { label: 'Aronoff',           value: 'aronoff',          checked: false },
+        { label: 'Old Chem',          value: 'old chem',         checked: false },
+        { label: 'Lindner Hall',      value: 'lindner hall',     checked: false },
+        { label: '60 West Charlton',  value: '60 west charlton', checked: false },
+        { label: 'Tangeman',          value: 'tangeman',         checked: false },
+        { label: 'Math Sciences',     value: 'math sciences',    checked: false },
       ],
     },
     {
       name: 'Features', mode: 'checkbox', open: false,
       options: [
-        { label: 'Flooring: Carpet',  value: 'carpet flooring',  checked: false },
-        { label: 'Flooring: Cement', value: 'cement flooring', checked: false },
-        { label: 'A/V Camera',       value: 'camera',       checked: false },
-        { label: 'Board: White', value: 'white board', checked: false },
-        { label: 'Seating: Tables and Chairs',       value: 'tables and chairs',       checked: false },
+        { label: 'Projector',              value: 'projector',        checked: false },
+        { label: 'Whiteboard',             value: 'white board',      checked: false },
+        { label: 'A/V Camera',             value: 'camera',           checked: false },
+        { label: 'Tables and Chairs',      value: 'tables and chairs', checked: false },
       ],
     },
     {
       name: 'Layouts',  mode: 'checkbox', open: false,
       options: [
         { label: 'Classroom', value: 'classroom', checked: false },
-        { label: 'Lecture',   value: 'lecture',    checked: false },
+        { label: 'Lecture',   value: 'lecture',   checked: false },
         { label: 'Seminar',   value: 'seminar',   checked: false },
       ],
     },
@@ -63,17 +66,17 @@
     {
       name: 'Organizations', mode: 'search', open: false,
       options: [
-        { label: 'Euchre Club',      value: 'euchre club',   checked: false },
-        { label: 'IEEE',  value: 'ieee',    checked: false },
-        { label: 'Chess Club', value: 'chess club',   checked: false },
-        { label: 'Star Wars Club', value: 'star wars club',   checked: false },
+        { label: 'Euchre Club',      value: 'euchre club',    checked: false },
+        { label: 'IEEE',             value: 'ieee',           checked: false },
+        { label: 'Chess Club',       value: 'chess club',     checked: false },
+        { label: 'Star Wars Club',   value: 'star wars club', checked: false },
       ],
     },
     {
       name: 'Types', mode: 'checkbox', open: false,
       options: [
-        { label: 'Class',  value: 'class',  checked: false },
-        { label: 'Organization',    value: 'organization',    checked: false },
+        { label: 'Class',        value: 'class',        checked: false },
+        { label: 'Organization', value: 'organization', checked: false },
       ],
     },
   ]);
@@ -84,14 +87,14 @@
       name: 'Types', mode: 'checkbox', open: false,
       options: [
         { label: 'Internal', value: 'internal', checked: false },
-        { label: 'External',    value: 'external', checked: false },
+        { label: 'External', value: 'external', checked: false },
       ],
     },
     {
       name: 'Categories', mode: 'checkbox', open: false,
       options: [
-        { label: 'Clubs',   value: 'clubs',   checked: false },
-        { label: 'CEAS', value: 'ceas', checked: false },
+        { label: 'Clubs', value: 'clubs', checked: false },
+        { label: 'CEAS',  value: 'ceas',  checked: false },
       ],
     },
   ]);
@@ -176,15 +179,15 @@
   // ── Active filter values ──
   // Derived object summarizing current filter selections, passed to <Results>.
   let activeFilters = $derived({
-    buildings:     locationFilters[0].options.filter(o => o.checked).map(o => o.value),
-    features:      locationFilters[1].options.filter(o => o.checked).map(o => o.value),
-    layouts:       locationFilters[2].options.filter(o => o.checked).map(o => o.value),
-    capacityMin:   capacityMin !== '' ? Number(capacityMin) : null,
-    capacityMax:   capacityMax !== '' ? Number(capacityMax) : null,
-    organizations: eventFilters[0].options.filter(o => o.checked).map(o => o.value),
-    eventTypes:    eventFilters[1].options.filter(o => o.checked).map(o => o.value),
-    orgTypes:      orgFilters[0].options.filter(o => o.checked).map(o => o.value),
-    categories:    orgFilters[1].options.filter(o => o.checked).map(o => o.value),
+    buildings:      locationFilters[0].options.filter(o => o.checked).map(o => o.value),
+    features:       locationFilters[1].options.filter(o => o.checked).map(o => o.value),
+    layouts:        locationFilters[2].options.filter(o => o.checked).map(o => o.value),
+    capacityMin:    capacityMin !== '' ? Number(capacityMin) : null,
+    capacityMax:    capacityMax !== '' ? Number(capacityMax) : null,
+    organizations:  eventFilters[0].options.filter(o => o.checked).map(o => o.value),
+    eventTypes:     eventFilters[1].options.filter(o => o.checked).map(o => o.value),
+    orgTypes:       orgFilters[0].options.filter(o => o.checked).map(o => o.value),
+    categories:     orgFilters[1].options.filter(o => o.checked).map(o => o.value),
   });
 
   // ── Recent-search history ──
@@ -218,24 +221,167 @@
   );
 
   // ── Search results (sample data) ──
-  // This is the master list passed down to <Results>. In a real app you
-  // would fetch this from an API based on `searchQuery` and `activeFilters`.
+  // Rich dataset covering all filter dimensions so every filter can be tested:
+  //   Locations  → building, features, layouts, capacity (range)
+  //   Events     → organization (search/multi-select), eventType (class | organization)
+  //   Organizations → orgType (internal | external), category (clubs | ceas)
   let searchResults = $state([
-    // Locations
-    { name: 'Langsam 520',     formal_name: 'Langsam Library 520',  spaces: 'single',   features: 'projector', layouts: 'classroom', capacity: 30,  favorite: true,  type: 'location' },
-    { name: 'Braunstein 140A', formal_name: 'Braunstein Hall 140A', spaces: 'single',   features: 'whiteboard', layouts: 'seminar', capacity: 20,  favorite: false, type: 'location' },
-    { name: 'Aronoff 6480A',   formal_name: 'Aronoff Center 6480A', spaces: 'multiple', features: 'zoom',      layouts: 'lecture',  capacity: 80,  favorite: true,  type: 'location' },
-    { name: 'Math 1061',       formal_name: 'Math Sciences 1061',   spaces: 'single',   features: 'projector', layouts: 'lecture',  capacity: 120, favorite: false, type: 'location' },
-    { name: 'TUC Cinema',      formal_name: 'Tangeman Cinema Hall',  spaces: 'single',   features: 'projector', layouts: 'lecture',  capacity: 200, favorite: false, type: 'location' },
-    // Events
-    { name: 'Euchre Club at UC',  formal_name: 'Weekly Euchre Club',    category: 'social',    favorite: false, type: 'event' },
-    { name: 'Calculus Review',    formal_name: 'Math 1061 Review',       category: 'academic', favorite: true,  type: 'event' },
-    { name: 'Chess Club Meet',    formal_name: 'UC Chess Club Meeting',  category: 'social',   favorite: false, type: 'event' },
-    { name: 'Dance Team Practice',formal_name: 'UC Dance Team Practice', category: 'arts',     favorite: false, type: 'event' },
-    // Organizations
-    { name: 'Chess Club',        formal_name: 'UC Chess Club',          orgType: 'student',   favorite: false, type: 'org' },
-    { name: 'Dance Team',        formal_name: 'UC Dance Team',          orgType: 'athletics', favorite: false, type: 'org' },
-    { name: 'Math Society',      formal_name: 'Math Academic Society',  orgType: 'academic',  favorite: true,  type: 'org' },
+
+    // ── Locations ─────────────────────────────────────────────────────────
+    {
+      name: 'Langsam 520',       formal_name: 'Langsam Library 520',
+      building: 'langsam',       features: 'projector',          layouts: 'classroom',
+      capacity: 30,              favorite: true,                  type: 'location',
+    },
+    {
+      name: 'Langsam 220',       formal_name: 'Langsam Library 220',
+      building: 'langsam',       features: 'white board',         layouts: 'seminar',
+      capacity: 18,              favorite: false,                 type: 'location',
+    },
+    {
+      name: 'Braunstein 140A',   formal_name: 'Braunstein Hall 140A',
+      building: 'braunstein hall', features: 'white board',      layouts: 'seminar',
+      capacity: 20,              favorite: false,                 type: 'location',
+    },
+    {
+      name: 'Braunstein 310',    formal_name: 'Braunstein Hall 310',
+      building: 'braunstein hall', features: 'camera',           layouts: 'classroom',
+      capacity: 45,              favorite: false,                 type: 'location',
+    },
+    {
+      name: 'Aronoff 6480A',     formal_name: 'Aronoff Center 6480A',
+      building: 'aronoff',       features: 'camera',              layouts: 'lecture',
+      capacity: 80,              favorite: true,                  type: 'location',
+    },
+    {
+      name: 'Aronoff 1220',      formal_name: 'Aronoff Center 1220',
+      building: 'aronoff',       features: 'tables and chairs',   layouts: 'seminar',
+      capacity: 35,              favorite: false,                 type: 'location',
+    },
+    {
+      name: 'Old Chem 400',      formal_name: 'Old Chemistry 400',
+      building: 'old chem',      features: 'projector',           layouts: 'lecture',
+      capacity: 150,             favorite: false,                 type: 'location',
+    },
+    {
+      name: 'Old Chem 112',      formal_name: 'Old Chemistry 112',
+      building: 'old chem',      features: 'white board',         layouts: 'seminar',
+      capacity: 24,              favorite: false,                 type: 'location',
+    },
+    {
+      name: '60 WC Room A',      formal_name: '60 West Charlton Room A',
+      building: '60 west charlton', features: 'tables and chairs', layouts: 'classroom',
+      capacity: 40,              favorite: false,                 type: 'location',
+    },
+    {
+      name: 'TUC Cinema',        formal_name: 'Tangeman Cinema Hall',
+      building: 'tangeman',      features: 'projector',           layouts: 'lecture',
+      capacity: 200,             favorite: false,                 type: 'location',
+    },
+    {
+      name: 'TUC Great Hall',    formal_name: 'Tangeman Great Hall',
+      building: 'tangeman',      features: 'tables and chairs',   layouts: 'lecture',
+      capacity: 500,             favorite: false,                 type: 'location',
+    },
+    {
+      name: 'Lindner 110',       formal_name: 'Lindner Hall 110',
+      building: 'lindner hall',  features: 'camera',              layouts: 'lecture',
+      capacity: 90,              favorite: true,                  type: 'location',
+    },
+    {
+      name: 'Lindner 215',       formal_name: 'Lindner Hall 215',
+      building: 'lindner hall',  features: 'projector',           layouts: 'classroom',
+      capacity: 55,              favorite: false,                 type: 'location',
+    },
+    {
+      name: 'Math 1061',         formal_name: 'Math Sciences 1061',
+      building: 'math sciences', features: 'projector',           layouts: 'lecture',
+      capacity: 120,             favorite: false,                 type: 'location',
+    },
+
+    // ── Events ────────────────────────────────────────────────────────────
+    {
+      name: 'Euchre Club at UC',    formal_name: 'Weekly Euchre Club Meeting',
+      organization: 'euchre club',  category: 'social',   eventType: 'organization',
+      date: 'Mon Nov 18 2026',      favorite: false,      type: 'event',
+    },
+    {
+      name: 'Calculus Review',      formal_name: 'Math 1061 Review Session',
+      organization: 'ieee',         category: 'academic', eventType: 'class',
+      date: 'Tue Nov 19 2026',      favorite: true,       type: 'event',
+    },
+    {
+      name: 'Chess Club Meet',      formal_name: 'UC Chess Club Weekly Meeting',
+      organization: 'chess club',   category: 'social',   eventType: 'organization',
+      date: 'Wed Nov 20 2026',      favorite: false,      type: 'event',
+    },
+    {
+      name: 'Dance Team Practice',  formal_name: 'UC Dance Team Rehearsal',
+      organization: 'chess club',   category: 'arts',     eventType: 'organization',
+      date: 'Thu Nov 21 2026',      favorite: false,      type: 'event',
+    },
+    {
+      name: 'Star Wars Film Night',  formal_name: 'Star Wars Club Screening',
+      organization: 'star wars club', category: 'social', eventType: 'organization',
+      date: 'Fri Nov 22 2026',       favorite: false,     type: 'event',
+    },
+    {
+      name: 'IEEE Workshop',         formal_name: 'IEEE Intro to PCB Design',
+      organization: 'ieee',          category: 'academic', eventType: 'organization',
+      date: 'Sat Nov 23 2026',       favorite: false,      type: 'event',
+    },
+    {
+      name: 'Intro to Circuits',     formal_name: 'EECE 2070 Lab Section',
+      organization: 'ieee',          category: 'academic', eventType: 'class',
+      date: 'Mon Nov 18 2026',       favorite: false,      type: 'event',
+    },
+    {
+      name: 'Linear Algebra Lecture', formal_name: 'MATH 2076 Lecture',
+      organization: 'euchre club',    category: 'academic', eventType: 'class',
+      date: 'Tue Nov 19 2026',        favorite: false,      type: 'event',
+    },
+
+    // ── Organizations ─────────────────────────────────────────────────────
+    {
+      name: 'Chess Club',      formal_name: 'UC Chess Club',
+      orgType: 'internal',     category: 'clubs',    status: 'active',
+      favorite: false,         type: 'org',
+    },
+    {
+      name: 'Dance Team',      formal_name: 'UC Dance Team',
+      orgType: 'internal',     category: 'clubs',    status: 'active',
+      favorite: false,         type: 'org',
+    },
+    {
+      name: 'Math Society',    formal_name: 'Math Academic Society',
+      orgType: 'internal',     category: 'ceas',     status: 'active',
+      favorite: true,          type: 'org',
+    },
+    {
+      name: 'IEEE UC Chapter', formal_name: 'Institute of Electrical & Electronics Engineers — UC',
+      orgType: 'external',     category: 'ceas',     status: 'active',
+      favorite: false,         type: 'org',
+    },
+    {
+      name: 'Euchre Club',     formal_name: 'UC Euchre Club',
+      orgType: 'internal',     category: 'clubs',    status: 'active',
+      favorite: false,         type: 'org',
+    },
+    {
+      name: 'Star Wars Club',  formal_name: 'UC Star Wars Appreciation Society',
+      orgType: 'internal',     category: 'clubs',    status: 'pending',
+      favorite: false,         type: 'org',
+    },
+    {
+      name: 'Cincinnati ACM',  formal_name: 'ACM Student Chapter Cincinnati',
+      orgType: 'external',     category: 'ceas',     status: 'active',
+      favorite: false,         type: 'org',
+    },
+    {
+      name: 'Campus Ministry', formal_name: 'UC Campus Ministry',
+      orgType: 'internal',     category: 'clubs',    status: 'inactive',
+      favorite: false,         type: 'org',
+    },
   ]);
 </script>
 
