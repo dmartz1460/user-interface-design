@@ -47,7 +47,7 @@
   </footer>
   <dialog class="confirm-dialog" bind:this={confirmation} aria-labelledby="confirm-title" aria-describedby="confirm-description" onclick={(event) => closeConfirmationOnBackdrop(event, close)}>
     <h2 id="confirm-title">Cancel event?</h2>
-    <p id="confirm-description">Are you sure you want to cancel {event.name}? This is a prototype and will not affect a real event.</p>
+    <p id="confirm-description">Are you sure you want to cancel {event.name}?</p>
     <div class="confirm-actions">
       <button class="action action-secondary" type="button" onclick={() => confirmation.close()}>Keep event</button>
       <button class="action action-cancel" type="button" onclick={() => confirmCancellation(close)}>Cancel event</button>
