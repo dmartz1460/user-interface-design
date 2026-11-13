@@ -178,7 +178,8 @@
   }
 
   function submitSearch() {
-    window.history.pushState({}, '', `#/search?mode=${searchMode}`);
+    const params = new URLSearchParams({ mode: searchMode, q: searchQuery.trim() });
+    window.history.pushState({}, '', `#/search?${params}`);
     window.dispatchEvent(new PopStateEvent('popstate'));
   }
 

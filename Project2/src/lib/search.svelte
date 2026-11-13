@@ -1,6 +1,8 @@
 <script>
   import Results from './results.svelte';
 
+  let { initialCategory = 'locations', initialQuery = '' } = $props();
+
   // ── Category tabs ──
   // Each tab has an id (used for logic), a label (displayed text), and a dot
   // color class. The `activeCategory` state tracks which tab is selected.
@@ -11,11 +13,17 @@
     { id: 'history',       label: 'History',        dot: null },
   ];
   let activeCategory = $state('locations');
+  $effect(() => {
+    activeCategory = initialCategory;
+  });
 
   // ── Search query ──
   // Bound to the <input> via `bind:value`. Every keystroke updates this,
   // which reactively filters `filteredRecents` below.
   let searchQuery = $state('');
+  $effect(() => {
+    searchQuery = initialQuery;
+  });
 
   // ── Placeholder ──
   // Derived from activeCategory so the input hint always matches the tab.
@@ -637,7 +645,7 @@
 
   /* ── Outer wrapper ── */
   .search-preview {
-    padding: 88px 40px 40px;
+    padding: 40px 40px 40px;
   }
 
   /* ── Card container ── */
