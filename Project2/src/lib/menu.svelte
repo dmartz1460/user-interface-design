@@ -9,10 +9,6 @@
     { label: 'API documentation', icon: 'M8 7l-5 5 5 5M16 7l5 5-5 5' }
   ];
 
-  function showPlaceholder(label) {
-    window.alert(`${label} is not available in this mockup yet.`);
-  }
-
   function handleKeydown(event) {
     if (event.key === 'Escape' && menu.matches(':popover-open')) {
       menu.hidePopover();
@@ -25,13 +21,13 @@
 
 <div id="profile-menu" class="profile-menu" popover="auto" aria-label="Profile menu" bind:this={menu}>
   <div class="profile-heading">
-    <span class="profile-initials" aria-hidden="true">YN</span>
-    <span class="profile-name">Your Name</span>
+    <span class="profile-initials" aria-hidden="true">JD</span>
+    <span class="profile-name">John Doe</span>
   </div>
 
   <nav class="menu-links" aria-label="Profile navigation">
     {#each menuItems as item}
-      <button class="menu-item" type="button" onclick={() => showPlaceholder(item.label)}>
+      <button class="menu-item" type="button">
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d={item.icon}></path>
         </svg>
@@ -41,7 +37,7 @@
   </nav>
 
   <div class="menu-footer">
-    <button class="sign-out" type="button" onclick={() => showPlaceholder('Sign out')}>Sign out</button>
+    <button class="sign-out" type="button">Sign out</button>
   </div>
 </div>
 
