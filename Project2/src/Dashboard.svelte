@@ -1,16 +1,30 @@
 <script>
   import Menu from './lib/menu.svelte';
+  import EventDetails from './lib/EventDetails.svelte';
+  import ViewAllFavorites from './lib/ViewAllFavorites.svelte';
+  import ViewAllRecents from './lib/ViewAllRecents.svelte';
 
   const recentItems = [
     { name: 'Langsam 520', type: 'Location', tone: 'blue' },
     { name: 'Euchre Club at UC', type: 'Organization', tone: 'gold' },
-    { name: 'Math 1061', type: 'Event', tone: 'green' }
+    { name: 'Math 1061', type: 'Event', tone: 'green' },
+    { name: 'The Meaning of Life', type: 'Event', tone: 'green' },
+    { name: 'Langsam 620', type: 'Location', tone: 'blue' },
+    { name: 'Aronoff 6480A', type: 'Location', tone: 'blue' },
+    { name: 'Chess Club', type: 'Organization', tone: 'gold' },
+    { name: 'Calculus review', type: 'Event', tone: 'green' },
+    { name: 'Braunstein 140A', type: 'Location', tone: 'blue' },
+    { name: 'Dance Team', type: 'Organization', tone: 'gold' }
   ];
 
-  const favoriteItems = [
-    { name: 'Euchre Club at UC', type: 'Organization', tone: 'gold' },
-    { name: 'Braunstein 140A', type: 'Location', tone: 'blue' },
-    { name: 'Aronoff 6480A', type: 'Location', tone: 'blue' }
+  let favoriteItems = [
+    { name: 'Euchre Club at UC', type: 'Organization', tone: 'gold', favorite: true },
+    { name: 'Braunstein 140A', type: 'Location', tone: 'blue', favorite: true },
+    { name: 'Aronoff 6480A', type: 'Location', tone: 'blue', favorite: true },
+    { name: 'Langsam 520', type: 'Location', tone: 'blue', favorite: true },
+    { name: 'Math 1061', type: 'Event', tone: 'green', favorite: true },
+    { name: 'Chess Club', type: 'Organization', tone: 'gold', favorite: true },
+    { name: 'Dance Team', type: 'Organization', tone: 'gold', favorite: true }
   ];
 
   const formatTestDate = (value) => {
@@ -78,6 +92,8 @@
   let dateInput;
   let bookingMessageTimeout;
   let menuTrigger;
+  let activePopup = '';
+  let selectedEvent;
   const eventsPerPage = 4;
 
   function eventStartTime(event) {
@@ -147,16 +163,15 @@
     }
   }
 
-  function openRecents() {
-    // TODO: Replace this placeholder with the View all Recents popup.
-    window.alert('The Recents popup will be connected here.');
+  function toggleFavorite(item) {
+    favoriteItems = favoriteItems.map((favorite) =>
+      favorite === item ? { ...favorite, favorite: !favorite.favorite } : favorite
+    );
   }
 
-  function openFavorites() {
-    // TODO: Replace this placeholder with the View all Favorites popup.
-    window.alert('The Favorites popup will be connected here.');
+  function cancelEvent(event) {
+    eventItems = eventItems.filter((item) => item !== event);
   }
-
 </script>
 
 <svelte:head>
@@ -224,24 +239,24 @@
       <section class="card list-card" aria-labelledby="recents-title">
         <h2 id="recents-title">Recents</h2>
         <div class="list-body">
-          {#each recentItems as item}
+          {#each recentItems.slice(0, 3) as item}
             <button class="list-row" type="button" onclick={() => window.alert(`${item.name} will open here.`)}>
               <span>{item.name}</span><span class={`tag ${item.tone}`}>{item.type}</span>
             </button>
           {/each}
-          <button class="text-button" type="button" onclick={openRecents}>View all</button>
+          <button class="text-button" type="button" onclick={() => activePopup = 'recents'}>View all</button>
         </div>
       </section>
 
       <section class="card list-card" aria-labelledby="favorites-title">
         <h2 id="favorites-title">Favorites</h2>
         <div class="list-body">
-          {#each favoriteItems as item}
+          {#each favoriteItems.filter((item) => item.favorite).slice(0, 3) as item}
             <button class="list-row" type="button" onclick={() => window.alert(`${item.name} will open here.`)}>
               <span>{item.name}</span><span class={`tag ${item.tone}`}>{item.type}</span>
             </button>
           {/each}
-          <button class="text-button" type="button" onclick={openFavorites}>View all</button>
+          <button class="text-button" type="button" onclick={() => activePopup = 'favorites'}>View all</button>
         </div>
       </section>
     </div>
@@ -258,7 +273,7 @@
             <button type="button" onclick={() => sortEvents('time')}>Time <span class="sort-icon" aria-label={sortColumn === 'time' ? `${sortDirection}ending` : 'not sorted'}>{#if sortColumn === 'time'}{sortDirection === 'asc' ? '▲' : '▼'}{:else}—{/if}</span></button>
           </div>
           {#each visibleEvents as event}
-            <button class="event-row" type="button" onclick={() => window.alert(`${event.name} will open here.`)}>
+            <button class="event-row" type="button" onclick={() => { selectedEvent = event; activePopup = 'event'; }}>
               <span class="event-name"><i></i>{event.name}</span>
               <span class="event-location">{event.location}</span>
               <span class="event-time">{event.time}</span>
@@ -282,3 +297,11 @@
     </section>
   </div>
 </main>
+
+{#if activePopup === 'recents'}
+  <ViewAllRecents items={recentItems} onClose={() => activePopup = ''} />
+{:else if activePopup === 'favorites'}
+  <ViewAllFavorites items={favoriteItems} onToggle={toggleFavorite} onClose={() => activePopup = ''} />
+{:else if activePopup === 'event'}
+  <EventDetails event={selectedEvent} onCancel={cancelEvent} onClose={() => activePopup = ''} />
+{/if}
