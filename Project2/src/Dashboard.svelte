@@ -1,4 +1,5 @@
 <script>
+  import ucLogo from './assets/UC_monogram_logo.png';
   import Menu from './lib/menu.svelte';
   import EventDetails from './lib/EventDetails.svelte';
   import ViewAllFavorites from './lib/ViewAllFavorites.svelte';
@@ -46,7 +47,6 @@
     const endHour = startHour + 1;
     const endTime = `${endHour % 12 || 12}:${index % 2 === 0 ? '00' : '30'} ${endHour < 12 ? 'AM' : 'PM'}`;
     const locations = ['Langsam 520', 'Aronoff 6480A', 'Braunstein 140A'];
-
     return {
       name: `Test event ${eventNumber}`,
       location: locations[index % locations.length],
@@ -88,13 +88,17 @@
   let sortColumn = 'time';
   let sortDirection = 'asc';
   let currentPage = 1;
-  let bookingMessage = '';
+  let bookingError = '';
+  let bookingToast = '';
   let dateInput;
   let bookingMessageTimeout;
+  let searchQuery = '';
   let menuTrigger;
   let activePopup = '';
   let selectedEvent;
   const eventsPerPage = 4;
+  let searchMode = 'locations';
+
 
   function eventStartTime(event) {
     const [, range] = event.time.split(' · ');
@@ -135,7 +139,7 @@
 
   function bookEvent() {
     if (!location || !eventName.trim()) {
-      bookingMessage = 'Choose a location and enter an event name to continue.';
+      bookingError = 'Choose a location and enter an event name to continue.';
       return;
     }
 
@@ -145,14 +149,14 @@
       date,
       time: `${formatEventDate(date)} · ${startTime}–${endTime}`
     }];
-    bookingMessage = `${eventName.trim()} was added to Your Events.`;
+    bookingError = '';
+    bookingToast = `${eventName.trim()} was added to Your Events.`;
     eventName = '';
     location = '';
     clearTimeout(bookingMessageTimeout);
     bookingMessageTimeout = setTimeout(() => {
-      bookingMessage = '';
+      bookingToast = '';
     }, 3000);
-    // TODO: Replace this status message with the event scheduling popup when it is implemented.
   }
 
   function openDatePicker() {
@@ -172,6 +176,12 @@
   function cancelEvent(event) {
     eventItems = eventItems.filter((item) => item !== event);
   }
+
+  function submitSearch() {
+    window.history.pushState({}, '', `#/search?mode=${searchMode}`);
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  }
+
 </script>
 
 <svelte:head>
@@ -179,12 +189,24 @@
 </svelte:head>
 
 <header class="site-header">
-  <a class="brand" href="/" aria-label="25LIVE dashboard">
-    <span class="uc-mark">UC</span>
+  <button class="brand" type="button" aria-label="25LIVE dashboard">
+    <img class="uc-logo" src={ucLogo} alt="University of Cincinnati" />
     <span>25LIVE</span>
-  </a>
+  </button>
+  <form class="header-search" role="search" onsubmit={(event) => { event.preventDefault(); submitSearch(); }}>
+      <button class="search-submit" type="submit" aria-label="Search">
+        <span class="search-icon" aria-hidden="true"></span>
+      </button>
+      <input type="search" bind:value={searchQuery} aria-label="Search locations, events, and organizations" placeholder="Search locations, events, and organizations" />
+      <span class="header-search-divider" aria-hidden="true"></span>
+      <select class="header-search-mode" bind:value={searchMode} aria-label="Search by">
+        <option value="locations">By location</option>
+        <option value="events">By event</option>
+        <option value="organizations">By organization</option>
+      </select>
+  </form>
   <div class="header-actions">
-    <button class="icon-button help-button" type="button" aria-label="Help" onclick={() => window.alert('Help will be connected here.')}>?</button>
+    <button class="icon-button help-button" type="button" aria-label="Help">?</button>
     <button class="profile-button" type="button" aria-label="Open profile and menu" popovertarget="profile-menu" bind:this={menuTrigger}>
       <span class="avatar" aria-hidden="true">
         <svg viewBox="0 0 24 24" role="presentation"><circle cx="12" cy="8" r="3.25"></circle><path d="M5.5 19c.6-3.1 2.8-4.8 6.5-4.8s5.9 1.7 6.5 4.8"></path></svg>
@@ -193,6 +215,9 @@
   </div>
 </header>
 
+{#if bookingToast}
+  <div class="booking-toast" role="status">{bookingToast}</div>
+{/if}
 <Menu trigger={menuTrigger} />
 
 <main class="dashboard">
@@ -230,7 +255,7 @@
       <input id="event-name" class="field" type="text" bind:value={eventName} placeholder="Enter event name" />
 
       <button class="primary-button" type="button" onclick={bookEvent}>Book</button>
-      {#if bookingMessage}<p class="form-message" role="status">{bookingMessage}</p>{/if}
+      {#if bookingError}<p class="form-message" role="alert">{bookingError}</p>{/if}
     </div>
   </section>
 

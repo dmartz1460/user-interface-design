@@ -11,7 +11,7 @@
 
 .popup::backdrop, .confirm-dialog::backdrop { background: rgb(0 0 0 / 50%); }
 .popup h1 { margin: 0; font-size: 20px; font-weight: 800; }
-.popup button:focus-visible, .popup .recent-list:focus-visible, .confirm-dialog button:focus-visible {
+.popup button:focus-visible, .confirm-dialog button:focus-visible {
   outline: 2px solid #2f6fed;
   outline-offset: 2px;
 }

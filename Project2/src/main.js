@@ -1,10 +1,10 @@
 import { mount } from 'svelte'
 import './25live.css'
+import App from './App.svelte'
 import './lib/popups.css'
-import Dashboard from './Dashboard.svelte'
 
-const dashboard = mount(Dashboard, {
+const app = mount(App, {
   target: document.getElementById('dashboard'),
 })
 
-export default dashboard
+export default app

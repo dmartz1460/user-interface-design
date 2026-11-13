@@ -30,7 +30,7 @@
     {/each}
   </div>
   <div class="recent-table-heading" aria-hidden="true"><span>Name</span><span>Type</span></div>
-  <div class="recent-list" tabindex="0" role="region" aria-label={favorites ? 'Favorite items' : 'Recent searches'}>
+  <div class="recent-list" role="region" aria-label={favorites ? 'Favorite items' : 'Recent searches'}>
     {#if visibleItems.length}
       <ul>
         {#each visibleItems as item}
