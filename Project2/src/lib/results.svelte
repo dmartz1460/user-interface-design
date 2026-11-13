@@ -41,13 +41,22 @@
   function prevWeek() { currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() - 7); }
   function nextWeek() { currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 7); }
 
-  // ── View switcher ──
-  const views = [
+    // ── View switcher ──
+  let allViews = [
     { id: 'List',   icon: 'list' },
     { id: 'Daily',  icon: 'calendar-day' },
     { id: 'Weekly', icon: 'calendar-week' },
   ];
-  let viewBy = $state(views[0]);
+
+  let defaultView = [
+    { id: 'List',   icon: 'list' },
+  ];
+
+  let availableViews = $derived(
+    activeCategory ===  'locations' ? allViews : defaultView
+  );
+
+  let viewBy = $derived(availableViews[0]);
 
   // ── Filtered results by category + search query + active filters ──
   let filteredResults = $derived(() => {
@@ -160,8 +169,8 @@
 
     <div class="view-by">
       <p>View As:</p>
-      <div class="view-by-buttons">
-        {#each views as view}
+      <div class="{activeCategory === 'locations' ? 'all-view-buttons' : 'list-button'}">
+        {#each availableViews as view}
           <button class:active={viewBy.id === view.id} onclick={() => viewBy = view}>
             {view.id}
           </button>
@@ -300,9 +309,19 @@
     align-items: center;
   }
 
-  .view-by-buttons {
+  .all-view-buttons {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
+    margin-left: 10px;
+    border: 2px solid rgb(180, 206, 207);
+    border-radius: 5px;
+    padding: 2px;
+    background-color: rgb(212, 230, 226);
+  }
+
+  .list-button {
+    display: flex;
+    flex-direction: row;
     margin-left: 10px;
     border: 2px solid rgb(180, 206, 207);
     border-radius: 5px;

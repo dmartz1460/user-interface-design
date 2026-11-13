@@ -27,18 +27,22 @@
   // Location filters (Spaces, Features, Layouts, Capacity)
   let locationFilters = $state([
     {
-      name: 'Spaces',   mode: 'checkbox', open: false,
+      name: 'Buildings',   mode: 'checkbox', open: false,
       options: [
-        { label: 'Single space',    value: 'single',   checked: true },
-        { label: 'Multiple spaces', value: 'multiple',  checked: true },
+        { label: 'Langsam',    value: 'langsam',   checked: false },
+        { label: 'Lindner Hall', value: 'lindner hall',  checked: false },
+        { label: 'Old Chem',    value: 'old chem',   checked: false },
+        { label: '60 West Charlton', value: '60 west charlton',  checked: false },
       ],
     },
     {
       name: 'Features', mode: 'checkbox', open: false,
       options: [
-        { label: 'Projector',  value: 'projector',  checked: false },
-        { label: 'Whiteboard', value: 'whiteboard', checked: false },
-        { label: 'Zoom',       value: 'zoom',       checked: false },
+        { label: 'Flooring: Carpet',  value: 'carpet flooring',  checked: false },
+        { label: 'Flooring: Cement', value: 'cement flooring', checked: false },
+        { label: 'A/V Camera',       value: 'camera',       checked: false },
+        { label: 'Board: White', value: 'white board', checked: false },
+        { label: 'Seating: Tables and Chairs',       value: 'tables and chairs',       checked: false },
       ],
     },
     {
@@ -50,39 +54,26 @@
       ],
     },
     {
-      name: 'Capacity', mode: 'radio',    open: false,
-      options: [
-        { label: '10', value: '10', checked: false },
-        { label: '25', value: '25', checked: false },
-        { label: '50', value: '50', checked: false },
-      ],
+      name: 'Capacity', mode: 'range', open: false,
     },
   ]);
 
   // Events filters
   let eventFilters = $state([
     {
-      name: 'Date range', mode: 'radio', open: false,
+      name: 'Organizations', mode: 'search', open: false,
       options: [
-        { label: 'Today',      value: 'today',   checked: false },
-        { label: 'This week',  value: 'week',    checked: false },
-        { label: 'This month', value: 'month',   checked: false },
+        { label: 'Euchre Club',      value: 'euchre club',   checked: false },
+        { label: 'IEEE',  value: 'ieee',    checked: false },
+        { label: 'Chess Club', value: 'chess club',   checked: false },
+        { label: 'Star Wars Club', value: 'star wars club',   checked: false },
       ],
     },
     {
-      name: 'Category', mode: 'checkbox', open: false,
+      name: 'Types', mode: 'checkbox', open: false,
       options: [
-        { label: 'Academic',  value: 'academic',  checked: false },
-        { label: 'Social',    value: 'social',    checked: false },
-        { label: 'Sports',    value: 'sports',    checked: false },
-        { label: 'Arts',      value: 'arts',      checked: false },
-      ],
-    },
-    {
-      name: 'Status', mode: 'radio', open: false,
-      options: [
-        { label: 'Confirmed', value: 'confirmed', checked: false },
-        { label: 'Tentative', value: 'tentative', checked: false },
+        { label: 'Class',  value: 'class',  checked: false },
+        { label: 'Organization',    value: 'organization',    checked: false },
       ],
     },
   ]);
@@ -90,18 +81,17 @@
   // Organizations filters
   let orgFilters = $state([
     {
-      name: 'Type', mode: 'checkbox', open: false,
+      name: 'Types', mode: 'checkbox', open: false,
       options: [
-        { label: 'Student org', value: 'student', checked: false },
-        { label: 'Academic',    value: 'academic', checked: false },
-        { label: 'Athletics',   value: 'athletics', checked: false },
+        { label: 'Internal', value: 'internal', checked: false },
+        { label: 'External',    value: 'external', checked: false },
       ],
     },
     {
-      name: 'Status', mode: 'radio', open: false,
+      name: 'Categories', mode: 'radio', open: false,
       options: [
-        { label: 'Active',   value: 'active',   checked: false },
-        { label: 'Inactive', value: 'inactive', checked: false },
+        { label: 'Clubs',   value: 'clubs',   checked: false },
+        { label: 'CEAS', value: 'ceas', checked: false },
       ],
     },
   ]);
@@ -170,15 +160,14 @@
   // ── Active filter values ──
   // Derived object summarizing current filter selections, passed to <Results>.
   let activeFilters = $derived({
-    spaces:    locationFilters[0].options.filter(o => o.checked).map(o => o.value),
-    features:  locationFilters[1].options.filter(o => o.checked).map(o => o.value),
-    layouts:   locationFilters[2].options.filter(o => o.checked).map(o => o.value),
-    capacity:  locationFilters[3].options.find(o => o.checked)?.value ?? null,
-    dateRange: eventFilters[0].options.find(o => o.checked)?.value ?? null,
-    category:  eventFilters[1].options.filter(o => o.checked).map(o => o.value),
-    status:    eventFilters[2].options.find(o => o.checked)?.value ?? null,
-    orgType:   orgFilters[0].options.filter(o => o.checked).map(o => o.value),
-    orgStatus: orgFilters[1].options.find(o => o.checked)?.value ?? null,
+    buildings:     locationFilters[0].options.filter(o => o.checked).map(o => o.value),
+    features:      locationFilters[1].options.filter(o => o.checked).map(o => o.value),
+    layouts:       locationFilters[2].options.filter(o => o.checked).map(o => o.value),
+    capacity:      locationFilters[3].options.find(o => o.checked)?.value ?? null,
+    organizations: eventFilters[0].options.find(o => o.checked)?.value ?? null,
+    eventTypes:    eventFilters[1].options.filter(o => o.checked).map(o => o.value),
+    orgTypes:      orgFilters[0].options.filter(o => o.checked).map(o => o.value),
+    categories:    orgFilters[1].options.find(o => o.checked)?.value ?? null,
   });
 
   // ── Recent-search history ──
@@ -222,14 +211,14 @@
     { name: 'Math 1061',       formal_name: 'Math Sciences 1061',   spaces: 'single',   features: 'projector', layouts: 'lecture',  capacity: 120, favorite: false, type: 'location' },
     { name: 'TUC Cinema',      formal_name: 'Tangeman Cinema Hall',  spaces: 'single',   features: 'projector', layouts: 'lecture',  capacity: 200, favorite: false, type: 'location' },
     // Events
-    { name: 'Euchre Club at UC',  formal_name: 'Weekly Euchre Club',    category: 'social',   status: 'confirmed', favorite: false, type: 'event' },
-    { name: 'Calculus Review',    formal_name: 'Math 1061 Review',       category: 'academic', status: 'confirmed', favorite: true,  type: 'event' },
-    { name: 'Chess Club Meet',    formal_name: 'UC Chess Club Meeting',  category: 'social',   status: 'tentative', favorite: false, type: 'event' },
-    { name: 'Dance Team Practice',formal_name: 'UC Dance Team Practice', category: 'arts',     status: 'confirmed', favorite: false, type: 'event' },
+    { name: 'Euchre Club at UC',  formal_name: 'Weekly Euchre Club',    category: 'social',    favorite: false, type: 'event' },
+    { name: 'Calculus Review',    formal_name: 'Math 1061 Review',       category: 'academic', favorite: true,  type: 'event' },
+    { name: 'Chess Club Meet',    formal_name: 'UC Chess Club Meeting',  category: 'social',   favorite: false, type: 'event' },
+    { name: 'Dance Team Practice',formal_name: 'UC Dance Team Practice', category: 'arts',     favorite: false, type: 'event' },
     // Organizations
-    { name: 'Chess Club',        formal_name: 'UC Chess Club',          orgType: 'student',   orgStatus: 'active',   favorite: false, type: 'org' },
-    { name: 'Dance Team',        formal_name: 'UC Dance Team',          orgType: 'athletics', orgStatus: 'active',   favorite: false, type: 'org' },
-    { name: 'Math Society',      formal_name: 'Math Academic Society',  orgType: 'academic',  orgStatus: 'active',   favorite: true,  type: 'org' },
+    { name: 'Chess Club',        formal_name: 'UC Chess Club',          orgType: 'student',   favorite: false, type: 'org' },
+    { name: 'Dance Team',        formal_name: 'UC Dance Team',          orgType: 'athletics', favorite: false, type: 'org' },
+    { name: 'Math Society',      formal_name: 'Math Academic Society',  orgType: 'academic',  favorite: true,  type: 'org' },
   ]);
 </script>
 
