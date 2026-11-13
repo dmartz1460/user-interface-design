@@ -1,14 +1,31 @@
 <script>
+  import ucLogo from './assets/UC_monogram_logo.png';
+  import Menu from './lib/menu.svelte';
+  import EventDetails from './lib/EventDetails.svelte';
+  import ViewAllFavorites from './lib/ViewAllFavorites.svelte';
+  import ViewAllRecents from './lib/ViewAllRecents.svelte';
+
   const recentItems = [
     { name: 'Langsam 520', type: 'Location', tone: 'blue' },
     { name: 'Euchre Club at UC', type: 'Organization', tone: 'gold' },
-    { name: 'Math 1061', type: 'Event', tone: 'green' }
+    { name: 'Math 1061', type: 'Event', tone: 'green' },
+    { name: 'The Meaning of Life', type: 'Event', tone: 'green' },
+    { name: 'Langsam 620', type: 'Location', tone: 'blue' },
+    { name: 'Aronoff 6480A', type: 'Location', tone: 'blue' },
+    { name: 'Chess Club', type: 'Organization', tone: 'gold' },
+    { name: 'Calculus review', type: 'Event', tone: 'green' },
+    { name: 'Braunstein 140A', type: 'Location', tone: 'blue' },
+    { name: 'Dance Team', type: 'Organization', tone: 'gold' }
   ];
 
-  const favoriteItems = [
-    { name: 'Euchre Club at UC', type: 'Organization', tone: 'gold' },
-    { name: 'Braunstein 140A', type: 'Location', tone: 'blue' },
-    { name: 'Aronoff 6480A', type: 'Location', tone: 'blue' }
+  let favoriteItems = [
+    { name: 'Euchre Club at UC', type: 'Organization', tone: 'gold', favorite: true },
+    { name: 'Braunstein 140A', type: 'Location', tone: 'blue', favorite: true },
+    { name: 'Aronoff 6480A', type: 'Location', tone: 'blue', favorite: true },
+    { name: 'Langsam 520', type: 'Location', tone: 'blue', favorite: true },
+    { name: 'Math 1061', type: 'Event', tone: 'green', favorite: true },
+    { name: 'Chess Club', type: 'Organization', tone: 'gold', favorite: true },
+    { name: 'Dance Team', type: 'Organization', tone: 'gold', favorite: true }
   ];
 
   const formatTestDate = (value) => {
@@ -30,7 +47,6 @@
     const endHour = startHour + 1;
     const endTime = `${endHour % 12 || 12}:${index % 2 === 0 ? '00' : '30'} ${endHour < 12 ? 'AM' : 'PM'}`;
     const locations = ['Langsam 520', 'Aronoff 6480A', 'Braunstein 140A'];
-
     return {
       name: `Test event ${eventNumber}`,
       location: locations[index % locations.length],
@@ -72,10 +88,17 @@
   let sortColumn = 'time';
   let sortDirection = 'asc';
   let currentPage = 1;
-  let bookingMessage = '';
+  let bookingError = '';
+  let bookingToast = '';
   let dateInput;
   let bookingMessageTimeout;
+  let searchQuery = '';
+  let menuTrigger;
+  let activePopup = '';
+  let selectedEvent;
   const eventsPerPage = 4;
+  let searchMode = 'locations';
+
 
   function eventStartTime(event) {
     const [, range] = event.time.split(' · ');
@@ -116,7 +139,7 @@
 
   function bookEvent() {
     if (!location || !eventName.trim()) {
-      bookingMessage = 'Choose a location and enter an event name to continue.';
+      bookingError = 'Choose a location and enter an event name to continue.';
       return;
     }
 
@@ -126,14 +149,14 @@
       date,
       time: `${formatEventDate(date)} · ${startTime}–${endTime}`
     }];
-    bookingMessage = `${eventName.trim()} was added to Your Events.`;
+    bookingError = '';
+    bookingToast = `${eventName.trim()} was added to Your Events.`;
     eventName = '';
     location = '';
     clearTimeout(bookingMessageTimeout);
     bookingMessageTimeout = setTimeout(() => {
-      bookingMessage = '';
+      bookingToast = '';
     }, 3000);
-    // TODO: Replace this status message with the event scheduling popup when it is implemented.
   }
 
   function openDatePicker() {
@@ -144,19 +167,19 @@
     }
   }
 
-  function openRecents() {
-    // TODO: Replace this placeholder with the View all Recents popup.
-    window.alert('The Recents popup will be connected here.');
+  function toggleFavorite(item) {
+    favoriteItems = favoriteItems.map((favorite) =>
+      favorite === item ? { ...favorite, favorite: !favorite.favorite } : favorite
+    );
   }
 
-  function openFavorites() {
-    // TODO: Replace this placeholder with the View all Favorites popup.
-    window.alert('The Favorites popup will be connected here.');
+  function cancelEvent(event) {
+    eventItems = eventItems.filter((item) => item !== event);
   }
 
-  function openMenu() {
-    // TODO: Replace this placeholder with the menu component when it is implemented.
-    window.alert('The menu will be connected here.');
+  function submitSearch() {
+    window.history.pushState({}, '', `#/search?mode=${searchMode}`);
+    window.dispatchEvent(new PopStateEvent('popstate'));
   }
 
 </script>
@@ -166,19 +189,36 @@
 </svelte:head>
 
 <header class="site-header">
-  <a class="brand" href="/" aria-label="25LIVE dashboard">
-    <span class="uc-mark">UC</span>
+  <button class="brand" type="button" aria-label="25LIVE dashboard">
+    <img class="uc-logo" src={ucLogo} alt="University of Cincinnati" />
     <span>25LIVE</span>
-  </a>
+  </button>
+  <form class="header-search" role="search" onsubmit={(event) => { event.preventDefault(); submitSearch(); }}>
+      <button class="search-submit" type="submit" aria-label="Search">
+        <span class="search-icon" aria-hidden="true"></span>
+      </button>
+      <input type="search" bind:value={searchQuery} aria-label="Search locations, events, and organizations" placeholder="Search locations, events, and organizations" />
+      <span class="header-search-divider" aria-hidden="true"></span>
+      <select class="header-search-mode" bind:value={searchMode} aria-label="Search by">
+        <option value="locations">By location</option>
+        <option value="events">By event</option>
+        <option value="organizations">By organization</option>
+      </select>
+  </form>
   <div class="header-actions">
-    <button class="icon-button help-button" type="button" aria-label="Help" onclick={() => window.alert('Help will be connected here.')}>?</button>
-    <button class="profile-button" type="button" aria-label="Open profile and menu" onclick={openMenu}>
+    <button class="icon-button help-button" type="button" aria-label="Help">?</button>
+    <button class="profile-button" type="button" aria-label="Open profile and menu" popovertarget="profile-menu" bind:this={menuTrigger}>
       <span class="avatar" aria-hidden="true">
         <svg viewBox="0 0 24 24" role="presentation"><circle cx="12" cy="8" r="3.25"></circle><path d="M5.5 19c.6-3.1 2.8-4.8 6.5-4.8s5.9 1.7 6.5 4.8"></path></svg>
       </span>
     </button>
   </div>
 </header>
+
+{#if bookingToast}
+  <div class="booking-toast" role="status">{bookingToast}</div>
+{/if}
+<Menu trigger={menuTrigger} />
 
 <main class="dashboard">
   <section class="card scheduler-card" aria-labelledby="scheduler-title">
@@ -215,7 +255,7 @@
       <input id="event-name" class="field" type="text" bind:value={eventName} placeholder="Enter event name" />
 
       <button class="primary-button" type="button" onclick={bookEvent}>Book</button>
-      {#if bookingMessage}<p class="form-message" role="status">{bookingMessage}</p>{/if}
+      {#if bookingError}<p class="form-message" role="alert">{bookingError}</p>{/if}
     </div>
   </section>
 
@@ -224,24 +264,24 @@
       <section class="card list-card" aria-labelledby="recents-title">
         <h2 id="recents-title">Recents</h2>
         <div class="list-body">
-          {#each recentItems as item}
+          {#each recentItems.slice(0, 3) as item}
             <button class="list-row" type="button" onclick={() => window.alert(`${item.name} will open here.`)}>
               <span>{item.name}</span><span class={`tag ${item.tone}`}>{item.type}</span>
             </button>
           {/each}
-          <button class="text-button" type="button" onclick={openRecents}>View all</button>
+          <button class="text-button" type="button" onclick={() => activePopup = 'recents'}>View all</button>
         </div>
       </section>
 
       <section class="card list-card" aria-labelledby="favorites-title">
         <h2 id="favorites-title">Favorites</h2>
         <div class="list-body">
-          {#each favoriteItems as item}
+          {#each favoriteItems.filter((item) => item.favorite).slice(0, 3) as item}
             <button class="list-row" type="button" onclick={() => window.alert(`${item.name} will open here.`)}>
               <span>{item.name}</span><span class={`tag ${item.tone}`}>{item.type}</span>
             </button>
           {/each}
-          <button class="text-button" type="button" onclick={openFavorites}>View all</button>
+          <button class="text-button" type="button" onclick={() => activePopup = 'favorites'}>View all</button>
         </div>
       </section>
     </div>
@@ -258,7 +298,7 @@
             <button type="button" onclick={() => sortEvents('time')}>Time <span class="sort-icon" aria-label={sortColumn === 'time' ? `${sortDirection}ending` : 'not sorted'}>{#if sortColumn === 'time'}{sortDirection === 'asc' ? '▲' : '▼'}{:else}—{/if}</span></button>
           </div>
           {#each visibleEvents as event}
-            <button class="event-row" type="button" onclick={() => window.alert(`${event.name} will open here.`)}>
+            <button class="event-row" type="button" onclick={() => { selectedEvent = event; activePopup = 'event'; }}>
               <span class="event-name"><i></i>{event.name}</span>
               <span class="event-location">{event.location}</span>
               <span class="event-time">{event.time}</span>
@@ -282,3 +322,11 @@
     </section>
   </div>
 </main>
+
+{#if activePopup === 'recents'}
+  <ViewAllRecents items={recentItems} onClose={() => activePopup = ''} />
+{:else if activePopup === 'favorites'}
+  <ViewAllFavorites items={favoriteItems} onToggle={toggleFavorite} onClose={() => activePopup = ''} />
+{:else if activePopup === 'event'}
+  <EventDetails event={selectedEvent} onCancel={cancelEvent} onClose={() => activePopup = ''} />
+{/if}
