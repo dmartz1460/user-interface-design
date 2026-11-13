@@ -56,7 +56,17 @@
     activeCategory ===  'locations' ? allViews : defaultView
   );
 
-  let viewBy = $derived(availableViews[0]);
+  // viewBy is state so the view buttons can reassign it.
+  // An effect resets it to the first available view whenever the category changes
+  // (which may remove Daily/Weekly from the available set).
+  let viewBy = $state({ id: 'List', icon: 'list' });
+  $effect(() => {
+    // Re-read availableViews to track the dependency; reset to first view.
+    const first = availableViews[0];
+    if (!availableViews.some(v => v.id === viewBy?.id)) {
+      viewBy = first;
+    }
+  });
 
   // ── Filtered results by category + search query + active filters ──
   let filteredResults = $derived(() => {
@@ -78,8 +88,8 @@
 
     // 3. Location-specific filters
     if (activeCategory === 'locations') {
-      if (activeFilters.spaces?.length) {
-        results = results.filter(r => activeFilters.spaces.includes(r.spaces));
+      if (activeFilters.buildings?.length) {
+        results = results.filter(r => activeFilters.buildings.some(b => r.name?.toLowerCase().includes(b)));
       }
       if (activeFilters.features?.length) {
         results = results.filter(r => activeFilters.features.includes(r.features));
@@ -87,28 +97,33 @@
       if (activeFilters.layouts?.length) {
         results = results.filter(r => activeFilters.layouts.includes(r.layouts));
       }
-      if (activeFilters.capacity) {
-        results = results.filter(r => r.capacity >= Number(activeFilters.capacity));
+      // Capacity range: capacityMin and capacityMax are numbers or null
+      if (activeFilters.capacityMin != null) {
+        results = results.filter(r => r.capacity >= activeFilters.capacityMin);
+      }
+      if (activeFilters.capacityMax != null) {
+        results = results.filter(r => r.capacity <= activeFilters.capacityMax);
       }
     }
 
     // 4. Event-specific filters
     if (activeCategory === 'events') {
-      if (activeFilters.category?.length) {
-        results = results.filter(r => activeFilters.category.includes(r.category));
+      if (activeFilters.eventTypes?.length) {
+        results = results.filter(r => activeFilters.eventTypes.includes(r.category));
       }
-      if (activeFilters.status) {
-        results = results.filter(r => r.status === activeFilters.status);
+      // Organizations filter: array of selected org values
+      if (activeFilters.organizations?.length) {
+        results = results.filter(r => activeFilters.organizations.includes(r.organization));
       }
     }
 
     // 5. Organization-specific filters
     if (activeCategory === 'organizations') {
-      if (activeFilters.orgType?.length) {
-        results = results.filter(r => activeFilters.orgType.includes(r.orgType));
+      if (activeFilters.orgTypes?.length) {
+        results = results.filter(r => activeFilters.orgTypes.includes(r.orgType));
       }
-      if (activeFilters.orgStatus) {
-        results = results.filter(r => r.orgStatus === activeFilters.orgStatus);
+      if (activeFilters.categories?.length) {
+        results = results.filter(r => activeFilters.categories.includes(r.category));
       }
     }
 
@@ -116,7 +131,8 @@
   });
 
   // ── Pagination ──
-  let results_per_page = $state(10);
+  // Weekly view: 25 results/page. List and Daily: 50 results/page.
+  let results_per_page = $derived(viewBy?.id === 'Weekly' ? 25 : 50);
   let current_page = $state(1);
 
   // Locations array for Weekly view (location-type results only)

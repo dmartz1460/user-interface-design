@@ -88,7 +88,7 @@
       ],
     },
     {
-      name: 'Categories', mode: 'radio', open: false,
+      name: 'Categories', mode: 'checkbox', open: false,
       options: [
         { label: 'Clubs',   value: 'clubs',   checked: false },
         { label: 'CEAS', value: 'ceas', checked: false },
@@ -104,14 +104,32 @@
     []
   );
 
+  // ── Capacity range state (for the 'range' mode filter) ──
+  let capacityMin = $state('');
+  let capacityMax = $state('');
+
+  // ── Org search query state (for the 'search' mode filter under Events) ──
+  let orgSearchQuery = $state('');
+
   // ── chipLabel(filter) ──
-  // Builds the text shown on each filter chip. For radio filters it
-  // shows the selected value; for checkboxes it shows the count.
-  // Called inline in the {#each filters} template block.
+  // Builds the text shown on each filter chip based on its mode.
   function chipLabel(filter) {
+    if (filter.mode === 'range') {
+      const hasMin = capacityMin !== '';
+      const hasMax = capacityMax !== '';
+      if (!hasMin && !hasMax) return `${filter.name} +`;
+      if (hasMin && hasMax)   return `${filter.name}: ${capacityMin}–${capacityMax}`;
+      if (hasMin)             return `${filter.name}: ≥${capacityMin}`;
+      return                         `${filter.name}: ≤${capacityMax}`;
+    }
+    if (filter.mode === 'search') {
+      const selected = filter.options.filter(o => o.checked);
+      if (!selected.length) return `${filter.name} +`;
+      return `${filter.name}: ${selected.length}`;
+    }
+    // checkbox
     const selected = filter.options.filter(o => o.checked);
     if (!selected.length) return `${filter.name} +`;
-    if (filter.mode === 'radio') return `${filter.name}: ${selected[0].label}`;
     return `${filter.name}: ${selected.length}`;
   }
 
@@ -123,39 +141,37 @@
       activeCategory === 'events'        ? eventFilters :
       activeCategory === 'organizations' ? orgFilters : [];
     const updated = src.map((f, i) => ({ ...f, open: i === index ? !f.open : false }));
-    if (activeCategory === 'locations')     locationFilters = updated;
-    else if (activeCategory === 'events')   eventFilters    = updated;
-    else if (activeCategory === 'organizations') orgFilters  = updated;
+    if (activeCategory === 'locations')          locationFilters = updated;
+    else if (activeCategory === 'events')        eventFilters    = updated;
+    else if (activeCategory === 'organizations') orgFilters      = updated;
+    // Reset org search box when closing
+    if (!updated[index]?.open) orgSearchQuery = '';
   }
 
   // ── clearFilters() ──
-  // Unchecks every option across all filter groups and closes dropdowns.
+  // Resets all filter groups and clears range / search state.
   function clearFilters() {
     const reset = (arr) => arr.map(f => ({
       ...f,
       open: false,
-      options: f.options.map(o => ({ ...o, checked: false })),
+      options: f.options ? f.options.map(o => ({ ...o, checked: false })) : f.options,
     }));
     locationFilters = reset(locationFilters);
     eventFilters    = reset(eventFilters);
     orgFilters      = reset(orgFilters);
+    capacityMin     = '';
+    capacityMax     = '';
+    orgSearchQuery  = '';
   }
 
-  // ── selectRadio(filterIndex, optionIndex) ──
-  // For radio-mode filters, ensures only one option is checked at a time.
-  function selectRadio(filterIndex, optionIndex) {
-    const src =
-      activeCategory === 'locations'     ? locationFilters :
-      activeCategory === 'events'        ? eventFilters :
-      activeCategory === 'organizations' ? orgFilters : [];
-    src[filterIndex].options = src[filterIndex].options.map((o, i) => ({
-      ...o,
-      checked: i === optionIndex,
-    }));
-    if (activeCategory === 'locations')     locationFilters = [...src];
-    else if (activeCategory === 'events')   eventFilters    = [...src];
-    else if (activeCategory === 'organizations') orgFilters  = [...src];
-  }
+  // ── filteredOrgOptions ──
+  // The org search filter's option list, narrowed by the in-dropdown search box.
+  let filteredOrgOptions = $derived(() => {
+    const q = orgSearchQuery.trim().toLowerCase();
+    const orgFilter = eventFilters[0]; // first event filter is 'Organizations'
+    if (!q) return orgFilter.options;
+    return orgFilter.options.filter(o => o.label.toLowerCase().includes(q));
+  });
 
   // ── Active filter values ──
   // Derived object summarizing current filter selections, passed to <Results>.
@@ -163,11 +179,12 @@
     buildings:     locationFilters[0].options.filter(o => o.checked).map(o => o.value),
     features:      locationFilters[1].options.filter(o => o.checked).map(o => o.value),
     layouts:       locationFilters[2].options.filter(o => o.checked).map(o => o.value),
-    capacity:      locationFilters[3].options.find(o => o.checked)?.value ?? null,
-    organizations: eventFilters[0].options.find(o => o.checked)?.value ?? null,
+    capacityMin:   capacityMin !== '' ? Number(capacityMin) : null,
+    capacityMax:   capacityMax !== '' ? Number(capacityMax) : null,
+    organizations: eventFilters[0].options.filter(o => o.checked).map(o => o.value),
     eventTypes:    eventFilters[1].options.filter(o => o.checked).map(o => o.value),
     orgTypes:      orgFilters[0].options.filter(o => o.checked).map(o => o.value),
-    categories:    orgFilters[1].options.find(o => o.checked)?.value ?? null,
+    categories:    orgFilters[1].options.filter(o => o.checked).map(o => o.value),
   });
 
   // ── Recent-search history ──
@@ -261,39 +278,130 @@
 
       <!-- ── Category filters ──
            Shown for locations, events, and organizations tabs.
-           Each filter group renders as a chip that toggles its dropdown.
-           Checkbox/radio inputs bind to option.checked. -->
+           Each filter chip toggles a dropdown. The dropdown content varies
+           by filter.mode: 'checkbox', 'range', or 'search'. -->
       {#if activeCategory === 'locations' || activeCategory === 'events' || activeCategory === 'organizations'}
         <div class="location-filters" aria-label="{activeCategory} filters">
           {#each filters as filter, fi}
             <div class="filter-menu" class:is-open={filter.open}>
+
+              <!-- Chip button — label adapts per mode -->
               <button
                 class="filter-chip"
-                class:has-selection={filter.options.some(o => o.checked)}
+                class:has-selection={
+                  filter.mode === 'range'
+                    ? (capacityMin !== '' || capacityMax !== '')
+                    : filter.mode === 'search'
+                      ? filter.options.some(o => o.checked)
+                      : filter.options.some(o => o.checked)
+                }
                 type="button"
                 onclick={() => toggleMenu(fi)}
               >
                 <span>{chipLabel(filter)}</span>
               </button>
 
+              <!-- ── Dropdown panel ── -->
               {#if filter.open}
-                <fieldset>
-                  {#each filter.options as option, oi}
-                    <label>
-                      {#if filter.mode === 'radio'}
+
+                <!-- RANGE mode: min / max number inputs (Capacity) -->
+                {#if filter.mode === 'range'}
+                  <div class="filter-panel filter-panel--range">
+                    <legend class="panel-legend">{filter.name}</legend>
+                    <div class="range-row">
+                      <label class="range-label">
+                        Min
                         <input
-                          type="radio"
-                          name="{activeCategory}-{filter.name}"
-                          checked={option.checked}
-                          onclick={() => selectRadio(fi, oi)}
-                        >
-                      {:else}
-                        <input type="checkbox" bind:checked={option.checked}>
+                          class="range-input"
+                          type="number"
+                          min="0"
+                          placeholder="0"
+                          bind:value={capacityMin}
+                          aria-label="Minimum capacity"
+                        />
+                      </label>
+                      <span class="range-dash">–</span>
+                      <label class="range-label">
+                        Max
+                        <input
+                          class="range-input"
+                          type="number"
+                          min="0"
+                          placeholder="∞"
+                          bind:value={capacityMax}
+                          aria-label="Maximum capacity"
+                        />
+                      </label>
+                    </div>
+                    <button
+                      class="range-clear"
+                      type="button"
+                      onclick={() => { capacityMin = ''; capacityMax = ''; }}
+                    >Clear range</button>
+                  </div>
+
+                <!-- SEARCH mode: search box + selectable list (Organizations) -->
+                {:else if filter.mode === 'search'}
+                  <div class="filter-panel filter-panel--search">
+                    <legend class="panel-legend">{filter.name}</legend>
+
+                    <!-- Search input inside the dropdown -->
+                    <div class="org-search-wrap">
+                      <span class="org-search-icon" aria-hidden="true"></span>
+                      <input
+                        class="org-search-input"
+                        type="search"
+                        placeholder="Search {filter.name.toLowerCase()}…"
+                        bind:value={orgSearchQuery}
+                        aria-label="Search {filter.name}"
+                      />
+                    </div>
+
+                    <!-- Filtered org list -->
+                    <ul class="org-option-list" role="listbox" aria-multiselectable="true">
+                      {#each filteredOrgOptions() as option}
+                        <li role="option" aria-selected={option.checked}>
+                          <label class="org-option-label">
+                            <input type="checkbox" bind:checked={option.checked} />
+                            {option.label}
+                          </label>
+                        </li>
+                      {/each}
+                      {#if filteredOrgOptions().length === 0}
+                        <li class="org-no-results">No results found</li>
                       {/if}
-                      {option.label}
-                    </label>
-                  {/each}
-                </fieldset>
+                    </ul>
+
+                    <!-- Selected tags -->
+                    {#if filter.options.some(o => o.checked)}
+                      <div class="org-selected-tags">
+                        {#each filter.options.filter(o => o.checked) as sel}
+                          <span class="org-tag">
+                            {sel.label}
+                            <button
+                              class="org-tag-remove"
+                              type="button"
+                              aria-label="Remove {sel.label}"
+                              onclick={() => sel.checked = false}
+                            >×</button>
+                          </span>
+                        {/each}
+                      </div>
+                    {/if}
+                  </div>
+
+                <!-- CHECKBOX mode: standard checkbox list -->
+                {:else}
+                  <fieldset>
+                    {#each filter.options as option}
+                      <label>
+                        <input type="checkbox" bind:checked={option.checked} />
+                        {option.label}
+                      </label>
+                    {/each}
+                  </fieldset>
+                {/if}
+
               {/if}
             </div>
           {/each}
@@ -521,6 +629,13 @@
     font-size: 13px;
     font-weight: 600;
     font-family: inherit;
+    transition: border-color 0.15s, background 0.15s;
+  }
+
+  .filter-chip.has-selection {
+    background: #eef2fd;
+    border-color: #2f6fed;
+    color: #2f6fed;
   }
 
   .filter-menu fieldset {
@@ -669,4 +784,192 @@
       margin-top: 4px;
     }
   }
+
+  /* ── Filter panel (shared card styles for range & search modes) ── */
+  .filter-panel {
+    position: absolute;
+    z-index: 1;
+    top: 40px;
+    left: 0;
+    min-width: 220px;
+    background: #fff;
+    border: 1px solid #e3e3e6;
+    border-radius: 10px;
+    box-shadow: 0 8px 20px rgb(0 0 0 / 15%);
+    padding: 14px 16px 12px;
+  }
+
+  .panel-legend {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #6b6b73;
+    margin-bottom: 10px;
+  }
+
+  /* ── Range mode (Capacity) ── */
+  .filter-panel--range {}
+
+  .range-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .range-label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #334155;
+  }
+
+  .range-input {
+    width: 72px;
+    padding: 5px 8px;
+    border: 1px solid #e3e3e6;
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: inherit;
+    color: #1c1c1e;
+    outline: none;
+  }
+
+  .range-input:focus {
+    border-color: #2f6fed;
+    outline: 2px solid rgba(47, 111, 237, 0.2);
+  }
+
+  .range-dash {
+    font-size: 16px;
+    color: #94a3b8;
+    margin-top: 16px;
+    flex: none;
+  }
+
+  .range-clear {
+    display: block;
+    margin-top: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    color: #6b6b73;
+    padding: 0;
+    font-family: inherit;
+  }
+  .range-clear:hover { color: #e00122; }
+
+  /* ── Search mode (Organizations) ── */
+  .filter-panel--search {
+    min-width: 240px;
+  }
+
+  .org-search-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 34px;
+    padding: 0 10px;
+    border: 1px solid #e3e3e6;
+    border-radius: 8px;
+    margin-bottom: 8px;
+  }
+  .org-search-wrap:focus-within {
+    border-color: #2f6fed;
+    outline: 2px solid rgba(47, 111, 237, 0.2);
+  }
+
+  .org-search-icon {
+    position: relative;
+    flex: none;
+    width: 13px;
+    height: 13px;
+    border: 2px solid #6b6b73;
+    border-radius: 50%;
+  }
+  .org-search-icon::after {
+    position: absolute;
+    width: 6px;
+    height: 2px;
+    right: -5px;
+    bottom: -3px;
+    transform: rotate(45deg);
+    background: #6b6b73;
+    content: "";
+  }
+
+  .org-search-input {
+    width: 100%;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    font-size: 13px;
+    font-family: inherit;
+    color: #1c1c1e;
+  }
+  .org-search-input::placeholder { color: #94a3b8; }
+
+  .org-option-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-height: 180px;
+    overflow-y: auto;
+  }
+
+  .org-option-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 0;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .org-option-label:hover { color: #2f6fed; }
+
+  .org-no-results {
+    color: #64748b;
+    font-size: 13px;
+    padding: 8px 0;
+    text-align: center;
+  }
+
+  .org-selected-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding-top: 8px;
+    border-top: 1px solid #f0f0f2;
+    margin-top: 6px;
+  }
+
+  .org-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #eef2fd;
+    color: #2f6fed;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .org-tag-remove {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #2f6fed;
+    font-size: 14px;
+    line-height: 1;
+    padding: 0;
+    font-family: inherit;
+  }
+  .org-tag-remove:hover { color: #e00122; }
 </style>
