@@ -9,11 +9,12 @@
   export let onClose;
 
   let confirmation;
-  $: date = event ? formatDate(event.date) : '';
-  $: time = event ? event.time.split(' · ')[1] : '';
+  $: date = event?.date ? formatDate(event.date) : '';
+  $: time = event?.time ? (event.time.split(' · ')[1] || event.time) : '';
   $: dotClass = { Location: 'location', Event: 'event', Organization: 'org' }[item.type];
 
   function formatDate(value) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
     const [year, month, day] = value.split('-').map(Number);
     return new Date(year, month - 1, day).toLocaleDateString('en-US', {
       weekday: 'short', month: 'short', day: 'numeric', year: 'numeric'
@@ -52,10 +53,10 @@
         onclick={onToggleFavorite}>{isFavorite ? '★' : '☆'}</button>
     </dd></div>
     {#if item.type === 'Event'}
-      {#if event}
-        <div class="event-field"><dt>Location</dt><dd class="marker-value location-value"><span class="dot dot-location" aria-hidden="true"></span><strong>{event.location}</strong></dd></div>
-        <div class="event-field"><dt>Date</dt><dd>{date}</dd></div>
-        <div class="event-field"><dt>Time</dt><dd>{time}</dd></div>
+      {#if event?.location || date || time}
+        {#if event?.location}<div class="event-field"><dt>Location</dt><dd class="marker-value location-value"><span class="dot dot-location" aria-hidden="true"></span><strong>{event.location}</strong></dd></div>{/if}
+        {#if date}<div class="event-field"><dt>Date</dt><dd>{date}</dd></div>{/if}
+        {#if time}<div class="event-field"><dt>Time</dt><dd>{time}</dd></div>{/if}
       {:else}
         <div class="event-field"><dt>Details</dt><dd>No schedule information available.</dd></div>
       {/if}

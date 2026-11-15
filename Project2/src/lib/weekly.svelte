@@ -1,5 +1,6 @@
 <script>
-  let { search_results = [], results_per_page, date, locations = [], weekStart } = $props();
+  import { favoriteItems, isFavorite, searchItem, timelineEvent } from './items.js';
+  let { search_results = [], results_per_page, date, locations = [], weekStart, onSelect, onToggleFavorite } = $props();
 
   // ── Day columns ──
   const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -226,28 +227,24 @@
     {#each search_results as result, ri}
       {@const isOpen   = expanded[ri] ?? true}
       {@const status   = todayStatus(result.name)}
+      {@const favorite = isFavorite($favoriteItems, searchItem(result))}
 
       <!-- Row header (always visible, click to toggle) -->
       <div class="result-row">
-        <button
-          class="row-toggle"
-          onclick={() => toggleRow(ri)}
-          aria-expanded={isOpen}
-          aria-controls="weekly-grid-{ri}"
-        >
+        <div class="row-toggle">
+          <button class="expand-toggle" type="button" onclick={() => toggleRow(ri)}
+            aria-label={`${isOpen ? 'Collapse' : 'Expand'} ${result.name}`}
+            aria-expanded={isOpen} aria-controls="weekly-grid-{ri}">
           <!-- Chevron -->
           <span class="chevron" class:open={isOpen} aria-hidden="true">›</span>
-
-          <!-- Favorite star -->
-          <span
-            class="star"
-            class:filled={result.favorite}
-            aria-label={result.favorite ? 'Favorited' : 'Not favorited'}
-          >{result.favorite ? '★' : '☆'}</span>
+          </button>
+          <button class="star" class:filled={favorite} type="button" onclick={() => onToggleFavorite(result)}
+            aria-pressed={favorite}
+            aria-label={`${favorite ? 'Remove' : 'Add'} ${result.name} ${favorite ? 'from' : 'to'} favorites`}>{favorite ? '★' : '☆'}</button>
 
           <!-- Blue dot + name -->
           <span class="loc-dot" aria-hidden="true"></span>
-          <span class="row-name">{result.name}</span>
+          <button class="row-name" type="button" onclick={() => onSelect(result)}>{result.name}</button>
 
           <!-- Availability badge -->
           <span class="avail-badge avail-{status}">
@@ -255,7 +252,7 @@
             {#if status === 'partial'}◑ Partial{/if}
             {#if status === 'busy'}● Busy today{/if}
           </span>
-        </button>
+        </div>
 
         <!-- Collapsible weekly grid -->
         {#if isOpen}
@@ -292,7 +289,6 @@
             <div
               class="events-overlay"
               style="--grid-top:{GRID_TOP}px; --col-w:calc((100% - 72px) / {visibleDays.length}); --row-h:{ROW_H}px;"
-              aria-hidden="true"
             >
               {#each visibleDays as day, di}
                 {@const col_events = eventsForCell(result.name, day.date.getDay())}
@@ -301,14 +297,16 @@
                   style="left:calc(72px + {di} * var(--col-w)); width:var(--col-w);"
                 >
                   {#each col_events as ev}
-                    <div
+                    <button
                       class="event-block"
+                      type="button"
+                      onclick={() => onSelect(timelineEvent(ev, day.date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })))}
                       style={blockStyle(ev)}
                       title="{ev.name} ({hourLabel(Math.floor(ev.startHour))}–{hourLabel(Math.ceil(ev.endHour))})"
                     >
                       <span class="event-accent"></span>
                       <span class="event-label">{ev.name}</span>
-                    </div>
+                    </button>
                   {/each}
                 </div>
               {/each}
@@ -489,7 +487,7 @@
   }
   .row-toggle:hover { background: #f0f4f8; }
   /* Show bottom border only when expanded */
-  .row-toggle[aria-expanded="true"] {
+  .row-toggle:has([aria-expanded="true"]) {
     border-bottom-color: #e3e3e6;
   }
 
@@ -508,6 +506,7 @@
   /* Favorite star */
   .star        { font-size: 15px; color: #b5b5bb; line-height: 1; }
   .star.filled { color: #e00122; }
+  .expand-toggle, .star, .row-name { border: 0; padding: 0; background: transparent; cursor: pointer; }
 
   /* Blue dot */
   .loc-dot {
@@ -526,6 +525,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    text-align: left;
   }
 
   /* Availability badge */
@@ -631,7 +631,10 @@
     border-radius: 5px;
     overflow: hidden;
     pointer-events: auto;
-    cursor: default;
+    cursor: pointer;
+    padding: 0;
+    border: 0;
+    text-align: left;
     transition: background 0.1s;
   }
   .event-block:hover { background: rgba(22,163,74,0.30); }

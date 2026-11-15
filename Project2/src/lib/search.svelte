@@ -1,5 +1,7 @@
 <script>
   import Results from './results.svelte';
+  import EventDetails from './EventDetails.svelte';
+  import { recentItems, favoriteItems, ownedEvents, searchItem, isFavorite, toggleFavorite, recordView } from './items.js';
 
   let { initialCategory = 'locations', initialQuery = '' } = $props();
 
@@ -198,21 +200,31 @@
     categories:     orgFilters[1].options.filter(o => o.checked).map(o => o.value),
   });
 
-  // ── Recent-search history ──
-  // Static sample data. The `typeLabels` map is used when rendering badges.
-  const recentItems = [
-    { name: 'Langsam 520',        type: 'location' },
-    { name: 'Euchre Club at UC',  type: 'org' },
-    { name: 'Math 1061',          type: 'event' },
-    { name: 'The Meaning of Life',type: 'event' },
-    { name: 'Langsam 620',        type: 'location' },
-    { name: 'Aronoff 6480A',      type: 'location' },
-    { name: 'Chess Club',         type: 'org' },
-    { name: 'Calculus review',    type: 'event' },
-    { name: 'Braunstein 140A',    type: 'location' },
-    { name: 'Dance Team',         type: 'org' },
-  ];
-  const typeLabels = { location: 'Location', event: 'Event', org: 'Organization' };
+  const typeClasses = { Location: 'location', Event: 'event', Organization: 'org' };
+  let selectedItem = $state.raw(null);
+  let selectedEvent = $state.raw(null);
+  let selectedOwned = $state(false);
+
+  function openItem(item) {
+    selectedItem = item;
+    selectedEvent = item.eventData || (item.type === 'Event'
+      ? ($ownedEvents || []).find((event) => event.name === item.name)
+      : null);
+    selectedOwned = !!selectedEvent && ($ownedEvents || []).includes(selectedEvent);
+    recordView(item);
+  }
+
+  function openResult(result) {
+    openItem(searchItem(result));
+  }
+
+  function toggleResultFavorite(result) {
+    toggleFavorite(searchItem(result));
+  }
+
+  function cancelEvent(event) {
+    ownedEvents.update((events) => events.filter((item) => item !== event));
+  }
 
   // ── History type filter ──
   // Tracks which type filter pill is active in the History tab.
@@ -222,8 +234,8 @@
   // Derived list that filters `recentItems` by both the active type pill
   // and the search query. This powers the history list in the template.
   let filteredRecents = $derived(
-    recentItems.filter(item =>
-      (historyType === 'all' || item.type === historyType) &&
+    $recentItems.filter(item =>
+      (historyType === 'all' || typeClasses[item.type] === historyType) &&
       item.name.toLowerCase().includes(searchQuery.trim().toLowerCase())
     )
   );
@@ -604,10 +616,10 @@
                   {#each filteredRecents as item}
                     <li>
                       <span class="recent-name">
-                        <span class="dot dot-{item.type}" aria-hidden="true"></span>
-                        {item.name}
+                        <span class="dot dot-{typeClasses[item.type]}" aria-hidden="true"></span>
+                        <button class="recent-item-button" type="button" onclick={() => openItem(item)}>{item.name}</button>
                       </span>
-                      <span class="badge badge-{item.type}">{typeLabels[item.type]}</span>
+                      <span class="badge badge-{typeClasses[item.type]}">{item.type}</span>
                     </li>
                   {/each}
                 </ul>
@@ -628,7 +640,16 @@
   {activeFilters}
   {activeCategory}
   {searchQuery}
+  onSelect={openResult}
+  onToggleFavorite={toggleResultFavorite}
 />
+
+{#if selectedItem}
+  <EventDetails item={selectedItem} event={selectedEvent} owned={selectedOwned}
+    isFavorite={isFavorite($favoriteItems, selectedItem)}
+    onToggleFavorite={() => toggleFavorite(selectedItem)}
+    onCancel={cancelEvent} onClose={() => selectedItem = null} />
+{/if}
 
 <style>
   /* ── Color dots (shared across tabs & history) ── */

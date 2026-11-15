@@ -1,5 +1,6 @@
 <script>
-  let { search_results = [], results_per_page, date } = $props();
+  import { favoriteItems, isFavorite, searchItem, timelineEvent } from './items.js';
+  let { search_results = [], results_per_page, date, onSelect, onToggleFavorite } = $props();
 
   // ── Hour columns: 7 AM – 9 PM ──
   // Each hour maps to a pixel-width slot in the timeline.
@@ -158,19 +159,21 @@
       <tbody>
         {#each search_results as result}
           {@const rowEvents = eventsForRow(result.name)}
+          {@const favorite = isFavorite($favoriteItems, searchItem(result))}
           <tr>
             <td class="row-label">
               <button
                 class="fav-btn"
-                onclick={() => result.favorite = !result.favorite}
-                aria-label={result.favorite ? 'Remove from favorites' : 'Add to favorites'}
+                onclick={() => onToggleFavorite(result)}
+                aria-pressed={favorite}
+                aria-label={`${favorite ? 'Remove' : 'Add'} ${result.name} ${favorite ? 'from' : 'to'} favorites`}
               >
-                <span class="star" class:filled={result.favorite} aria-hidden="true">
-                  {result.favorite ? '★' : '☆'}
+                <span class="star" class:filled={favorite} aria-hidden="true">
+                  {favorite ? '★' : '☆'}
                 </span>
               </button>
               <span class="loc-dot" aria-hidden="true"></span>
-              <span class="loc-name" title={result.name}>{result.name}</span>
+              <button class="loc-name" type="button" title={result.name} onclick={() => onSelect(result)}>{result.name}</button>
             </td>
 
             <!-- Single timeline cell spanning all visible hour columns -->
@@ -190,14 +193,16 @@
                 {#each rowEvents as ev}
                   {@const style = eventStyle(ev)}
                   {#if style}
-                    <div
+                    <button
                       class="event-block"
+                      type="button"
+                      onclick={() => onSelect(timelineEvent(ev, date))}
                       style={style}
                       title="{ev.name} ({hourLabel(Math.floor(ev.startHour))}–{hourLabel(Math.ceil(ev.endHour))})"
                     >
                       <span class="event-accent"></span>
                       <span class="event-label">{ev.name}</span>
-                    </div>
+                    </button>
                   {/if}
                 {/each}
               </div>
@@ -398,6 +403,10 @@
   }
 
   .loc-name {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    text-align: left;
     font-size: 13px;
     font-weight: 600;
     color: #1c1c1e;
@@ -434,7 +443,10 @@
     background: rgba(22, 163, 74, 0.18);
     border-radius: 6px;
     overflow: hidden;
-    cursor: default;
+    cursor: pointer;
+    padding: 0;
+    border: 0;
+    text-align: left;
     min-width: 28px;
     transition: background 0.1s;
   }

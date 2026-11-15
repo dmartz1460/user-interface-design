@@ -13,6 +13,8 @@
     activeFilters = { spaces: [], features: [], layouts: [], capacity: null },
     activeCategory = 'locations',
     searchQuery = '',
+    onSelect,
+    onToggleFavorite,
   } = $props();
 
   let currentDate = $state(new Date());
@@ -203,11 +205,11 @@
 
   <div class="results-body">
     {#if viewBy.id === 'List'}
-      <List search_results={pagedResults} {results_per_page} {activeCategory} />
+      <List search_results={pagedResults} {results_per_page} {activeCategory} {onSelect} {onToggleFavorite} />
     {:else if viewBy.id === 'Daily'}
-      <Daily search_results={pagedResults} {results_per_page} {date} />
+      <Daily search_results={pagedResults} {results_per_page} {date} {onSelect} {onToggleFavorite} />
     {:else if viewBy.id === 'Weekly'}
-      <Weekly search_results={pagedResults} {results_per_page} {date} {locations} {weekStart} />
+      <Weekly search_results={pagedResults} {results_per_page} {date} {locations} {weekStart} {onSelect} {onToggleFavorite} />
     {/if}
   </div>
 

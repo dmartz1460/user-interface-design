@@ -4,29 +4,7 @@
   import EventDetails from './lib/EventDetails.svelte';
   import ViewAllFavorites from './lib/ViewAllFavorites.svelte';
   import ViewAllRecents from './lib/ViewAllRecents.svelte';
-
-  let recentItems = [
-    { name: 'Langsam 520', type: 'Location', tone: 'blue' },
-    { name: 'Euchre Club at UC', type: 'Organization', tone: 'gold' },
-    { name: 'Math 1061', type: 'Event', tone: 'green' },
-    { name: 'The Meaning of Life', type: 'Event', tone: 'green' },
-    { name: 'Langsam 620', type: 'Location', tone: 'blue' },
-    { name: 'Aronoff 6480A', type: 'Location', tone: 'blue' },
-    { name: 'Chess Club', type: 'Organization', tone: 'gold' },
-    { name: 'Calculus review', type: 'Event', tone: 'green' },
-    { name: 'Braunstein 140A', type: 'Location', tone: 'blue' },
-    { name: 'Dance Team', type: 'Organization', tone: 'gold' }
-  ];
-
-  let favoriteItems = [
-    { name: 'Euchre Club at UC', type: 'Organization', tone: 'gold', favorite: true },
-    { name: 'Braunstein 140A', type: 'Location', tone: 'blue', favorite: true },
-    { name: 'Aronoff 6480A', type: 'Location', tone: 'blue', favorite: true },
-    { name: 'Langsam 520', type: 'Location', tone: 'blue', favorite: true },
-    { name: 'Math 1061', type: 'Event', tone: 'green', favorite: true },
-    { name: 'Chess Club', type: 'Organization', tone: 'gold', favorite: true },
-    { name: 'Dance Team', type: 'Organization', tone: 'gold', favorite: true }
-  ];
+  import { recentItems, favoriteItems, ownedEvents, isFavorite, toggleFavorite, recordView } from './lib/items.js';
 
   const formatTestDate = (value) => {
     const [year, month, day] = value.split('-').map(Number);
@@ -55,7 +33,7 @@
     };
   });
 
-  let eventItems = testEvents;
+  if ($ownedEvents === null) $ownedEvents = testEvents;
 
   const times = Array.from({ length: 48 }, (_, index) => {
     const hour = Math.floor(index / 2);
@@ -97,6 +75,7 @@
   let activePopup = '';
   let selectedItem;
   let selectedEvent;
+  let selectedOwned = false;
   const eventsPerPage = 4;
   let searchMode = 'locations';
 
@@ -119,7 +98,7 @@
     return [1, 'ellipsis', page, 'ellipsis', totalPages];
   }
 
-  $: sortedEvents = [...eventItems].sort((a, b) => {
+  $: sortedEvents = [...$ownedEvents].sort((a, b) => {
     const first = sortColumn === 'time' ? eventStartTime(a) : a[sortColumn].toLowerCase();
     const second = sortColumn === 'time' ? eventStartTime(b) : b[sortColumn].toLowerCase();
     return (first < second ? -1 : first > second ? 1 : 0) * (sortDirection === 'asc' ? 1 : -1);
@@ -144,7 +123,7 @@
       return;
     }
 
-    eventItems = [...eventItems, {
+    $ownedEvents = [...$ownedEvents, {
       name: eventName.trim(),
       location,
       date,
@@ -168,32 +147,18 @@
     }
   }
 
-  function toggleFavorite(item) {
-    const matches = (favorite) => favorite.name === item.name && favorite.type === item.type;
-    const existing = favoriteItems.find(matches);
-    favoriteItems = existing
-      ? favoriteItems.map((favorite) => matches(favorite) ? { ...favorite, favorite: !favorite.favorite } : favorite)
-      : [{ name: item.name, type: item.type, tone: toneByType[item.type], favorite: true }, ...favoriteItems];
-  }
-
-  const toneByType = { Location: 'blue', Organization: 'gold', Event: 'green' };
-
   function openDetails(item, event = null) {
-    selectedItem = { name: item.name, type: item.type };
-    selectedEvent = event || (item.type === 'Event' ? eventItems.find((candidate) => candidate.name === item.name) : null);
-    recentItems = [
-      { ...selectedItem, tone: toneByType[item.type] },
-      ...recentItems.filter((recent) => recent.name !== item.name || recent.type !== item.type)
-    ].slice(0, 10);
+    selectedItem = item;
+    selectedEvent = event || item.eventData || (item.type === 'Event' ? $ownedEvents.find((candidate) => candidate.name === item.name) : null);
+    selectedOwned = !!selectedEvent && $ownedEvents.includes(selectedEvent);
+    recordView(item);
     activePopup = 'details';
   }
 
-  $: selectedIsFavorite = !!selectedItem && favoriteItems.some((favorite) =>
-    favorite.name === selectedItem.name && favorite.type === selectedItem.type && favorite.favorite
-  );
+  $: selectedIsFavorite = !!selectedItem && isFavorite($favoriteItems, selectedItem);
 
   function cancelEvent(event) {
-    eventItems = eventItems.filter((item) => item !== event);
+    $ownedEvents = $ownedEvents.filter((item) => item !== event);
   }
 
   function submitSearch() {
@@ -284,7 +249,7 @@
       <section class="card list-card" aria-labelledby="recents-title">
         <h2 id="recents-title">Recents</h2>
         <div class="list-body">
-          {#each recentItems.slice(0, 3) as item}
+          {#each $recentItems.slice(0, 3) as item}
             <button class="list-row" type="button" onclick={() => openDetails(item)}>
               <span>{item.name}</span><span class={`tag ${item.tone}`}>{item.type}</span>
             </button>
@@ -296,7 +261,7 @@
       <section class="card list-card" aria-labelledby="favorites-title">
         <h2 id="favorites-title">Favorites</h2>
         <div class="list-body">
-          {#each favoriteItems.filter((item) => item.favorite).slice(0, 3) as item}
+          {#each $favoriteItems.filter((item) => item.favorite).slice(0, 3) as item}
             <button class="list-row" type="button" onclick={() => openDetails(item)}>
               <span>{item.name}</span><span class={`tag ${item.tone}`}>{item.type}</span>
             </button>
@@ -344,11 +309,11 @@
 </main>
 
 {#if activePopup === 'recents'}
-  <ViewAllRecents items={recentItems} onSelect={openDetails} onClose={() => activePopup = ''} />
+  <ViewAllRecents items={$recentItems} onSelect={openDetails} onClose={() => activePopup = ''} />
 {:else if activePopup === 'favorites'}
-  <ViewAllFavorites items={favoriteItems} onToggle={toggleFavorite} onSelect={openDetails} onClose={() => activePopup = ''} />
+  <ViewAllFavorites items={$favoriteItems} onToggle={toggleFavorite} onSelect={openDetails} onClose={() => activePopup = ''} />
 {:else if activePopup === 'details'}
-  <EventDetails item={selectedItem} event={selectedEvent} owned={!!selectedEvent}
+  <EventDetails item={selectedItem} event={selectedEvent} owned={selectedOwned}
     isFavorite={selectedIsFavorite} onToggleFavorite={() => toggleFavorite(selectedItem)}
     onCancel={cancelEvent} onClose={() => activePopup = ''} />
 {/if}
