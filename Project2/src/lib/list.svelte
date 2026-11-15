@@ -5,6 +5,7 @@
   // activeCategory:  'locations' | 'events' | 'organizations' | 'history'
   import { favoriteItems, isFavorite, searchItem } from './items.js';
   let { search_results, results_per_page, activeCategory = 'locations', onSelect, onToggleFavorite } = $props();
+  const historyTypeClasses = { Location: 'location', Event: 'event', Organization: 'org' };
 </script>
 
 <table class="list-results">
@@ -38,8 +39,8 @@
     </tr>
   </thead>
   <tbody>
-    {#each search_results as result}
-      {@const favorite = isFavorite($favoriteItems, searchItem(result))}
+    {#each search_results as result (`${result.type}:${result.name}`)}
+      {@const favorite = activeCategory !== 'history' && isFavorite($favoriteItems, searchItem(result))}
       <tr>
         {#if activeCategory === 'locations'}
           <td>
@@ -83,14 +84,14 @@
 
         {:else}
           <td><button class="result-name" onclick={() => onSelect(result)}>{result.name}</button></td>
-          <td><span class="badge badge-{result.type}">{result.type}</span></td>
+          <td><span class="badge badge-{historyTypeClasses[result.type]}">{result.type}</span></td>
         {/if}
       </tr>
     {/each}
 
     {#if search_results.length === 0}
       <tr>
-        <td colspan="6" class="empty-state">No results found.</td>
+        <td colspan={activeCategory === 'history' ? 2 : 6} class="empty-state">{activeCategory === 'history' ? 'No matching recent searches.' : 'No results found.'}</td>
       </tr>
     {/if}
   </tbody>

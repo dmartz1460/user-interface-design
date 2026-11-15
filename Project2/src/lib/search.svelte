@@ -575,58 +575,26 @@
         </div>
       {/if}
 
-      <!-- ── History panel ──
-           Only shown when the "history" tab is active.
-           Type-filter pills set `historyType`, which drives `filteredRecents`. -->
       {#if activeCategory === 'history'}
-        <section class="search-history" aria-labelledby="history-title">
-          <h1 id="history-title">History</h1>
-          <p>Your 10 latest searches</p>
-
-          <div class="recent-browser">
-            <div class="recent-filters" role="group" aria-label="Recent search types">
-              {#each [
-                { type: 'all',      label: 'All',       dot: null },
-                { type: 'location', label: 'Locations',  dot: 'dot-location' },
-                { type: 'event',    label: 'Events',     dot: 'dot-event' },
-                { type: 'org',      label: 'Orgs',       dot: 'dot-org' },
-              ] as pill}
-                <button
-                  class="recent-filter"
-                  class:is-selected={historyType === pill.type}
-                  type="button"
-                  aria-pressed={historyType === pill.type}
-                  onclick={() => historyType = pill.type}
-                >
-                  {#if pill.dot}<span class="dot {pill.dot}" aria-hidden="true"></span>{/if}
-                  {pill.label}
-                </button>
-              {/each}
-            </div>
-
-            <div class="recent-table-heading" aria-hidden="true">
-              <span>Name</span><span>Type</span>
-            </div>
-
-            <div class="recent-list" tabindex="0" aria-label="Recent searches">
-              {#if filteredRecents.length === 0}
-                <p class="empty-recents">No matching recent searches.</p>
-              {:else}
-                <ul>
-                  {#each filteredRecents as item}
-                    <li>
-                      <span class="recent-name">
-                        <span class="dot dot-{typeClasses[item.type]}" aria-hidden="true"></span>
-                        <button class="recent-item-button" type="button" onclick={() => openItem(item)}>{item.name}</button>
-                      </span>
-                      <span class="badge badge-{typeClasses[item.type]}">{item.type}</span>
-                    </li>
-                  {/each}
-                </ul>
-              {/if}
-            </div>
-          </div>
-        </section>
+        <div class="location-filters history-filters" role="group" aria-label="Recent search types">
+          {#each [
+            { type: 'all',      label: 'All',       dot: null },
+            { type: 'location', label: 'Locations', dot: 'dot-location' },
+            { type: 'event',    label: 'Events',    dot: 'dot-event' },
+            { type: 'org',      label: 'Orgs',      dot: 'dot-org' },
+          ] as pill}
+            <button
+              class="filter-chip"
+              class:has-selection={historyType === pill.type}
+              type="button"
+              aria-pressed={historyType === pill.type}
+              onclick={() => historyType = pill.type}
+            >
+              {#if pill.dot}<span class="dot {pill.dot}" aria-hidden="true"></span>{/if}
+              {pill.label}
+            </button>
+          {/each}
+        </div>
       {/if}
     </div>
   </div>
@@ -637,10 +605,11 @@
      the active category, and the search query down to Results. -->
 <Results
   {searchResults}
+  historyResults={filteredRecents}
   {activeFilters}
   {activeCategory}
   {searchQuery}
-  onSelect={openResult}
+  onSelect={activeCategory === 'history' ? openItem : openResult}
   onToggleFavorite={toggleResultFavorite}
 />
 
@@ -652,6 +621,7 @@
 {/if}
 
 <style>
+  .history-filters .filter-chip { gap: 6px; }
   /* ── Color dots (shared across tabs & history) ── */
   .dot {
     display: inline-block;
@@ -845,105 +815,6 @@
     font-weight: 600;
     cursor: pointer;
     font-family: inherit;
-  }
-
-  /* ── History section ── */
-  .search-history {
-    margin: 24px -24px -24px;
-  }
-
-  .search-history h1 {
-    margin: 0 28px;
-    font-size: 20px;
-  }
-
-  .search-history > p {
-    margin: 6px 28px 20px;
-    color: #64748b;
-    font-size: 13px;
-  }
-
-  .recent-browser {
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-  }
-
-  .recent-filters {
-    display: flex;
-    gap: 8px;
-    padding: 0 28px 12px;
-  }
-
-  .recent-filter {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 14px;
-    border: 1px solid #e3e3e6;
-    border-radius: 18px;
-    background: transparent;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    font-family: inherit;
-  }
-
-  .recent-filter.is-selected {
-    background: #2f6fed;
-    color: #fff;
-    border-color: #2f6fed;
-  }
-
-  .recent-table-heading {
-    display: flex;
-    justify-content: space-between;
-    padding: 8px 28px;
-    color: #64748b;
-    font-size: 12px;
-    font-weight: 700;
-    border-bottom: 1px solid #e3e3e6;
-  }
-
-  .recent-list {
-    padding: 0 28px;
-  }
-
-  .recent-list ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-
-  .recent-list li {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 0;
-    border-bottom: 1px solid #f0f0f2;
-  }
-
-  .recent-name {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .badge {
-    font-size: 12px;
-    font-weight: 600;
-    padding: 2px 10px;
-    border-radius: 10px;
-  }
-
-  .badge-location { background: #dbeafe; color: #1e40af; }
-  .badge-event    { background: #dcfce7; color: #166534; }
-  .badge-org      { background: #fef9c3; color: #854d0e; }
-
-  .empty-recents {
-    padding: 20px 0;
-    color: #64748b;
-    text-align: center;
   }
 
   /* ── Responsive ── */

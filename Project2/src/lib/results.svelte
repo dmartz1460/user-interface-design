@@ -10,6 +10,7 @@
   // searchQuery:    the current text in the search input
   let {
     searchResults = [],
+    historyResults = [],
     activeFilters = { spaces: [], features: [], layouts: [], capacity: null },
     activeCategory = 'locations',
     searchQuery = '',
@@ -72,6 +73,8 @@
 
   // ── Filtered results by category + search query + active filters ──
   let filteredResults = $derived(() => {
+    if (activeCategory === 'history') return historyResults;
+
     // 1. Filter by category type
     const typeMap = { locations: 'location', events: 'event', organizations: 'org' };
     const targetType = typeMap[activeCategory];
