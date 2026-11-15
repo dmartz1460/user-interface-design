@@ -64,7 +64,7 @@ input[type="date"]::-webkit-calendar-picker-indicator { opacity: 0; }
 .search-tabs { display: flex; gap: 32px; padding: 0 24px; overflow-x: auto; border-bottom: 1px solid #e3e3e6; border-radius: 14px 14px 0 0; }
 .search-tab { position: relative; display: flex; align-items: center; gap: 8px; flex: none; min-height: 46px; padding: 0; border: 0; background: transparent; color: #6b6b73; font-size: 15px; }
 .search-tab.is-active { color: #000; font-weight: 700; }
-.search-tab.is-active::after { position: absolute; right: 0; bottom: -1px; left: 0; height: 4px; border-radius: 2px; background: #E00122; content: ""; }
+.search-tab.is-active::after { position: absolute; right: 0; bottom: 0; left: 0; height: 4px; border-radius: 2px; background: #E00122; content: ""; }
 .search-content { padding: 17px 24px 24px; }
 .search-input { display: flex; align-items: center; gap: 16px; height: 44px; padding: 0 16px; border: 1px solid #e3e3e6; border-radius: 10px; }
 .search-input:focus-within { outline: 2px solid #E00122; outline-offset: 2px; }
