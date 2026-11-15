@@ -26,8 +26,8 @@
 .event-field:last-child { border-bottom: 0; }
 .event-field dt { color: #64748b; font-size: 13px; font-weight: 700; }
 .event-field dd { position: relative; margin: 0; padding: 10px 0; font-size: 16px; font-weight: 500; overflow-wrap: anywhere; }
-.event-marker, .location-value .dot { position: absolute; right: calc(100% + 12px); top: 50%; transform: translateY(-50%); }
-.event-marker { width: 6px; height: 22px; border-radius: 3px; background: #16a34a; }
+.marker-value .dot { position: absolute; right: calc(100% + 12px); top: 50%; transform: translateY(-50%); }
+.marker-value .favorite-toggle { margin-left: 10px; vertical-align: middle; position: relative; top: -2px; }
 .location-value { color: #2f6fed; }
 .popup-actions { display: flex; justify-content: flex-end; gap: 12px; padding: 20px 28px 16px; border-top: 1px solid #e3e3e6; }
 .action { min-height: 44px; padding: 0 24px; border: 0; border-radius: 10px; color: #fff; font-size: 14px; font-weight: 700; }
@@ -59,6 +59,8 @@
 .recent-list li { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 50px; border-bottom: 1px solid #e3e3e6; }
 .empty-recents { color: #64748b; font-size: 14px; }
 .recent-name { display: flex; align-items: center; gap: 13px; min-width: 0; font-size: 15px; font-weight: 600; overflow-wrap: anywhere; }
+.recent-item-button { padding: 0; border: 0; background: transparent; color: inherit; text-align: left; font-weight: inherit; overflow-wrap: anywhere; }
+.recent-item-button:hover { text-decoration: underline; }
 .favorite-toggle { border: 0; padding: 0; color: #d99000; background: transparent; font-size: 20px; line-height: 1; }
 .badge { flex: none; padding: 6px 12px; border-radius: 13px; font-size: 12px; font-weight: 700; }
 .badge-location { background: #d5e2fb; color: #2f6fed; }

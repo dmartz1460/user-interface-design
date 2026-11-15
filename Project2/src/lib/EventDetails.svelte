@@ -1,15 +1,24 @@
 <script>
   import Popup from './Popup.svelte';
-  export let event;
+  export let item;
+  export let event = null;
+  export let owned = false;
+  export let isFavorite = false;
+  export let onToggleFavorite;
   export let onCancel;
   export let onClose;
 
   let confirmation;
-  const [year, month, day] = event.date.split('-').map(Number);
-  const date = new Date(year, month - 1, day).toLocaleDateString('en-US', {
-    weekday: 'short', month: 'short', day: 'numeric', year: 'numeric'
-  });
-  const time = event.time.split(' · ')[1];
+  $: date = event ? formatDate(event.date) : '';
+  $: time = event ? event.time.split(' · ')[1] : '';
+  $: dotClass = { Location: 'location', Event: 'event', Organization: 'org' }[item.type];
+
+  function formatDate(value) {
+    const [year, month, day] = value.split('-').map(Number);
+    return new Date(year, month - 1, day).toLocaleDateString('en-US', {
+      weekday: 'short', month: 'short', day: 'numeric', year: 'numeric'
+    });
+  }
 
   function confirmCancellation(close) {
     confirmation.close();
@@ -32,25 +41,38 @@
 
 <Popup titleId="event-popup-title" variant="event-details" {onClose} let:close>
   <header class="popup-header">
-    <h1 id="event-popup-title">Event details</h1>
-    <button class="close-button" type="button" aria-label="Close event details" onclick={close}>&times;</button>
+    <h1 id="event-popup-title">{item.type} details</h1>
+    <button class="close-button" type="button" aria-label={`Close ${item.type.toLowerCase()} details`} onclick={close}>&times;</button>
   </header>
   <dl class="event-fields">
-    <div class="event-field"><dt>Name</dt><dd><span class="event-marker" aria-hidden="true"></span><strong>{event.name}</strong></dd></div>
-    <div class="event-field"><dt>Location</dt><dd class="location-value"><span class="dot dot-location" aria-hidden="true"></span><strong>{event.location}</strong></dd></div>
-    <div class="event-field"><dt>Date</dt><dd>{date}</dd></div>
-    <div class="event-field"><dt>Time</dt><dd>{time}</dd></div>
+    <div class="event-field"><dt>Name</dt><dd class="marker-value">
+      <span class={`dot dot-${dotClass}`} aria-hidden="true"></span><strong>{item.name}</strong>
+      <button class="favorite-toggle" type="button" aria-pressed={isFavorite}
+        aria-label={`${isFavorite ? 'Remove' : 'Add'} ${item.name} ${isFavorite ? 'from' : 'to'} favorites`}
+        onclick={onToggleFavorite}>{isFavorite ? '★' : '☆'}</button>
+    </dd></div>
+    {#if item.type === 'Event'}
+      {#if event}
+        <div class="event-field"><dt>Location</dt><dd class="marker-value location-value"><span class="dot dot-location" aria-hidden="true"></span><strong>{event.location}</strong></dd></div>
+        <div class="event-field"><dt>Date</dt><dd>{date}</dd></div>
+        <div class="event-field"><dt>Time</dt><dd>{time}</dd></div>
+      {:else}
+        <div class="event-field"><dt>Details</dt><dd>No schedule information available.</dd></div>
+      {/if}
+    {/if}
   </dl>
-  <footer class="popup-actions">
-    <button class="action action-modify" type="button" disabled>Modify</button>
-    <button class="action action-cancel" type="button" onclick={() => confirmation.showModal()}>Cancel event</button>
-  </footer>
-  <dialog class="confirm-dialog" bind:this={confirmation} aria-labelledby="confirm-title" aria-describedby="confirm-description" onclick={(event) => closeConfirmationOnBackdrop(event, close)}>
-    <h2 id="confirm-title">Cancel event?</h2>
-    <p id="confirm-description">Are you sure you want to cancel {event.name}?</p>
-    <div class="confirm-actions">
-      <button class="action action-secondary" type="button" onclick={() => confirmation.close()}>Keep event</button>
-      <button class="action action-cancel" type="button" onclick={() => confirmCancellation(close)}>Cancel event</button>
-    </div>
-  </dialog>
+  {#if item.type === 'Event' && owned && event}
+    <footer class="popup-actions">
+      <button class="action action-modify" type="button" disabled>Modify</button>
+      <button class="action action-cancel" type="button" onclick={() => confirmation.showModal()}>Cancel event</button>
+    </footer>
+    <dialog class="confirm-dialog" bind:this={confirmation} aria-labelledby="confirm-title" aria-describedby="confirm-description" onclick={(event) => closeConfirmationOnBackdrop(event, close)}>
+      <h2 id="confirm-title">Cancel event?</h2>
+      <p id="confirm-description">Are you sure you want to cancel {event.name}?</p>
+      <div class="confirm-actions">
+        <button class="action action-secondary" type="button" onclick={() => confirmation.close()}>Keep event</button>
+        <button class="action action-cancel" type="button" onclick={() => confirmCancellation(close)}>Cancel event</button>
+      </div>
+    </dialog>
+  {/if}
 </Popup>

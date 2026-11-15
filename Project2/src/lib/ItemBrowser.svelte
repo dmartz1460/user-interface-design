@@ -2,6 +2,7 @@
   export let items;
   export let favorites = false;
   export let onToggle = () => {};
+  export let onSelect;
 
   const filters = [
     { type: 'All', label: 'All' },
@@ -42,7 +43,7 @@
                   aria-label={`${item.favorite ? 'Remove' : 'Add'} ${item.name} ${item.favorite ? 'from' : 'to'} favorites`}
                   onclick={() => onToggle(item)}>{item.favorite ? '★' : '☆'}</button>
               {/if}
-              {item.name}
+              <button class="recent-item-button" type="button" onclick={() => onSelect(item)}>{item.name}</button>
             </span>
             <span class={`badge badge-${typeClass[item.type]}`}>{item.type}</span>
           </li>
