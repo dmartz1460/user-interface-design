@@ -1,4 +1,4 @@
-name: Deploy 25Live Redesign
+name: Deploy Smart Bank UI
 
 on:
 
@@ -16,7 +16,7 @@ permissions:
 
 concurrency:
   group: 'pages'
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
 
@@ -30,16 +30,30 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch }}
 
       - uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - name: Install and Build
+      - name: Build Smart Bank UI
+        working-directory: Project1
+        run: |
+          npm install
+          npm run build
+
+      - name: Build 25Live Redesign
         working-directory: Project2
         run: |
           npm install
           npm run build
+
+      - name: Assemble Pages site
+        run: |
+          mkdir -p site/25live
+          cp -R Project1/dist/. site/
+          cp -R Project2/dist/. site/25live/
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -47,8 +61,13 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: Project2/dist
+          path: site
 
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+      - name: Publish site links
+        run: |
+          echo "- [Smart Bank UI](${{ steps.deployment.outputs.page_url }})" >> "$GITHUB_STEP_SUMMARY"
+          echo "- [25Live Redesign](${{ steps.deployment.outputs.page_url }}25live/)" >> "$GITHUB_STEP_SUMMARY"
