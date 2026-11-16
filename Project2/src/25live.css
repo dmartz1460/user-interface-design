@@ -37,10 +37,11 @@ button { cursor: pointer; }
 .search-icon { position: relative; display: block; width: 16px; height: 16px; border: 2px solid #6b6b73; border-radius: 50%; }
 .search-icon::after { position: absolute; right: -6px; bottom: -3px; width: 8px; height: 2px; transform: rotate(45deg); background: #6b6b73; content: ""; }
 
-.dashboard { width: min(1240px, 96%); margin: 16px auto; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 20px; align-items: stretch; }
+.dashboard { width: calc(100% - 256px); min-height: calc(100vh - 96px); margin: 16px auto; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 20px; align-items: stretch; }
 .scheduler-card { display: flex; flex-direction: column; }
 .right-column { display: grid; gap: 20px; min-width: 0; }
 .quick-lists { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.list-card { display: flex; flex-direction: column; }
 .card { overflow: hidden; border: 1px solid #dedee2; border-radius: 16px; background: #fff; box-shadow: 0 1px 2px #1f1f1f08; }
 .card h1, .card h2 { margin: 0; padding: 14px 20px 12px; border-bottom: 1px solid #e3e3e5; text-align: center; font-size: 18px; font-weight: 750; }
 .card-body { padding: 18px 22px; }
@@ -91,18 +92,19 @@ input[type="date"]::-webkit-calendar-picker-indicator { opacity: 0; }
 .search-history h1 { margin: 0; font-size: 20px; }
 .search-history p { color: #64748b; font-size: 14px; }
 
-.list-body { padding-bottom: 10px; }
+.list-body { display: flex; flex: 1; flex-direction: column; padding-bottom: 10px; }
 .list-row { width: 100%; min-height: 44px; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; border: 0; border-bottom: 1px solid #e3e3e5; background: #fff; color: #202124; text-align: left; font-weight: 650; }
 .list-row:hover, .event-row:hover { background: #F3F3F3; }
 .tag { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; }
 .tag.blue { background: #DBEAFE; color: #1E40AF; }
 .tag.gold { background: #FEF9C3; color: #854D0E; }
 .tag.green { background: #DCFCE7; color: #166534; }
+.list-body .text-button { margin-top: auto; }
 .text-button { display: block; margin: 12px auto 1px; border: 0; background: transparent; color: #B8011C; font-weight: 700; }
 .text-button:hover { text-decoration: underline; }
 
 .events-card { display: flex; flex-direction: column; }
-.events-table { min-height: 232px; overflow-x: auto; }
+.events-table { flex: 1; min-height: 232px; overflow-x: auto; }
 .empty-events { min-height: 232px; margin: 0; display: grid; place-items: center; padding: 20px; color: #5e626a; text-align: center; }
 .event-header, .event-row { min-width: 560px; display: grid; grid-template-columns: 1.2fr 1fr 1.25fr; align-items: center; }
 .event-header { min-height: 40px; padding: 0 20px; border-bottom: 1px solid #e3e3e5; }
@@ -120,7 +122,7 @@ input[type="date"]::-webkit-calendar-picker-indicator { opacity: 0; }
 
 @media (max-width: 800px) {
   .site-header { padding: 0 5%; }
-  .dashboard { width: min(94%, 560px); grid-template-columns: 1fr; margin: 24px auto; gap: 24px; }
+  .dashboard { width: min(94%, 560px); min-height: auto; grid-template-columns: 1fr; margin: 24px auto; gap: 24px; }
   .right-column { gap: 24px; }
   .quick-lists { gap: 24px; }
   .primary-button { margin-top: 28px; }
