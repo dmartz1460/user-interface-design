@@ -130,6 +130,19 @@
     if (!updated[index]?.open) orgSearchQuery = '';
   }
 
+  function closeMenus() {
+    locationFilters = locationFilters.map(f => ({ ...f, open: false }));
+    eventFilters    = eventFilters.map(f => ({ ...f, open: false }));
+    orgFilters      = orgFilters.map(f => ({ ...f, open: false }));
+    orgSearchQuery  = '';
+  }
+
+  function handleDocumentClick(event) {
+    if (event.target instanceof Element && !event.target.closest('.filter-menu')) {
+      closeMenus();
+    }
+  }
+
   // ── clearFilters() ──
   // Resets all filter groups and clears range / search state.
   function clearFilters() {
@@ -204,6 +217,8 @@
   );
 
 </script>
+
+<svelte:document onclick={handleDocumentClick} />
 
 <section class="search-preview">
   <div class="search-card" aria-label="Search">
