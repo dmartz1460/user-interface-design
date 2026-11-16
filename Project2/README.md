@@ -4,6 +4,10 @@
 
 The purpose of this project is to redesign an existing website UI that contains usability issues or core design flaws. Our chosen UI is `25Live`: the University of Cincinnati's event scheduler. 
 
+- [Hosted Webpage](https://dmartz1460.github.io/user-interface-design/25live/)
+- [Source Code](src/)
+- [Demo](docs/25Live-Demo.mp4)
+
 ## Redesign
 
 The redesign strategies for redesigning 25Live's dashboard, navigation, and search features are outlined in [REDESIGN.md](docs/REDESIGN.md). These strategies follow a basic process to analyze its design flaws and usability issues within the UI. An observational study and a survey will allow us to receive feedback from various users tasked with executing a series of actions within 25Live. As a result, user feedback and our initial design analysis will allow us to target specific areas of the UI to redesign.

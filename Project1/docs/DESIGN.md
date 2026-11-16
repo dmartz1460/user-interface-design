@@ -29,13 +29,13 @@ This section covers the initial gathering of design needs and requirements of th
 
 | **Physical Properties**  | **Affordances** | **Signifiers** | **Constraints** |
 | ------------------------ | --------------- | -------------- | --------------- | 
-| Stands on a table | Numpad to enter pin | Arrows to signal direction of a button | Greyed out buttons to indicate unavailble selections | 
+| Stands on a table | Numpad to enter pin | Arrows to signal direction of a button | Greyed out buttons to indicate unavailable selections | 
 | Small object | Graphics to indicate capacity and contents | Text on buttons signify its action | Features unavailable in the lock screen |
 | Coin Sensor | Enter and Cancel keys to finalize or cancel choices | Insertion slot signals where coin shall be inserted | Correct pin must be entered to unlock device |
-| Coin Dispensor | At-a-Glance/Lock screen for quick info | Dispensor tray to signal where coins will be dispensed |
+| Coin Dispenser | At-a-Glance/Lock screen for quick info | Dispenser tray to signal where coins will be dispensed |
 | 10 Custom Currency Partitions | Back buttons to navigate to previous screen | Prompt to signal Unlock action to unlock screen | 
 | Two Displays (front and side) | Buttons to select number and letter characters |
-| Storage paritions for each coin type | Touch display to interact with UI |
+| Storage partitions for each coin type | Touch display to interact with UI |
 | Coin insertion slot |
 
 ### Assumptions
@@ -46,7 +46,7 @@ The following assumptions were made about Mechanical and Electrical properties o
 - is capable of `mechanically dispensing` coins
 - is capable of sensing the current `capacity` of the bank
 - powered with wall outlet
-- `no connecticity` capabillities
+- `no connectivity` capabilities
 - capable of storing currency types such as `cash` and `gift cards`
 - incapable of sensing or dispensing `cash` and `gift cards`
 
@@ -76,7 +76,7 @@ Three separate individuals were asked a series of questions to gather user needs
     * Person 2: total sum, friendly reminders for goals, deeper menu to display counts
     * Person 3: total value on value screen, how many of each currency type, click prompts password to navigate to home screen
 
-4. If you wanted to store any other forms of currency in this device (eg. cash, giftcards), but it couldn't automatically detect them, how would you prefer to keep track of their value?
+4. If you wanted to store any other forms of currency in this device (eg. cash, gift cards), but it couldn't automatically detect them, how would you prefer to keep track of their value?
 - Would you be willing to manually enter the value using a dial or buttons?
     * Person 1: name and custom value, user friendly entering
     * Person 2: dropdown, default values to enter ($1, $5, $20), user friendly entering
@@ -92,20 +92,20 @@ Three separate individuals were asked a series of questions to gather user needs
 6. Imagine you wanted to take out some money from the device. How would you expect to make that request?
 - Would you request a dollar amount or coin type?
     * Person 1: like an ATM, shortest path
-    * Person 2: like ATM, withdrawl menu, select bills or coins
+    * Person 2: like ATM, withdraw menu, select bills or coins
     * Person 3: select bills and change to dispense based on the total to dispense, only display options that are available to dispense. arrows to select amount
 
 7. Is there anything else you would expect a modern, nightstand savings device to do that we haven't discussed?
 - Any concerns about security, or accessibility?
     * Person 1: why is this not connected and no app is available? pin key, secondary physical key available
     * Person 2: pin code, sleep mode, single touch wakes the device
-    * Person 3: pin code to withdrawl, separate screen for each action (dispense, insert, Your Bank info), button to unlock from home screen
+    * Person 3: pin code to withdraw, separate screen for each action (dispense, insert, Your Bank info), button to unlock from home screen
 
 ```
 
 ### Design Requirements
 
-The following design requirements were made based on user reponses and object properties above:
+The following design requirements were made based on user responses and object properties above:
 
 - `REQ-01`: The system shall prompt for a password pin to unlock the device.
 - `REQ-02`: The system shall allow custom currency to be tracked using its type/name, and value.
