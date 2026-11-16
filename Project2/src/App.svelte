@@ -1,4 +1,5 @@
 <script>
+  import { onMount } from 'svelte';
   import Dashboard from './Dashboard.svelte';
   import Search from './Search.svelte';
 
@@ -14,7 +15,15 @@
     searchQuery = searchParams.get('q') || '';
   }
 
-  window.addEventListener('popstate', updateRoute);
+  onMount(() => {
+    window.addEventListener('popstate', updateRoute);
+    window.addEventListener('hashchange', updateRoute);
+
+    return () => {
+      window.removeEventListener('popstate', updateRoute);
+      window.removeEventListener('hashchange', updateRoute);
+    };
+  });
 </script>
 
 {#if route === 'search'}
