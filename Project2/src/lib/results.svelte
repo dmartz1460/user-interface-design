@@ -237,10 +237,10 @@
     display: flex;
     flex-direction: column;
     padding: 15px;
-    border: 2px solid rgb(180, 206, 207);
+    border: 2px solid #F3F3F3;
     border-radius: 15px;
     margin: 10px;
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-family: "Open Sans", "Segoe UI", Helvetica, Arial, sans-serif;
     gap: 12px;
   }
 
@@ -277,7 +277,7 @@
 
   .result-count-location {
     background-color: #dbeafe;
-    border-color: #2f6fed;
+    border-color: #2F6FED;
     color: #1e40af;
   }
 
@@ -303,20 +303,20 @@
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     margin-left: 10px;
-    border: 2px solid rgb(180, 206, 207);
+    border: 2px solid #F3F3F3;
     border-radius: 5px;
     padding: 2px;
-    background-color: rgb(212, 230, 226);
+    background-color: #F3F3F3;
   }
 
   .list-button {
     display: flex;
     flex-direction: row;
     margin-left: 10px;
-    border: 2px solid rgb(180, 206, 207);
+    border: 2px solid #F3F3F3;
     border-radius: 5px;
     padding: 2px;
-    background-color: rgb(212, 230, 226);
+    background-color: #F3F3F3;
   }
 
   .view-by button.active {
@@ -327,7 +327,7 @@
   }
 
   .view-by button {
-    background-color: rgb(212, 230, 226);
+    background-color: #F3F3F3;
     color: black;
     margin: 2px;
     border: none;
