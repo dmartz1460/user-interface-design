@@ -19,3 +19,10 @@ The redesign strategies for redesigning 25Live's dashboard, navigation, and sear
 ## Usage
 
 The instructions for testing the features of the UI and its deployment are outlined in [USAGE.md](docs/USAGE.md).
+
+## Group Members
+
+The following parties were involved in the redesign of 25Live:
+- [Dylan Martz](https://github.com/dmartz1460)
+- [Daniel Brill](https://github.com/DanielBrill20)
+- [Isaac Dowdy](https://github.com/isaac-dowdy)

@@ -17,8 +17,7 @@ The purpose of this document is to describe the implementation decisions made to
 - Dashboard redesign
 - Menu redesign
 - Search experience rework
-- Event Management
-- Future Implementation
+- Event management
 
 ## Svelte Architecture
 
