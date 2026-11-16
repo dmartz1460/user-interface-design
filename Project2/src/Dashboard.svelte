@@ -4,11 +4,14 @@
   import EventDetails from './lib/EventDetails.svelte';
   import ViewAllFavorites from './lib/ViewAllFavorites.svelte';
   import ViewAllRecents from './lib/ViewAllRecents.svelte';
-  import { locations, recentItems, favoriteItems, ownedEvents, isFavorite, toggleFavorite, recordView, findEvent, bookEvent as saveEvent, cancelEvent, timelineHours, dateKey } from './lib/items.js';
+  import { locations, events, recentItems, favoriteItems, ownedEvents, isFavorite, toggleFavorite, recordView, findEvent, bookEvent as saveEvent, cancelEvent, timelineHours, dateKey } from './lib/items.js';
 
-  const times = Array.from({ length: 48 }, (_, index) => {
-    const hour = Math.floor(index / 2);
-    const minutes = index % 2 === 0 ? '00' : '30';
+  const OPEN_HOUR_START = 7;
+  const OPEN_HOUR_END = 21;
+  const times = Array.from({ length: (OPEN_HOUR_END - OPEN_HOUR_START) * 2 + 1 }, (_, index) => {
+    const minuteOfDay = OPEN_HOUR_START * 60 + index * 30;
+    const hour = Math.floor(minuteOfDay / 60);
+    const minutes = String(minuteOfDay % 60).padStart(2, '0');
     const period = hour < 12 ? 'AM' : 'PM';
     const displayHour = hour % 12 || 12;
     return `${displayHour}:${minutes} ${period}`;
@@ -18,10 +21,22 @@
   const nextInterval = new Date(now);
   nextInterval.setSeconds(0, 0);
   nextInterval.setMinutes(Math.ceil((now.getMinutes() + 1) / 30) * 30);
+  if (nextInterval.getHours() < OPEN_HOUR_START) {
+    nextInterval.setHours(OPEN_HOUR_START, 0, 0, 0);
+  } else if (nextInterval.getHours() >= OPEN_HOUR_END) {
+    nextInterval.setDate(nextInterval.getDate() + 1);
+    nextInterval.setHours(OPEN_HOUR_START, 0, 0, 0);
+  }
   const timeToLabel = (time) => {
     const hour = time.getHours();
     const minutes = String(time.getMinutes()).padStart(2, '0');
     return `${hour % 12 || 12}:${minutes} ${hour < 12 ? 'AM' : 'PM'}`;
+  };
+  const timeToHour = (value) => {
+    const match = value.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+    if (!match) return NaN;
+    const hour = Number(match[1]) % 12 + (match[3].toUpperCase() === 'PM' ? 12 : 0);
+    return hour + Number(match[2]) / 60;
   };
   let date = dateKey(nextInterval);
   let startTime = timeToLabel(nextInterval);
@@ -54,6 +69,24 @@
     return new Date(year, month - 1, day).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   }
 
+  function isOpenHours(startHour, endHour) {
+    return Number.isFinite(startHour) && Number.isFinite(endHour) &&
+      startHour >= OPEN_HOUR_START && endHour <= OPEN_HOUR_END && endHour > startHour;
+  }
+
+  $: requestedStartHour = timeToHour(startTime);
+  $: requestedEndHour = timeToHour(endTime);
+  $: validEndTimes = times.filter((time) => timeToHour(time) > requestedStartHour);
+  $: if (validEndTimes.length && !validEndTimes.includes(endTime)) endTime = validEndTimes[0];
+  $: availableLocations = isOpenHours(requestedStartHour, requestedEndHour)
+    ? $locations.filter((item) => !$events.some((event) => {
+        if (event.location !== item.name || event.date !== date) return false;
+        const scheduled = timelineHours(event);
+        return scheduled.startHour < requestedEndHour && scheduled.endHour > requestedStartHour;
+      }))
+    : [];
+  $: if (location && !availableLocations.some((item) => item.name === location)) location = '';
+
   function getPaginationItems(totalPages, page) {
     if (totalPages <= 5) return Array.from({ length: totalPages }, (_, index) => index + 1);
     if (page <= 3) return [1, 2, 3, 'ellipsis', totalPages];
@@ -81,12 +114,16 @@
   }
 
   function bookEvent() {
-    if (!date || !$locations.some((item) => item.name === location) || !eventName.trim()) {
-      bookingError = 'Choose a date and location and enter an event name to continue.';
+    if (!date || !eventName.trim()) {
+      bookingError = 'Choose a date and enter an event name to continue.';
       return;
     }
-    if (times.indexOf(startTime) < 0 || times.indexOf(endTime) <= times.indexOf(startTime)) {
-      bookingError = 'Choose an end time after the start time on the same day.';
+    if (!isOpenHours(requestedStartHour, requestedEndHour)) {
+      bookingError = 'Choose a time between 7:00 AM and 9:00 PM, with the end after the start.';
+      return;
+    }
+    if (!availableLocations.some((item) => item.name === location)) {
+      bookingError = 'Choose a room available for the selected date and time.';
       return;
     }
 
@@ -185,18 +222,18 @@
 
       <label for="start-time">Start time</label>
       <select id="start-time" class="field" bind:value={startTime}>
-        {#each times as time}<option value={time}>{time}</option>{/each}
+        {#each times.filter((time) => timeToHour(time) < OPEN_HOUR_END) as time}<option value={time}>{time}</option>{/each}
       </select>
 
       <label for="end-time">End time</label>
       <select id="end-time" class="field" bind:value={endTime}>
-        {#each times as time}<option value={time}>{time}</option>{/each}
+        {#each validEndTimes as time}<option value={time}>{time}</option>{/each}
       </select>
 
       <label for="location">Location</label>
       <select id="location" class="field" bind:value={location}>
-        <option value="" disabled>Select a location</option>
-        {#each $locations as item}<option value={item.name}>{item.name}</option>{/each}
+        <option value="" disabled>{availableLocations.length ? 'Select a location' : 'No rooms available for selected time'}</option>
+        {#each availableLocations as item}<option value={item.name}>{item.name}</option>{/each}
       </select>
 
       <label for="event-name">Event name</label>
