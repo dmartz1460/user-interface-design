@@ -1,6 +1,6 @@
 # Usage
 
-This document details how to run this project locally on your system so you can test and interact with the interface of the Smart Bank. These details include the required tools needed to run the interface and how to use the interface when once it's up and running.
+This document details how to run this project locally on your system so you can test and interact with the redesigned 25Live UI. These details include the required tools needed to run the interface and how to use the interface once it's up and running.
 
 Deployment is also covered to detail how the webpage is hosted using GitHub Pages.
 
