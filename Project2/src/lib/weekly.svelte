@@ -1,5 +1,5 @@
 <script>
-  import { favoriteItems, isFavorite, searchItem, timelineEvent } from './items.js';
+  import { events, favoriteItems, isFavorite, searchItem, timelineHours, dateKey } from './items.js';
   let { search_results = [], results_per_page, date, locations = [], weekStart, onSelect, onToggleFavorite } = $props();
 
   // ── Day columns ──
@@ -85,41 +85,17 @@
   function expandAll()   { expanded = expanded.map(() => true);  }
   function collapseAll() { expanded = expanded.map(() => false); }
 
-  // ── Sample booked events ──
-  // Format: { location, dayOffset (0=Sun … 6=Sat), startHour, endHour, name }
-  const bookedEvents = [
-    { location: 'Langsam 520',     dayOffset: 1, startHour: 10,   endHour: 11.5, name: 'Lecture'       },
-    { location: 'Langsam 520',     dayOffset: 2, startHour: 13,   endHour: 14,   name: 'Study time'    },
-    { location: 'Langsam 520',     dayOffset: 3, startHour: 11,   endHour: 12,   name: 'Org meeting'   },
-    { location: 'Langsam 520',     dayOffset: 4, startHour: 9,    endHour: 9.5,  name: 'Tutoring'      },
-    { location: 'Langsam 520',     dayOffset: 4, startHour: 14.5, endHour: 16,   name: 'Project'       },
-    { location: 'Langsam 520',     dayOffset: 5, startHour: 13,   endHour: 14.5, name: 'Euchre night'  },
-    { location: 'Braunstein 140A', dayOffset: 1, startHour: 9,    endHour: 11,   name: 'Physics Lab'   },
-    { location: 'Braunstein 140A', dayOffset: 3, startHour: 13,   endHour: 15,   name: 'Office Hours'  },
-    { location: 'Aronoff 6480A',   dayOffset: 2, startHour: 10,   endHour: 11,   name: 'Seminar'       },
-    { location: 'Aronoff 6480A',   dayOffset: 4, startHour: 15,   endHour: 16,   name: 'Lab session'   },
-    { location: 'Math 1061',       dayOffset: 1, startHour: 14,   endHour: 16,   name: 'Club meeting'  },
-    { location: 'TUC Cinema',      dayOffset: 3, startHour: 10.5, endHour: 12,   name: 'Review session'},
-    // Fallback entries keyed by generic names (matches sample data in search.svelte)
-    { location: 'Location 1',      dayOffset: 1, startHour: 10,   endHour: 11.5, name: 'Lecture'       },
-    { location: 'Location 1',      dayOffset: 3, startHour: 11,   endHour: 12,   name: 'Org meeting'   },
-    { location: 'Location 2',      dayOffset: 1, startHour: 9,    endHour: 11,   name: 'Physics Lab'   },
-    { location: 'Location 2',      dayOffset: 4, startHour: 14,   endHour: 15.5, name: 'Club meeting'  },
-    { location: 'Location 3',      dayOffset: 2, startHour: 10,   endHour: 11,   name: 'Seminar'       },
-    { location: 'Location 4',      dayOffset: 5, startHour: 13,   endHour: 14,   name: 'Study group'   },
-    { location: 'Location 5',      dayOffset: 3, startHour: 10.5, endHour: 12,   name: 'Review'        },
-  ];
+  let bookedEvents = $derived($events.map(timelineHours));
 
-  // Row height per hour in px
   const ROW_H = 40;
 
   // Events for a given location + day visible in the current hour range
-  function eventsForCell(locationName, dayIndex) {
+  function eventsForCell(locationName, day) {
     const visStart = HOURS[startIndex];
     const visEnd   = HOURS[endIndex] + 1;
     return bookedEvents.filter(ev =>
       ev.location === locationName &&
-      ev.dayOffset === dayIndex    &&
+      ev.date === dateKey(day)     &&
       ev.endHour   > visStart      &&
       ev.startHour < visEnd
     );
@@ -138,10 +114,9 @@
   // Availability badge for the row header
   // Returns 'free' | 'partial' | 'busy' based on today's bookings
   function todayStatus(locationName) {
-    const dow    = new Date().getDay();
-    const events = bookedEvents.filter(e => e.location === locationName && e.dayOffset === dow);
-    if (!events.length) return 'free';
-    const hours  = events.reduce((s, e) => s + (e.endHour - e.startHour), 0);
+    const todayEvents = bookedEvents.filter(e => e.location === locationName && e.date === dateKey(new Date()));
+    if (!todayEvents.length) return 'free';
+    const hours  = todayEvents.reduce((s, e) => s + (e.endHour - e.startHour), 0);
     return hours >= 4 ? 'busy' : 'partial';
   }
 
@@ -291,7 +266,7 @@
               style="--grid-top:{GRID_TOP}px; --col-w:calc((100% - 72px) / {visibleDays.length}); --row-h:{ROW_H}px;"
             >
               {#each visibleDays as day, di}
-                {@const col_events = eventsForCell(result.name, day.date.getDay())}
+                {@const col_events = eventsForCell(result.name, day.date)}
                 <div
                   class="day-col-overlay"
                   style="left:calc(72px + {di} * var(--col-w)); width:var(--col-w);"
@@ -300,7 +275,7 @@
                     <button
                       class="event-block"
                       type="button"
-                      onclick={() => onSelect(timelineEvent(ev, day.date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })))}
+                      onclick={() => onSelect(ev)}
                       style={blockStyle(ev)}
                       title="{ev.name} ({hourLabel(Math.floor(ev.startHour))}–{hourLabel(Math.ceil(ev.endHour))})"
                     >

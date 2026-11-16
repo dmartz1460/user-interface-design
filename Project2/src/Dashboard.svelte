@@ -4,36 +4,7 @@
   import EventDetails from './lib/EventDetails.svelte';
   import ViewAllFavorites from './lib/ViewAllFavorites.svelte';
   import ViewAllRecents from './lib/ViewAllRecents.svelte';
-  import { recentItems, favoriteItems, ownedEvents, isFavorite, toggleFavorite, recordView } from './lib/items.js';
-
-  const formatTestDate = (value) => {
-    const [year, month, day] = value.split('-').map(Number);
-    return new Date(year, month - 1, day).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  };
-
-  // TODO: Make this an empty array when we no longer want to view test values.
-  const testEvents = Array.from({ length: 40 }, (_, index) => {
-    const eventNumber = index + 1;
-    const eventDate = new Date(2026, 10, 3 + (index % 20));
-    const date = [
-      eventDate.getFullYear(),
-      String(eventDate.getMonth() + 1).padStart(2, '0'),
-      String(eventDate.getDate()).padStart(2, '0')
-    ].join('-');
-    const startHour = 8 + (index % 10);
-    const startTime = `${startHour % 12 || 12}:${index % 2 === 0 ? '00' : '30'} ${startHour < 12 ? 'AM' : 'PM'}`;
-    const endHour = startHour + 1;
-    const endTime = `${endHour % 12 || 12}:${index % 2 === 0 ? '00' : '30'} ${endHour < 12 ? 'AM' : 'PM'}`;
-    const locations = ['Langsam 520', 'Aronoff 6480A', 'Braunstein 140A'];
-    return {
-      name: `Test event ${eventNumber}`,
-      location: locations[index % locations.length],
-      date,
-      time: `${formatTestDate(date)} · ${startTime}–${endTime}`
-    };
-  });
-
-  if ($ownedEvents === null) $ownedEvents = testEvents;
+  import { locations, recentItems, favoriteItems, ownedEvents, isFavorite, toggleFavorite, recordView, findEvent, bookEvent as saveEvent, cancelEvent, timelineHours, dateKey } from './lib/items.js';
 
   const times = Array.from({ length: 48 }, (_, index) => {
     const hour = Math.floor(index / 2);
@@ -42,14 +13,8 @@
     const displayHour = hour % 12 || 12;
     return `${displayHour}:${minutes} ${period}`;
   });
-  const locations = ['Langsam 520', 'Aronoff 6480A', 'Braunstein 140A'];
 
   const now = new Date();
-  const today = [
-    now.getFullYear(),
-    String(now.getMonth() + 1).padStart(2, '0'),
-    String(now.getDate()).padStart(2, '0')
-  ].join('-');
   const nextInterval = new Date(now);
   nextInterval.setSeconds(0, 0);
   nextInterval.setMinutes(Math.ceil((now.getMinutes() + 1) / 30) * 30);
@@ -58,7 +23,7 @@
     const minutes = String(time.getMinutes()).padStart(2, '0');
     return `${hour % 12 || 12}:${minutes} ${hour < 12 ? 'AM' : 'PM'}`;
   };
-  let date = today;
+  let date = dateKey(nextInterval);
   let startTime = timeToLabel(nextInterval);
   let endTime = timeToLabel(new Date(nextInterval.getTime() + 30 * 60 * 1000));
   let location = '';
@@ -81,9 +46,7 @@
 
 
   function eventStartTime(event) {
-    const [, range] = event.time.split(' · ');
-    const [start] = range.split('–');
-    return new Date(`${event.date} ${start.trim()}`);
+    return Date.parse(`${event.date}T00:00:00Z`) + timelineHours(event).startHour * 3600000;
   }
 
   function formatEventDate(value) {
@@ -118,17 +81,21 @@
   }
 
   function bookEvent() {
-    if (!location || !eventName.trim()) {
-      bookingError = 'Choose a location and enter an event name to continue.';
+    if (!date || !$locations.some((item) => item.name === location) || !eventName.trim()) {
+      bookingError = 'Choose a date and location and enter an event name to continue.';
+      return;
+    }
+    if (times.indexOf(startTime) < 0 || times.indexOf(endTime) <= times.indexOf(startTime)) {
+      bookingError = 'Choose an end time after the start time on the same day.';
       return;
     }
 
-    $ownedEvents = [...$ownedEvents, {
+    saveEvent({
       name: eventName.trim(),
       location,
       date,
       time: `${formatEventDate(date)} · ${startTime}–${endTime}`
-    }];
+    });
     bookingError = '';
     bookingToast = `${eventName.trim()} was added to Your Events.`;
     eventName = '';
@@ -147,19 +114,15 @@
     }
   }
 
-  function openDetails(item, event = null) {
+  function openDetails(item) {
     selectedItem = item;
-    selectedEvent = event || item.eventData || (item.type === 'Event' ? $ownedEvents.find((candidate) => candidate.name === item.name) : null);
-    selectedOwned = !!selectedEvent && $ownedEvents.includes(selectedEvent);
+    selectedEvent = findEvent(item);
+    selectedOwned = !!selectedEvent?.owned;
     recordView(item);
     activePopup = 'details';
   }
 
   $: selectedIsFavorite = !!selectedItem && isFavorite($favoriteItems, selectedItem);
-
-  function cancelEvent(event) {
-    $ownedEvents = $ownedEvents.filter((item) => item !== event);
-  }
 
   function submitSearch() {
     const params = new URLSearchParams({ mode: searchMode, q: searchQuery.trim() });
@@ -233,7 +196,7 @@
       <label for="location">Location</label>
       <select id="location" class="field" bind:value={location}>
         <option value="" disabled>Select a location</option>
-        {#each locations as item}<option value={item}>{item}</option>{/each}
+        {#each $locations as item}<option value={item.name}>{item.name}</option>{/each}
       </select>
 
       <label for="event-name">Event name</label>
@@ -283,7 +246,7 @@
             <button type="button" onclick={() => sortEvents('time')}>Time <span class="sort-icon" aria-label={sortColumn === 'time' ? `${sortDirection}ending` : 'not sorted'}>{#if sortColumn === 'time'}{sortDirection === 'asc' ? '▲' : '▼'}{:else}—{/if}</span></button>
           </div>
           {#each visibleEvents as event}
-            <button class="event-row" type="button" onclick={() => openDetails({ name: event.name, type: 'Event' }, event)}>
+            <button class="event-row" type="button" onclick={() => openDetails({ id: event.id, name: event.name, type: 'Event' })}>
               <span class="event-name"><i></i>{event.name}</span>
               <span class="event-location">{event.location}</span>
               <span class="event-time">{event.time}</span>

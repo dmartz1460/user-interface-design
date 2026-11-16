@@ -1,7 +1,8 @@
 <script>
   import Popup from './Popup.svelte';
+  import { locations, organizations, eventTime } from './items.js';
   export let item;
-  export let event = null;
+  export let event;
   export let owned = false;
   export let isFavorite = false;
   export let onToggleFavorite;
@@ -10,7 +11,9 @@
 
   let confirmation;
   $: date = event?.date ? formatDate(event.date) : '';
-  $: time = event?.time ? (event.time.split(' · ')[1] || event.time) : '';
+  $: time = event?.time ? eventTime(event.time) : '';
+  $: locationDetails = item.type === 'Location' ? $locations.find((location) => location.id === item.id) : undefined;
+  $: organizationDetails = item.type === 'Organization' ? $organizations.find((organization) => organization.id === item.id) : undefined;
   $: dotClass = { Location: 'location', Event: 'event', Organization: 'org' }[item.type];
 
   function formatDate(value) {
@@ -60,6 +63,13 @@
       {:else}
         <div class="event-field"><dt>Details</dt><dd>No schedule information available.</dd></div>
       {/if}
+    {:else if item.type === 'Location'}
+      <div class="event-field"><dt>Features</dt><dd>{locationDetails?.features?.join(', ') || 'Not specified'}</dd></div>
+      <div class="event-field"><dt>Layout</dt><dd>{locationDetails?.layout || 'Not specified'}</dd></div>
+      <div class="event-field"><dt>Capacity</dt><dd>{locationDetails?.capacity ?? 'Not specified'}</dd></div>
+    {:else if item.type === 'Organization'}
+      <div class="event-field"><dt>Type</dt><dd>{organizationDetails?.orgType || 'Not specified'}</dd></div>
+      <div class="event-field"><dt>Category</dt><dd>{organizationDetails?.category || 'Not specified'}</dd></div>
     {/if}
   </dl>
   {#if item.type === 'Event' && owned && event}

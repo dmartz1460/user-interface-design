@@ -1,7 +1,7 @@
 <script>
   import Results from './results.svelte';
   import EventDetails from './EventDetails.svelte';
-  import { recentItems, favoriteItems, ownedEvents, searchItem, isFavorite, toggleFavorite, recordView } from './items.js';
+  import { recentItems, favoriteItems, searchResults, filterOptions, searchItem, isFavorite, toggleFavorite, recordView, findEvent, cancelEvent } from './items.js';
 
   let { initialCategory = 'locations', initialQuery = '' } = $props();
 
@@ -35,36 +35,19 @@
 
   // ── Filter definitions ──
   // Location filters (Spaces, Features, Layouts, Capacity)
+  const options = (values) => values.map((value) => ({ label: value, value, checked: false }));
   let locationFilters = $state([
     {
       name: 'Buildings',   mode: 'checkbox', open: false,
-      options: [
-        { label: 'Langsam',           value: 'langsam',          checked: false },
-        { label: 'Braunstein Hall',   value: 'braunstein hall',  checked: false },
-        { label: 'Aronoff',           value: 'aronoff',          checked: false },
-        { label: 'Old Chem',          value: 'old chem',         checked: false },
-        { label: 'Lindner Hall',      value: 'lindner hall',     checked: false },
-        { label: '60 West Charlton',  value: '60 west charlton', checked: false },
-        { label: 'Tangeman',          value: 'tangeman',         checked: false },
-        { label: 'Math Sciences',     value: 'math sciences',    checked: false },
-      ],
+      options: options(filterOptions.locations.buildings),
     },
     {
       name: 'Features', mode: 'checkbox', open: false,
-      options: [
-        { label: 'Projector',              value: 'projector',        checked: false },
-        { label: 'Whiteboard',             value: 'white board',      checked: false },
-        { label: 'A/V Camera',             value: 'camera',           checked: false },
-        { label: 'Tables and Chairs',      value: 'tables and chairs', checked: false },
-      ],
+      options: options(filterOptions.locations.features),
     },
     {
       name: 'Layouts',  mode: 'checkbox', open: false,
-      options: [
-        { label: 'Classroom', value: 'classroom', checked: false },
-        { label: 'Lecture',   value: 'lecture',   checked: false },
-        { label: 'Seminar',   value: 'seminar',   checked: false },
-      ],
+      options: options(filterOptions.locations.layouts),
     },
     {
       name: 'Capacity', mode: 'range', open: false,
@@ -75,19 +58,11 @@
   let eventFilters = $state([
     {
       name: 'Organizations', mode: 'search', open: false,
-      options: [
-        { label: 'Euchre Club',      value: 'euchre club',    checked: false },
-        { label: 'IEEE',             value: 'ieee',           checked: false },
-        { label: 'Chess Club',       value: 'chess club',     checked: false },
-        { label: 'Star Wars Club',   value: 'star wars club', checked: false },
-      ],
+      options: options(filterOptions.events.organizations),
     },
     {
       name: 'Types', mode: 'checkbox', open: false,
-      options: [
-        { label: 'Class',        value: 'class',        checked: false },
-        { label: 'Organization', value: 'organization', checked: false },
-      ],
+      options: options(filterOptions.events.types),
     },
   ]);
 
@@ -95,17 +70,11 @@
   let orgFilters = $state([
     {
       name: 'Types', mode: 'checkbox', open: false,
-      options: [
-        { label: 'Internal', value: 'internal', checked: false },
-        { label: 'External', value: 'external', checked: false },
-      ],
+      options: options(filterOptions.organizations.types),
     },
     {
       name: 'Categories', mode: 'checkbox', open: false,
-      options: [
-        { label: 'Clubs', value: 'clubs', checked: false },
-        { label: 'CEAS',  value: 'ceas',  checked: false },
-      ],
+      options: options(filterOptions.organizations.categories),
     },
   ]);
 
@@ -128,8 +97,8 @@
   // Builds the text shown on each filter chip based on its mode.
   function chipLabel(filter) {
     if (filter.mode === 'range') {
-      const hasMin = capacityMin !== '';
-      const hasMax = capacityMax !== '';
+      const hasMin = capacityMin != null && capacityMin !== '';
+      const hasMax = capacityMax != null && capacityMax !== '';
       if (!hasMin && !hasMax) return `${filter.name} +`;
       if (hasMin && hasMax)   return `${filter.name}: ${capacityMin}–${capacityMax}`;
       if (hasMin)             return `${filter.name}: ≥${capacityMin}`;
@@ -192,8 +161,8 @@
     buildings:      locationFilters[0].options.filter(o => o.checked).map(o => o.value),
     features:       locationFilters[1].options.filter(o => o.checked).map(o => o.value),
     layouts:        locationFilters[2].options.filter(o => o.checked).map(o => o.value),
-    capacityMin:    capacityMin !== '' ? Number(capacityMin) : null,
-    capacityMax:    capacityMax !== '' ? Number(capacityMax) : null,
+    capacityMin:    capacityMin != null && capacityMin !== '' ? Number(capacityMin) : null,
+    capacityMax:    capacityMax != null && capacityMax !== '' ? Number(capacityMax) : null,
     organizations:  eventFilters[0].options.filter(o => o.checked).map(o => o.value),
     eventTypes:     eventFilters[1].options.filter(o => o.checked).map(o => o.value),
     orgTypes:       orgFilters[0].options.filter(o => o.checked).map(o => o.value),
@@ -207,10 +176,8 @@
 
   function openItem(item) {
     selectedItem = item;
-    selectedEvent = item.eventData || (item.type === 'Event'
-      ? ($ownedEvents || []).find((event) => event.name === item.name)
-      : null);
-    selectedOwned = !!selectedEvent && ($ownedEvents || []).includes(selectedEvent);
+    selectedEvent = findEvent(item);
+    selectedOwned = !!selectedEvent?.owned;
     recordView(item);
   }
 
@@ -220,10 +187,6 @@
 
   function toggleResultFavorite(result) {
     toggleFavorite(searchItem(result));
-  }
-
-  function cancelEvent(event) {
-    ownedEvents.update((events) => events.filter((item) => item !== event));
   }
 
   // ── History type filter ──
@@ -240,169 +203,6 @@
     )
   );
 
-  // ── Search results (sample data) ──
-  // Rich dataset covering all filter dimensions so every filter can be tested:
-  //   Locations  → building, features, layouts, capacity (range)
-  //   Events     → organization (search/multi-select), eventType (class | organization)
-  //   Organizations → orgType (internal | external), category (clubs | ceas)
-  let searchResults = $state([
-
-    // ── Locations ─────────────────────────────────────────────────────────
-    {
-      name: 'Langsam 520',       formal_name: 'Langsam Library 520',
-      building: 'langsam',       features: 'projector',          layouts: 'classroom',
-      capacity: 30,              favorite: true,                  type: 'location',
-    },
-    {
-      name: 'Langsam 220',       formal_name: 'Langsam Library 220',
-      building: 'langsam',       features: 'white board',         layouts: 'seminar',
-      capacity: 18,              favorite: false,                 type: 'location',
-    },
-    {
-      name: 'Braunstein 140A',   formal_name: 'Braunstein Hall 140A',
-      building: 'braunstein hall', features: 'white board',      layouts: 'seminar',
-      capacity: 20,              favorite: false,                 type: 'location',
-    },
-    {
-      name: 'Braunstein 310',    formal_name: 'Braunstein Hall 310',
-      building: 'braunstein hall', features: 'camera',           layouts: 'classroom',
-      capacity: 45,              favorite: false,                 type: 'location',
-    },
-    {
-      name: 'Aronoff 6480A',     formal_name: 'Aronoff Center 6480A',
-      building: 'aronoff',       features: 'camera',              layouts: 'lecture',
-      capacity: 80,              favorite: true,                  type: 'location',
-    },
-    {
-      name: 'Aronoff 1220',      formal_name: 'Aronoff Center 1220',
-      building: 'aronoff',       features: 'tables and chairs',   layouts: 'seminar',
-      capacity: 35,              favorite: false,                 type: 'location',
-    },
-    {
-      name: 'Old Chem 400',      formal_name: 'Old Chemistry 400',
-      building: 'old chem',      features: 'projector',           layouts: 'lecture',
-      capacity: 150,             favorite: false,                 type: 'location',
-    },
-    {
-      name: 'Old Chem 112',      formal_name: 'Old Chemistry 112',
-      building: 'old chem',      features: 'white board',         layouts: 'seminar',
-      capacity: 24,              favorite: false,                 type: 'location',
-    },
-    {
-      name: '60 WC Room A',      formal_name: '60 West Charlton Room A',
-      building: '60 west charlton', features: 'tables and chairs', layouts: 'classroom',
-      capacity: 40,              favorite: false,                 type: 'location',
-    },
-    {
-      name: 'TUC Cinema',        formal_name: 'Tangeman Cinema Hall',
-      building: 'tangeman',      features: 'projector',           layouts: 'lecture',
-      capacity: 200,             favorite: false,                 type: 'location',
-    },
-    {
-      name: 'TUC Great Hall',    formal_name: 'Tangeman Great Hall',
-      building: 'tangeman',      features: 'tables and chairs',   layouts: 'lecture',
-      capacity: 500,             favorite: false,                 type: 'location',
-    },
-    {
-      name: 'Lindner 110',       formal_name: 'Lindner Hall 110',
-      building: 'lindner hall',  features: 'camera',              layouts: 'lecture',
-      capacity: 90,              favorite: true,                  type: 'location',
-    },
-    {
-      name: 'Lindner 215',       formal_name: 'Lindner Hall 215',
-      building: 'lindner hall',  features: 'projector',           layouts: 'classroom',
-      capacity: 55,              favorite: false,                 type: 'location',
-    },
-    {
-      name: 'Math 1061',         formal_name: 'Math Sciences 1061',
-      building: 'math sciences', features: 'projector',           layouts: 'lecture',
-      capacity: 120,             favorite: false,                 type: 'location',
-    },
-
-    // ── Events ────────────────────────────────────────────────────────────
-    {
-      name: 'Euchre Club at UC',    formal_name: 'Weekly Euchre Club Meeting',
-      organization: 'euchre club',  category: 'social',   eventType: 'organization',
-      date: 'Mon Nov 18 2026',      favorite: false,      type: 'event',
-    },
-    {
-      name: 'Calculus Review',      formal_name: 'Math 1061 Review Session',
-      organization: 'ieee',         category: 'academic', eventType: 'class',
-      date: 'Tue Nov 19 2026',      favorite: true,       type: 'event',
-    },
-    {
-      name: 'Chess Club Meet',      formal_name: 'UC Chess Club Weekly Meeting',
-      organization: 'chess club',   category: 'social',   eventType: 'organization',
-      date: 'Wed Nov 20 2026',      favorite: false,      type: 'event',
-    },
-    {
-      name: 'Dance Team Practice',  formal_name: 'UC Dance Team Rehearsal',
-      organization: 'chess club',   category: 'arts',     eventType: 'organization',
-      date: 'Thu Nov 21 2026',      favorite: false,      type: 'event',
-    },
-    {
-      name: 'Star Wars Film Night',  formal_name: 'Star Wars Club Screening',
-      organization: 'star wars club', category: 'social', eventType: 'organization',
-      date: 'Fri Nov 22 2026',       favorite: false,     type: 'event',
-    },
-    {
-      name: 'IEEE Workshop',         formal_name: 'IEEE Intro to PCB Design',
-      organization: 'ieee',          category: 'academic', eventType: 'organization',
-      date: 'Sat Nov 23 2026',       favorite: false,      type: 'event',
-    },
-    {
-      name: 'Intro to Circuits',     formal_name: 'EECE 2070 Lab Section',
-      organization: 'ieee',          category: 'academic', eventType: 'class',
-      date: 'Mon Nov 18 2026',       favorite: false,      type: 'event',
-    },
-    {
-      name: 'Linear Algebra Lecture', formal_name: 'MATH 2076 Lecture',
-      organization: 'euchre club',    category: 'academic', eventType: 'class',
-      date: 'Tue Nov 19 2026',        favorite: false,      type: 'event',
-    },
-
-    // ── Organizations ─────────────────────────────────────────────────────
-    {
-      name: 'Chess Club',      formal_name: 'UC Chess Club',
-      orgType: 'internal',     category: 'clubs',    status: 'active',
-      favorite: false,         type: 'org',
-    },
-    {
-      name: 'Dance Team',      formal_name: 'UC Dance Team',
-      orgType: 'internal',     category: 'clubs',    status: 'active',
-      favorite: false,         type: 'org',
-    },
-    {
-      name: 'Math Society',    formal_name: 'Math Academic Society',
-      orgType: 'internal',     category: 'ceas',     status: 'active',
-      favorite: true,          type: 'org',
-    },
-    {
-      name: 'IEEE UC Chapter', formal_name: 'Institute of Electrical & Electronics Engineers — UC',
-      orgType: 'external',     category: 'ceas',     status: 'active',
-      favorite: false,         type: 'org',
-    },
-    {
-      name: 'Euchre Club',     formal_name: 'UC Euchre Club',
-      orgType: 'internal',     category: 'clubs',    status: 'active',
-      favorite: false,         type: 'org',
-    },
-    {
-      name: 'Star Wars Club',  formal_name: 'UC Star Wars Appreciation Society',
-      orgType: 'internal',     category: 'clubs',    status: 'pending',
-      favorite: false,         type: 'org',
-    },
-    {
-      name: 'Cincinnati ACM',  formal_name: 'ACM Student Chapter Cincinnati',
-      orgType: 'external',     category: 'ceas',     status: 'active',
-      favorite: false,         type: 'org',
-    },
-    {
-      name: 'Campus Ministry', formal_name: 'UC Campus Ministry',
-      orgType: 'internal',     category: 'clubs',    status: 'inactive',
-      favorite: false,         type: 'org',
-    },
-  ]);
 </script>
 
 <section class="search-preview">
@@ -456,7 +256,7 @@
                 class="filter-chip"
                 class:has-selection={
                   filter.mode === 'range'
-                    ? (capacityMin !== '' || capacityMax !== '')
+                    ? (activeFilters.capacityMin != null || activeFilters.capacityMax != null)
                     : filter.mode === 'search'
                       ? filter.options.some(o => o.checked)
                       : filter.options.some(o => o.checked)
@@ -604,7 +404,7 @@
      Passes the full search results array, the derived filter summary,
      the active category, and the search query down to Results. -->
 <Results
-  {searchResults}
+  searchResults={$searchResults}
   historyResults={filteredRecents}
   {activeFilters}
   {activeCategory}
@@ -683,7 +483,7 @@
   .search-tab.is-active::after {
     position: absolute;
     right: 0;
-    bottom: -1px;
+    bottom: 0;
     left: 0;
     height: 4px;
     border-radius: 2px;

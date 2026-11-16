@@ -3,7 +3,7 @@
   // search_results:  paged array of result objects
   // results_per_page: number of rows per page (unused here but kept for parity)
   // activeCategory:  'locations' | 'events' | 'organizations' | 'history'
-  import { favoriteItems, isFavorite, searchItem } from './items.js';
+  import { favoriteItems, isFavorite, searchItem, eventTime } from './items.js';
   let { search_results, results_per_page, activeCategory = 'locations', onSelect, onToggleFavorite } = $props();
   const historyTypeClasses = { Location: 'location', Event: 'event', Organization: 'org' };
 </script>
@@ -26,6 +26,7 @@
         <th>Category</th>
         <th>Type</th>
         <th>Date</th>
+        <th>Time</th>
       {:else if activeCategory === 'organizations'}
         <th>Name</th>
         <th>Formal Name</th>
@@ -39,7 +40,7 @@
     </tr>
   </thead>
   <tbody>
-    {#each search_results as result (`${result.type}:${result.name}`)}
+    {#each search_results as result (result.id)}
       {@const favorite = activeCategory !== 'history' && isFavorite($favoriteItems, searchItem(result))}
       <tr>
         {#if activeCategory === 'locations'}
@@ -50,10 +51,10 @@
             </button>
             <button class="result-name" onclick={() => onSelect(result)}>{result.name}</button>
           </td>
-          <td style="font-weight: bold;">{result.formal_name}</td>
+          <td style="font-weight: bold;">{result.formal_name ?? '—'}</td>
           <td>{result.building ?? '—'}</td>
-          <td>{result.features ?? '—'}</td>
-          <td>{result.layouts ?? '—'}</td>
+          <td>{result.features?.join(', ') || '—'}</td>
+          <td>{result.layout ?? '—'}</td>
           <td>{result.capacity ?? '—'}</td>
 
         {:else if activeCategory === 'events'}
@@ -64,11 +65,12 @@
             </button>
             <button class="result-name" onclick={() => onSelect(result)}>{result.name}</button>
           </td>
-          <td style="font-weight: bold;">{result.formal_name}</td>
+          <td style="font-weight: bold;">{result.formal_name ?? '—'}</td>
           <td>{result.organization ?? '—'}</td>
           <td>{result.category ?? '—'}</td>
           <td>{result.eventType ?? '—'}</td>
           <td>{result.date ?? '—'}</td>
+          <td>{result.time ? eventTime(result.time) : '—'}</td>
 
         {:else if activeCategory === 'organizations'}
           <td>
@@ -78,7 +80,7 @@
             </button>
             <button class="result-name" onclick={() => onSelect(result)}>{result.name}</button>
           </td>
-          <td style="font-weight: bold;">{result.formal_name}</td>
+          <td style="font-weight: bold;">{result.formal_name ?? '—'}</td>
           <td>{result.orgType ?? '—'}</td>
           <td>{result.category ?? '—'}</td>
 
@@ -91,7 +93,7 @@
 
     {#if search_results.length === 0}
       <tr>
-        <td colspan={activeCategory === 'history' ? 2 : 6} class="empty-state">{activeCategory === 'history' ? 'No matching recent searches.' : 'No results found.'}</td>
+        <td colspan={activeCategory === 'history' ? 2 : activeCategory === 'events' ? 7 : activeCategory === 'organizations' ? 4 : 6} class="empty-state">{activeCategory === 'history' ? 'No matching recent searches.' : 'No results found.'}</td>
       </tr>
     {/if}
   </tbody>

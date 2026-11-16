@@ -1,6 +1,6 @@
 <script>
-  import { favoriteItems, isFavorite, searchItem, timelineEvent } from './items.js';
-  let { search_results = [], results_per_page, date, onSelect, onToggleFavorite } = $props();
+  import { events, favoriteItems, isFavorite, searchItem, timelineHours, dateKey } from './items.js';
+  let { search_results = [], results_per_page, date, currentDate, onSelect, onToggleFavorite } = $props();
 
   // ── Hour columns: 7 AM – 9 PM ──
   // Each hour maps to a pixel-width slot in the timeline.
@@ -8,22 +8,8 @@
   const HOUR_END   = 21; // 9 PM (exclusive)
   const HOURS = Array.from({ length: HOUR_END - HOUR_START }, (_, i) => HOUR_START + i);
 
-  // ── Sample booked events data ──
-  // In a real app these would come from a prop or API call filtered by `date`.
-  // event.startHour / endHour are decimal (e.g. 10.5 = 10:30 AM).
-  const bookedEvents = [
-    { location: 'Langsam 520',    name: 'Study time',  startHour: 12,   endHour: 13.5 },
-    { location: 'Braunstein 140A', name: 'Lecture',    startHour: 10,   endHour: 12   },
-    { location: 'Braunstein 140A', name: 'Org meeting', startHour: 14,  endHour: 16   },
-    { location: 'Aronoff 6480A',   name: 'Project',    startHour: 15,   endHour: 17   },
-    { location: 'Math 1061',       name: 'Calc review', startHour: 11,  endHour: 12.5 },
-    { location: 'TUC Cinema',      name: 'Film night',  startHour: 13,  endHour: 15.5 },
-    { location: 'Event 1',         name: 'Physics Lab', startHour: 9,   endHour: 10.5 },
-    { location: 'Event 2',         name: 'Seminar',     startHour: 13,  endHour: 14   },
-    { location: 'Event 3',         name: 'Office Hours', startHour: 15, endHour: 17   },
-  ];
+  let bookedEvents = $derived($events.map(timelineHours));
 
-  // ── Slider state ──
   let startIndex = $state(0);
   let endIndex   = $state(HOURS.length - 1);
   let dragging   = $state(null); // 'start' | 'end' | null
@@ -75,7 +61,7 @@
   // Events for a given location row (filtered to those visible in current time range)
   function eventsForRow(locationName) {
     return bookedEvents
-      .filter(e => e.location === locationName)
+      .filter(e => e.location === locationName && e.date === dateKey(currentDate))
       .filter(e => eventStyle(e) !== null);
   }
 </script>
@@ -196,7 +182,7 @@
                     <button
                       class="event-block"
                       type="button"
-                      onclick={() => onSelect(timelineEvent(ev, date))}
+                      onclick={() => onSelect(ev)}
                       style={style}
                       title="{ev.name} ({hourLabel(Math.floor(ev.startHour))}–{hourLabel(Math.ceil(ev.endHour))})"
                     >
