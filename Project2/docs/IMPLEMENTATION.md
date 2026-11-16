@@ -67,13 +67,14 @@ As of 11/16/2026, the new Menu options do nothing. They are only there to highli
 
 ## Search Experience Rework
 
-The Search Experience of 25Live was completely rebuilt to simplify the various filtering options and category filters. Let's first begin by exploring how a user can perform a search query. From the `Dashboard`, a user can use the new `Search Bar` to perform a search from the following categories:
+The Search Experience of 25Live was completely rebuilt to simplify the various category and filtering options. Let's first begin by exploring how a user can perform a search query. From the `Dashboard`, a user can use the new `Search Bar` to perform a search from the following categories:
 - Locations
 - Events
 - Organizations
+
 The user may also select the magnifying glass icon to proceed immediately to the new Search screen. 
 
-Upon entering the search screen, the user is presented with two sections. One section allows the user to perform the same search query in one of the three categories and select various filters according to that category. The following table describes the various categories according to their filters and viewable results formats.
+Upon entering the search screen, the user is presented with two sections. One section allows the user to perform the same search query in one of three categories and select various filters according to that category. The following table describes the various categories according to their filters and viewable results formats.
 
 | Category | Filters | Viewable Formats |
 | -------- | ------- | ---------------- |
