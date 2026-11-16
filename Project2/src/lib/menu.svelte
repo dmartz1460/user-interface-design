@@ -118,8 +118,8 @@
     font-size: 15px;
     font-weight: 700;
   }
-  .sign-out:hover { background: #b9001b; }
-  button:focus-visible { outline: 2px solid #2f6fed; outline-offset: 2px; }
+  .sign-out:hover { background: #B8011C; }
+  button:focus-visible { outline: 2px solid #E00122; outline-offset: 2px; }
 
   @media (max-width: 800px) {
     .profile-menu { right: 5%; }

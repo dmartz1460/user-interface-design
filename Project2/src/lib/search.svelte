@@ -445,9 +445,9 @@
     height: 10px;
     border-radius: 50%;
   }
-  .dot-location { background: #2f6fed; }
-  .dot-event    { background: #16a34a; }
-  .dot-org      { background: #facc15; }
+  .dot-location { background: #2F6FED; }
+  .dot-event    { background: #16A34A; }
+  .dot-org      { background: #FACC15; }
 
   /* ── Outer wrapper ── */
   .search-preview {
@@ -502,7 +502,7 @@
     left: 0;
     height: 4px;
     border-radius: 2px;
-    background: #2f6fed;
+    background: #E00122;
     content: "";
   }
 
@@ -558,7 +558,7 @@
   }
 
   .search-input:focus-within {
-    outline: 2px solid #2f6fed;
+    outline: 2px solid #E00122;
     outline-offset: 2px;
   }
 
@@ -593,9 +593,9 @@
   }
 
   .filter-chip.has-selection {
-    background: #eef2fd;
-    border-color: #2f6fed;
-    color: #2f6fed;
+    background: #DBEAFE;
+    border-color: #2F6FED;
+    color: #1E40AF;
   }
 
   .filter-menu fieldset {
@@ -700,8 +700,8 @@
   }
 
   .range-input:focus {
-    border-color: #2f6fed;
-    outline: 2px solid rgba(47, 111, 237, 0.2);
+    border-color: #E00122;
+    outline: 2px solid rgb(224 1 34 / 20%);
   }
 
   .range-dash {
@@ -723,7 +723,7 @@
     padding: 0;
     font-family: inherit;
   }
-  .range-clear:hover { color: #e00122; }
+  .range-clear:hover { color: #B8011C; }
 
   /* ── Search mode (Organizations) ── */
   .filter-panel--search {
@@ -741,8 +741,8 @@
     margin-bottom: 8px;
   }
   .org-search-wrap:focus-within {
-    border-color: #2f6fed;
-    outline: 2px solid rgba(47, 111, 237, 0.2);
+    border-color: #E00122;
+    outline: 2px solid rgb(224 1 34 / 20%);
   }
 
   .org-search-icon {
@@ -792,7 +792,7 @@
     font-size: 14px;
     cursor: pointer;
   }
-  .org-option-label:hover { color: #2f6fed; }
+  .org-option-label:hover { color: #1E40AF; }
 
   .org-no-results {
     color: #64748b;
@@ -814,8 +814,8 @@
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    background: #eef2fd;
-    color: #2f6fed;
+    background: #DBEAFE;
+    color: #1E40AF;
     padding: 2px 8px;
     border-radius: 12px;
     font-size: 12px;
@@ -826,11 +826,11 @@
     background: none;
     border: none;
     cursor: pointer;
-    color: #2f6fed;
+    color: #1E40AF;
     font-size: 14px;
     line-height: 1;
     padding: 0;
     font-family: inherit;
   }
-  .org-tag-remove:hover { color: #e00122; }
+  .org-tag-remove:hover { color: #B8011C; }
 </style>

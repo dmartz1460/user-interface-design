@@ -145,7 +145,7 @@
     line-height: 1;
     vertical-align: middle;
   }
-  button:hover { color: #2f6fed; }
+  button:hover { color: #2F6FED; }
   .result-name { color: #1c1c1e; text-align: left; }
   .result-name:hover { text-decoration: underline; }
 
@@ -167,11 +167,11 @@
   }
 
   /* event type */
-  .badge-class        { background: #dbeafe; color: #1e40af; }
-  .badge-organization { background: #fef9c3; color: #854d0e; }
+  .badge-class        { background: #DBEAFE; color: #1E40AF; }
+  .badge-organization { background: #FEF9C3; color: #854D0E; }
 
   /* org status */
-  .badge-status-active   { background: #dcfce7; color: #166534; }
-  .badge-status-inactive { background: #fee2e2; color: #991b1b; }
-  .badge-status-pending  { background: #fef3c7; color: #92400e; }
+  .badge-status-active   { background: #DCFCE7; color: #166534; }
+  .badge-status-inactive { background: #F3F3F3; color: #B8011C; }
+  .badge-status-pending  { background: #FEF9C3; color: #854D0E; }
 </style>

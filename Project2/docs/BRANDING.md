@@ -1,3 +1,5 @@
+The 25Live redesign follows basic color and font branding standards established by the University of Cincinnati. For more information, check out [UC's Visual Identity page](https://www.uc.edu/about/marketing-communications/brand-guide/visual-identity.html).
+
 # Primary Colors
 
 - White - #FFFFFF
