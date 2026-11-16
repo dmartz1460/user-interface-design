@@ -1,5 +1,6 @@
 <script>
-  let { search_results = [], results_per_page, date } = $props();
+  import { events, favoriteItems, isFavorite, searchItem, timelineHours, dateKey } from './items.js';
+  let { search_results = [], results_per_page, date, currentDate, onSelect, onToggleFavorite } = $props();
 
   // ── Hour columns: 7 AM – 9 PM ──
   // Each hour maps to a pixel-width slot in the timeline.
@@ -7,22 +8,8 @@
   const HOUR_END   = 21; // 9 PM (exclusive)
   const HOURS = Array.from({ length: HOUR_END - HOUR_START }, (_, i) => HOUR_START + i);
 
-  // ── Sample booked events data ──
-  // In a real app these would come from a prop or API call filtered by `date`.
-  // event.startHour / endHour are decimal (e.g. 10.5 = 10:30 AM).
-  const bookedEvents = [
-    { location: 'Langsam 520',    name: 'Study time',  startHour: 12,   endHour: 13.5 },
-    { location: 'Braunstein 140A', name: 'Lecture',    startHour: 10,   endHour: 12   },
-    { location: 'Braunstein 140A', name: 'Org meeting', startHour: 14,  endHour: 16   },
-    { location: 'Aronoff 6480A',   name: 'Project',    startHour: 15,   endHour: 17   },
-    { location: 'Math 1061',       name: 'Calc review', startHour: 11,  endHour: 12.5 },
-    { location: 'TUC Cinema',      name: 'Film night',  startHour: 13,  endHour: 15.5 },
-    { location: 'Event 1',         name: 'Physics Lab', startHour: 9,   endHour: 10.5 },
-    { location: 'Event 2',         name: 'Seminar',     startHour: 13,  endHour: 14   },
-    { location: 'Event 3',         name: 'Office Hours', startHour: 15, endHour: 17   },
-  ];
+  let bookedEvents = $derived($events.map(timelineHours));
 
-  // ── Slider state ──
   let startIndex = $state(0);
   let endIndex   = $state(HOURS.length - 1);
   let dragging   = $state(null); // 'start' | 'end' | null
@@ -74,7 +61,7 @@
   // Events for a given location row (filtered to those visible in current time range)
   function eventsForRow(locationName) {
     return bookedEvents
-      .filter(e => e.location === locationName)
+      .filter(e => e.location === locationName && e.date === dateKey(currentDate))
       .filter(e => eventStyle(e) !== null);
   }
 </script>
@@ -158,19 +145,21 @@
       <tbody>
         {#each search_results as result}
           {@const rowEvents = eventsForRow(result.name)}
+          {@const favorite = isFavorite($favoriteItems, searchItem(result))}
           <tr>
             <td class="row-label">
               <button
                 class="fav-btn"
-                onclick={() => result.favorite = !result.favorite}
-                aria-label={result.favorite ? 'Remove from favorites' : 'Add to favorites'}
+                onclick={() => onToggleFavorite(result)}
+                aria-pressed={favorite}
+                aria-label={`${favorite ? 'Remove' : 'Add'} ${result.name} ${favorite ? 'from' : 'to'} favorites`}
               >
-                <span class="star" class:filled={result.favorite} aria-hidden="true">
-                  {result.favorite ? '★' : '☆'}
+                <span class="star" class:filled={favorite} aria-hidden="true">
+                  {favorite ? '★' : '☆'}
                 </span>
               </button>
               <span class="loc-dot" aria-hidden="true"></span>
-              <span class="loc-name" title={result.name}>{result.name}</span>
+              <button class="loc-name" type="button" title={result.name} onclick={() => onSelect(result)}>{result.name}</button>
             </td>
 
             <!-- Single timeline cell spanning all visible hour columns -->
@@ -190,14 +179,16 @@
                 {#each rowEvents as ev}
                   {@const style = eventStyle(ev)}
                   {#if style}
-                    <div
+                    <button
                       class="event-block"
+                      type="button"
+                      onclick={() => onSelect(ev)}
                       style={style}
                       title="{ev.name} ({hourLabel(Math.floor(ev.startHour))}–{hourLabel(Math.ceil(ev.endHour))})"
                     >
                       <span class="event-accent"></span>
                       <span class="event-label">{ev.name}</span>
-                    </div>
+                    </button>
                   {/if}
                 {/each}
               </div>
@@ -398,6 +389,10 @@
   }
 
   .loc-name {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    text-align: left;
     font-size: 13px;
     font-weight: 600;
     color: #1c1c1e;
@@ -434,7 +429,10 @@
     background: rgba(22, 163, 74, 0.18);
     border-radius: 6px;
     overflow: hidden;
-    cursor: default;
+    cursor: pointer;
+    padding: 0;
+    border: 0;
+    text-align: left;
     min-width: 28px;
     transition: background 0.1s;
   }

@@ -2,6 +2,7 @@
   export let items;
   export let favorites = false;
   export let onToggle = () => {};
+  export let onSelect;
 
   const filters = [
     { type: 'All', label: 'All' },
@@ -9,12 +10,12 @@
     { type: 'Event', label: 'Events', tone: 'event' },
     { type: 'Organization', label: 'Orgs', tone: 'org' }
   ];
-  const initialNames = favorites ? items.filter((item) => item.favorite).map((item) => item.name) : null;
+  const initialItems = favorites ? items.filter((item) => item.favorite) : null;
   const typeClass = { Location: 'location', Event: 'event', Organization: 'org' };
   let selectedType = 'All';
 
   $: visibleItems = items.filter((item) =>
-    (!initialNames || initialNames.includes(item.name)) &&
+    (!initialItems || initialItems.some((initial) => initial.name === item.name && initial.type === item.type)) &&
     (selectedType === 'All' || item.type === selectedType)
   );
 </script>
@@ -42,7 +43,7 @@
                   aria-label={`${item.favorite ? 'Remove' : 'Add'} ${item.name} ${item.favorite ? 'from' : 'to'} favorites`}
                   onclick={() => onToggle(item)}>{item.favorite ? '★' : '☆'}</button>
               {/if}
-              {item.name}
+              <button class="recent-item-button" type="button" onclick={() => onSelect(item)}>{item.name}</button>
             </span>
             <span class={`badge badge-${typeClass[item.type]}`}>{item.type}</span>
           </li>

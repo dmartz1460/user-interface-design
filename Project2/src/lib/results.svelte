@@ -1,4 +1,5 @@
 <script>
+  import { filterResults } from './items.js';
   import List from './list.svelte';
   import Daily from './daily.svelte';
   import Weekly from './weekly.svelte';
@@ -10,9 +11,12 @@
   // searchQuery:    the current text in the search input
   let {
     searchResults = [],
+    historyResults = [],
     activeFilters = { spaces: [], features: [], layouts: [], capacity: null },
     activeCategory = 'locations',
     searchQuery = '',
+    onSelect,
+    onToggleFavorite,
   } = $props();
 
   let currentDate = $state(new Date());
@@ -70,64 +74,9 @@
 
   // ── Filtered results by category + search query + active filters ──
   let filteredResults = $derived(() => {
-    // 1. Filter by category type
-    const typeMap = { locations: 'location', events: 'event', organizations: 'org' };
-    const targetType = typeMap[activeCategory];
-    let results = targetType
-      ? searchResults.filter(r => r.type === targetType)
-      : searchResults;
+    if (activeCategory === 'history') return historyResults;
 
-    // 2. Filter by search query
-    const q = searchQuery.trim().toLowerCase();
-    if (q) {
-      results = results.filter(r =>
-        r.name.toLowerCase().includes(q) ||
-        (r.formal_name && r.formal_name.toLowerCase().includes(q))
-      );
-    }
-
-    // 3. Location-specific filters
-    if (activeCategory === 'locations') {
-      if (activeFilters.buildings?.length) {
-        results = results.filter(r => activeFilters.buildings.some(b => r.name?.toLowerCase().includes(b)));
-      }
-      if (activeFilters.features?.length) {
-        results = results.filter(r => activeFilters.features.includes(r.features));
-      }
-      if (activeFilters.layouts?.length) {
-        results = results.filter(r => activeFilters.layouts.includes(r.layouts));
-      }
-      // Capacity range: capacityMin and capacityMax are numbers or null
-      if (activeFilters.capacityMin != null) {
-        results = results.filter(r => r.capacity >= activeFilters.capacityMin);
-      }
-      if (activeFilters.capacityMax != null) {
-        results = results.filter(r => r.capacity <= activeFilters.capacityMax);
-      }
-    }
-
-    // 4. Event-specific filters
-    if (activeCategory === 'events') {
-      if (activeFilters.eventTypes?.length) {
-        results = results.filter(r => activeFilters.eventTypes.includes(r.category));
-      }
-      // Organizations filter: array of selected org values
-      if (activeFilters.organizations?.length) {
-        results = results.filter(r => activeFilters.organizations.includes(r.organization));
-      }
-    }
-
-    // 5. Organization-specific filters
-    if (activeCategory === 'organizations') {
-      if (activeFilters.orgTypes?.length) {
-        results = results.filter(r => activeFilters.orgTypes.includes(r.orgType));
-      }
-      if (activeFilters.categories?.length) {
-        results = results.filter(r => activeFilters.categories.includes(r.category));
-      }
-    }
-
-    return results;
+    return filterResults(searchResults, activeCategory, searchQuery, activeFilters);
   });
 
   // ── Pagination ──
@@ -203,11 +152,13 @@
 
   <div class="results-body">
     {#if viewBy.id === 'List'}
-      <List search_results={pagedResults} {results_per_page} {activeCategory} />
+      <div class="list-scroll" role="region" aria-label="Search results" tabindex="0">
+        <List search_results={pagedResults} {results_per_page} {activeCategory} {onSelect} {onToggleFavorite} />
+      </div>
     {:else if viewBy.id === 'Daily'}
-      <Daily search_results={pagedResults} {results_per_page} {date} />
+      <Daily search_results={pagedResults} {results_per_page} {date} {currentDate} {onSelect} {onToggleFavorite} />
     {:else if viewBy.id === 'Weekly'}
-      <Weekly search_results={pagedResults} {results_per_page} {date} {locations} {weekStart} />
+      <Weekly search_results={pagedResults} {results_per_page} {date} {locations} {weekStart} {onSelect} {onToggleFavorite} />
     {/if}
   </div>
 
@@ -241,6 +192,7 @@
 </section>
 
 <style>
+  .list-scroll { overflow-x: auto; }
   .date-header {
     display: flex;
     align-items: center;

@@ -3,7 +3,9 @@
   // search_results:  paged array of result objects
   // results_per_page: number of rows per page (unused here but kept for parity)
   // activeCategory:  'locations' | 'events' | 'organizations' | 'history'
-  let { search_results, results_per_page, activeCategory = 'locations' } = $props();
+  import { favoriteItems, isFavorite, searchItem, eventTime } from './items.js';
+  let { search_results, results_per_page, activeCategory = 'locations', onSelect, onToggleFavorite } = $props();
+  const historyTypeClasses = { Location: 'location', Event: 'event', Organization: 'org' };
 </script>
 
 <table class="list-results">
@@ -24,6 +26,7 @@
         <th>Category</th>
         <th>Type</th>
         <th>Date</th>
+        <th>Time</th>
       {:else if activeCategory === 'organizations'}
         <th>Name</th>
         <th>Formal Name</th>
@@ -37,55 +40,60 @@
     </tr>
   </thead>
   <tbody>
-    {#each search_results as result}
+    {#each search_results as result (result.id)}
+      {@const favorite = activeCategory !== 'history' && isFavorite($favoriteItems, searchItem(result))}
       <tr>
         {#if activeCategory === 'locations'}
           <td>
-            <button onclick={() => result.favorite = !result.favorite} aria-label="Toggle favorite">
-              {result.favorite ? '★' : '☆'}
+            <button onclick={() => onToggleFavorite(result)} aria-pressed={favorite}
+              aria-label={`${favorite ? 'Remove' : 'Add'} ${result.name} ${favorite ? 'from' : 'to'} favorites`}>
+              {favorite ? '★' : '☆'}
             </button>
-            {result.name}
+            <button class="result-name" onclick={() => onSelect(result)}>{result.name}</button>
           </td>
-          <td style="font-weight: bold;">{result.formal_name}</td>
+          <td style="font-weight: bold;">{result.formal_name ?? '—'}</td>
           <td>{result.building ?? '—'}</td>
-          <td>{result.features ?? '—'}</td>
-          <td>{result.layouts ?? '—'}</td>
+          <td>{result.features?.join(', ') || '—'}</td>
+          <td>{result.layout ?? '—'}</td>
           <td>{result.capacity ?? '—'}</td>
 
         {:else if activeCategory === 'events'}
           <td>
-            <button onclick={() => result.favorite = !result.favorite} aria-label="Toggle favorite">
-              {result.favorite ? '★' : '☆'}
+            <button onclick={() => onToggleFavorite(result)} aria-pressed={favorite}
+              aria-label={`${favorite ? 'Remove' : 'Add'} ${result.name} ${favorite ? 'from' : 'to'} favorites`}>
+              {favorite ? '★' : '☆'}
             </button>
-            {result.name}
+            <button class="result-name" onclick={() => onSelect(result)}>{result.name}</button>
           </td>
-          <td style="font-weight: bold;">{result.formal_name}</td>
+          <td style="font-weight: bold;">{result.formal_name ?? '—'}</td>
           <td>{result.organization ?? '—'}</td>
           <td>{result.category ?? '—'}</td>
           <td>{result.eventType ?? '—'}</td>
           <td>{result.date ?? '—'}</td>
+          <td>{result.time ? eventTime(result.time) : '—'}</td>
 
         {:else if activeCategory === 'organizations'}
           <td>
-            <button onclick={() => result.favorite = !result.favorite} aria-label="Toggle favorite">
-              {result.favorite ? '★' : '☆'}
+            <button onclick={() => onToggleFavorite(result)} aria-pressed={favorite}
+              aria-label={`${favorite ? 'Remove' : 'Add'} ${result.name} ${favorite ? 'from' : 'to'} favorites`}>
+              {favorite ? '★' : '☆'}
             </button>
-            {result.name}
+            <button class="result-name" onclick={() => onSelect(result)}>{result.name}</button>
           </td>
-          <td style="font-weight: bold;">{result.formal_name}</td>
+          <td style="font-weight: bold;">{result.formal_name ?? '—'}</td>
           <td>{result.orgType ?? '—'}</td>
           <td>{result.category ?? '—'}</td>
 
         {:else}
-          <td>{result.name}</td>
-          <td><span class="badge badge-{result.type}">{result.type}</span></td>
+          <td><button class="result-name" onclick={() => onSelect(result)}>{result.name}</button></td>
+          <td><span class="badge badge-{historyTypeClasses[result.type]}">{result.type}</span></td>
         {/if}
       </tr>
     {/each}
 
     {#if search_results.length === 0}
       <tr>
-        <td colspan="6" class="empty-state">No results found.</td>
+        <td colspan={activeCategory === 'history' ? 2 : activeCategory === 'events' ? 7 : activeCategory === 'organizations' ? 4 : 6} class="empty-state">{activeCategory === 'history' ? 'No matching recent searches.' : 'No results found.'}</td>
       </tr>
     {/if}
   </tbody>
@@ -138,6 +146,8 @@
     vertical-align: middle;
   }
   button:hover { color: #2f6fed; }
+  .result-name { color: #1c1c1e; text-align: left; }
+  .result-name:hover { text-decoration: underline; }
 
   .empty-state {
     text-align: center;

@@ -3,6 +3,7 @@
   import ItemBrowser from './ItemBrowser.svelte';
   export let items;
   export let onToggle;
+  export let onSelect;
   export let onClose;
 </script>
 
@@ -11,5 +12,5 @@
     <div><h1 id="favorites-popup-title">Favorites</h1><p>Your saved items</p></div>
     <button class="close-button" type="button" aria-label="Close favorites" onclick={close}>&times;</button>
   </header>
-  <ItemBrowser {items} favorites {onToggle} />
+  <ItemBrowser {items} favorites {onToggle} {onSelect} />
 </Popup>

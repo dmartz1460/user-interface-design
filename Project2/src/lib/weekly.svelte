@@ -1,5 +1,6 @@
 <script>
-  let { search_results = [], results_per_page, date, locations = [], weekStart } = $props();
+  import { events, favoriteItems, isFavorite, searchItem, timelineHours, dateKey } from './items.js';
+  let { search_results = [], results_per_page, date, locations = [], weekStart, onSelect, onToggleFavorite } = $props();
 
   // ── Day columns ──
   const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -84,41 +85,17 @@
   function expandAll()   { expanded = expanded.map(() => true);  }
   function collapseAll() { expanded = expanded.map(() => false); }
 
-  // ── Sample booked events ──
-  // Format: { location, dayOffset (0=Sun … 6=Sat), startHour, endHour, name }
-  const bookedEvents = [
-    { location: 'Langsam 520',     dayOffset: 1, startHour: 10,   endHour: 11.5, name: 'Lecture'       },
-    { location: 'Langsam 520',     dayOffset: 2, startHour: 13,   endHour: 14,   name: 'Study time'    },
-    { location: 'Langsam 520',     dayOffset: 3, startHour: 11,   endHour: 12,   name: 'Org meeting'   },
-    { location: 'Langsam 520',     dayOffset: 4, startHour: 9,    endHour: 9.5,  name: 'Tutoring'      },
-    { location: 'Langsam 520',     dayOffset: 4, startHour: 14.5, endHour: 16,   name: 'Project'       },
-    { location: 'Langsam 520',     dayOffset: 5, startHour: 13,   endHour: 14.5, name: 'Euchre night'  },
-    { location: 'Braunstein 140A', dayOffset: 1, startHour: 9,    endHour: 11,   name: 'Physics Lab'   },
-    { location: 'Braunstein 140A', dayOffset: 3, startHour: 13,   endHour: 15,   name: 'Office Hours'  },
-    { location: 'Aronoff 6480A',   dayOffset: 2, startHour: 10,   endHour: 11,   name: 'Seminar'       },
-    { location: 'Aronoff 6480A',   dayOffset: 4, startHour: 15,   endHour: 16,   name: 'Lab session'   },
-    { location: 'Math 1061',       dayOffset: 1, startHour: 14,   endHour: 16,   name: 'Club meeting'  },
-    { location: 'TUC Cinema',      dayOffset: 3, startHour: 10.5, endHour: 12,   name: 'Review session'},
-    // Fallback entries keyed by generic names (matches sample data in search.svelte)
-    { location: 'Location 1',      dayOffset: 1, startHour: 10,   endHour: 11.5, name: 'Lecture'       },
-    { location: 'Location 1',      dayOffset: 3, startHour: 11,   endHour: 12,   name: 'Org meeting'   },
-    { location: 'Location 2',      dayOffset: 1, startHour: 9,    endHour: 11,   name: 'Physics Lab'   },
-    { location: 'Location 2',      dayOffset: 4, startHour: 14,   endHour: 15.5, name: 'Club meeting'  },
-    { location: 'Location 3',      dayOffset: 2, startHour: 10,   endHour: 11,   name: 'Seminar'       },
-    { location: 'Location 4',      dayOffset: 5, startHour: 13,   endHour: 14,   name: 'Study group'   },
-    { location: 'Location 5',      dayOffset: 3, startHour: 10.5, endHour: 12,   name: 'Review'        },
-  ];
+  let bookedEvents = $derived($events.map(timelineHours));
 
-  // Row height per hour in px
   const ROW_H = 40;
 
   // Events for a given location + day visible in the current hour range
-  function eventsForCell(locationName, dayIndex) {
+  function eventsForCell(locationName, day) {
     const visStart = HOURS[startIndex];
     const visEnd   = HOURS[endIndex] + 1;
     return bookedEvents.filter(ev =>
       ev.location === locationName &&
-      ev.dayOffset === dayIndex    &&
+      ev.date === dateKey(day)     &&
       ev.endHour   > visStart      &&
       ev.startHour < visEnd
     );
@@ -137,10 +114,9 @@
   // Availability badge for the row header
   // Returns 'free' | 'partial' | 'busy' based on today's bookings
   function todayStatus(locationName) {
-    const dow    = new Date().getDay();
-    const events = bookedEvents.filter(e => e.location === locationName && e.dayOffset === dow);
-    if (!events.length) return 'free';
-    const hours  = events.reduce((s, e) => s + (e.endHour - e.startHour), 0);
+    const todayEvents = bookedEvents.filter(e => e.location === locationName && e.date === dateKey(new Date()));
+    if (!todayEvents.length) return 'free';
+    const hours  = todayEvents.reduce((s, e) => s + (e.endHour - e.startHour), 0);
     return hours >= 4 ? 'busy' : 'partial';
   }
 
@@ -226,28 +202,24 @@
     {#each search_results as result, ri}
       {@const isOpen   = expanded[ri] ?? true}
       {@const status   = todayStatus(result.name)}
+      {@const favorite = isFavorite($favoriteItems, searchItem(result))}
 
       <!-- Row header (always visible, click to toggle) -->
       <div class="result-row">
-        <button
-          class="row-toggle"
-          onclick={() => toggleRow(ri)}
-          aria-expanded={isOpen}
-          aria-controls="weekly-grid-{ri}"
-        >
+        <div class="row-toggle">
+          <button class="expand-toggle" type="button" onclick={() => toggleRow(ri)}
+            aria-label={`${isOpen ? 'Collapse' : 'Expand'} ${result.name}`}
+            aria-expanded={isOpen} aria-controls="weekly-grid-{ri}">
           <!-- Chevron -->
           <span class="chevron" class:open={isOpen} aria-hidden="true">›</span>
-
-          <!-- Favorite star -->
-          <span
-            class="star"
-            class:filled={result.favorite}
-            aria-label={result.favorite ? 'Favorited' : 'Not favorited'}
-          >{result.favorite ? '★' : '☆'}</span>
+          </button>
+          <button class="star" class:filled={favorite} type="button" onclick={() => onToggleFavorite(result)}
+            aria-pressed={favorite}
+            aria-label={`${favorite ? 'Remove' : 'Add'} ${result.name} ${favorite ? 'from' : 'to'} favorites`}>{favorite ? '★' : '☆'}</button>
 
           <!-- Blue dot + name -->
           <span class="loc-dot" aria-hidden="true"></span>
-          <span class="row-name">{result.name}</span>
+          <button class="row-name" type="button" onclick={() => onSelect(result)}>{result.name}</button>
 
           <!-- Availability badge -->
           <span class="avail-badge avail-{status}">
@@ -255,7 +227,7 @@
             {#if status === 'partial'}◑ Partial{/if}
             {#if status === 'busy'}● Busy today{/if}
           </span>
-        </button>
+        </div>
 
         <!-- Collapsible weekly grid -->
         {#if isOpen}
@@ -292,23 +264,24 @@
             <div
               class="events-overlay"
               style="--grid-top:{GRID_TOP}px; --col-w:calc((100% - 72px) / {visibleDays.length}); --row-h:{ROW_H}px;"
-              aria-hidden="true"
             >
               {#each visibleDays as day, di}
-                {@const col_events = eventsForCell(result.name, day.date.getDay())}
+                {@const col_events = eventsForCell(result.name, day.date)}
                 <div
                   class="day-col-overlay"
                   style="left:calc(72px + {di} * var(--col-w)); width:var(--col-w);"
                 >
                   {#each col_events as ev}
-                    <div
+                    <button
                       class="event-block"
+                      type="button"
+                      onclick={() => onSelect(ev)}
                       style={blockStyle(ev)}
                       title="{ev.name} ({hourLabel(Math.floor(ev.startHour))}–{hourLabel(Math.ceil(ev.endHour))})"
                     >
                       <span class="event-accent"></span>
                       <span class="event-label">{ev.name}</span>
-                    </div>
+                    </button>
                   {/each}
                 </div>
               {/each}
@@ -489,7 +462,7 @@
   }
   .row-toggle:hover { background: #f0f4f8; }
   /* Show bottom border only when expanded */
-  .row-toggle[aria-expanded="true"] {
+  .row-toggle:has([aria-expanded="true"]) {
     border-bottom-color: #e3e3e6;
   }
 
@@ -508,6 +481,7 @@
   /* Favorite star */
   .star        { font-size: 15px; color: #b5b5bb; line-height: 1; }
   .star.filled { color: #e00122; }
+  .expand-toggle, .star, .row-name { border: 0; padding: 0; background: transparent; cursor: pointer; }
 
   /* Blue dot */
   .loc-dot {
@@ -526,6 +500,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    text-align: left;
   }
 
   /* Availability badge */
@@ -631,7 +606,10 @@
     border-radius: 5px;
     overflow: hidden;
     pointer-events: auto;
-    cursor: default;
+    cursor: pointer;
+    padding: 0;
+    border: 0;
+    text-align: left;
     transition: background 0.1s;
   }
   .event-block:hover { background: rgba(22,163,74,0.30); }
