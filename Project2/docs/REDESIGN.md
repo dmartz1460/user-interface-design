@@ -153,7 +153,7 @@ The primary goal of the 25Live redesign is to prioritize simplicity and learnabi
 
 The primary target of the 25Live redesign is inspired by the complex and overwhelming amount of features of the site. Specifically, the various search features in the `Menu` and `Dashboard` force the user recognize the previous steps taken to book a room or search an event. However, some of these features are only available under specific privileges. For example, a user who is not an `Organization` administrator has no use for the `Event Wizard` or `Resources`. These features require the user to book an event associated with an `Organization`.
 
-To simply a user's experience of searching 25Live, a Tier-based system will allow the site to filter out privileged features for lower tier users. The tier-based system is detailed in the following table.
+To simplify a user's experience of searching 25Live, a Tier-based system will allow the site to filter out privileged features for lower tier users. The tier-based system is detailed in the following table.
 
 | Tier | Criteria | Available Features | 
 | ---- | -------- | ------------------ |

@@ -42,4 +42,4 @@ Paste the resulting localhost address into your browser or `Ctrl + Click` on the
 
 ## Deployment 
 
-This UI is self hosted using GitHub's Pages platform. Upon a commit to the repo, `smart-bank-ui.yaml` will run to build and deploy the webpage to GitHub Pages under https://dmartz1460.github.io/user-interface-design/.
+This UI is self hosted using GitHub's Pages platform. Upon a commit to the repo, `deploy-projects.yaml` will run to build and deploy the webpage to GitHub Pages under https://dmartz1460.github.io/user-interface-design/.

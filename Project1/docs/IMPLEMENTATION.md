@@ -20,7 +20,7 @@ The purpose of this document is to detail the implementation decisions for the f
 - Svelte Architecture
 - Navigation
 - Features
-- Future Fmplementation
+- Future Implementation
 
 ## Svelte Architecture
 
@@ -31,7 +31,7 @@ The resulting UI appears is shown in the following screen shot:
 
 ## Navigation
 
-Navigation of the Smart Bank's UI came to the decision to use menu selection or buttons to navigate screens. Since there are only 4 additional screens from `Home` which acts as an `At-a-Glance` screen for each feature, it was decided to use buttons underneath each At-a-Glance window to signal the user that additional features and options for the window reside on an additional screen. In additon, those who were interviewed requested that additional info about the contents of the bank should reside in a deeper menu screen. This screen is found under the `Your Bank` button which also acts as the header of the `Home/At-a-Glance` screen.
+Navigation of the Smart Bank's UI came to the decision to use menu selection or buttons to navigate screens. Since there are only 4 additional screens from `Home` which acts as an `At-a-Glance` screen for each feature, it was decided to use buttons underneath each At-a-Glance window to signal the user that additional features and options for the window reside on an additional screen. In addition, those who were interviewed requested that additional info about the contents of the bank should reside in a deeper menu screen. This screen is found under the `Your Bank` button which also acts as the header of the `Home/At-a-Glance` screen.
 
 To unlock the screen, an `Unlock` button was used instead of the traditional swipe-up action used by many smart devices since this device will most likely be used by children learning to bank. `Enter` and `Cancel/Back` buttons were also chosen over arrows to signal the action of the button. 
 
@@ -100,4 +100,4 @@ Future features that need requirements and user needs would be the following:
 
 ## AI Usage 
 
-The use of AI in this project came strictly for coding/syntax purposes. Inline suggestions with GitHub Copilot in VS-Code were used to assist the programming of this project. AI was also used to help draft interview questions through an experiement to determine the quality of its output. 
+The use of AI in this project came strictly for coding/syntax purposes. Inline suggestions with GitHub Copilot in VS-Code were used to assist the programming of this project. AI was also used to help draft interview questions through an experiment to determine the quality of its output. 
