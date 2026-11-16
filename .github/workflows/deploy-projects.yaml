@@ -1,13 +1,7 @@
 name: Deploy Projects
 
 on:
-
-  workflow_dispatch:
-    inputs:
-      branch:
-        description: 'Branch to deploy'
-        required: true
-        default: 'main'
+  push:
 
 permissions:
   contents: read
@@ -29,8 +23,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: ${{ inputs.branch }}
 
       - uses: actions/setup-node@v4
         with:
