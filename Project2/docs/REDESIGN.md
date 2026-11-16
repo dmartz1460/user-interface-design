@@ -14,7 +14,8 @@
   - [Force Sign-in Action](#force-sign-in-action)
 - [Sketching](#sketching)
   - [Iteration 1](#iteration-1)
-  - [Final Sketch Mockup](#final-sketch-mockup)
+  - [Iteration 2](#iteration-2)
+  - [Final Sketch Mockups](#final-sketch-mockups)
 
 ---
 
@@ -35,7 +36,7 @@ This document covers the following topics:
 
 `Guest View`
 
-Upon entering the 25Live dashboard, a user is considered a guest and is presented with a restricted view of the dashboard screen. As a user of 25Live, I am most likely a student or faculty member of the University of Cincinnati as a user cannot perform any actions within the dashboard without signing in with UC credentials. Once signed in, the user is unable to perform a sign-out action. This renders the guest view obsolete.
+Upon entering the 25Live dashboard, a user is considered a guest and is presented with a restricted view of the dashboard screen. A user of 25Live is most likely a student or faculty member of the University of Cincinnati. Furthermore, a user cannot perform any actions within the dashboard without signing in with UC credentials. Once signed in, the user is unable to perform a sign-out action. This renders the guest view obsolete.
 
 `Choice of Icons`
 
@@ -117,13 +118,11 @@ While solving these challenges, the user may encounter the following problems:
 - How satisfied are you with 25Live?
 - What features in 25Live need the most improvement?
 - What is the most frustrating part about using 25Live?
-- What do you like about using 25Live? 
-
-Survey Link: https://forms.gle/R9xwjFvTYdHHdNV97
+- What do you like about using 25Live?
 
 ### Results
 
-Results of the observational studies and interviews can be found in [USER_RESEARCH.md](USER_RESEARCH.md).
+Results of the observational studies and surveys can be found in [USER_RESEARCH.md](USER_RESEARCH.md).
 
 ### Expert Heuristic Evaluation
 
@@ -168,7 +167,7 @@ The following features will be deprecated as a result of the following justifica
 | Feature | Overview | Justification | 
 | ------- | -------- | ------------- |
 | Calendar View | View `Events`, `Locations`, `Orgs` in a `Calendar` view | Information overload |
-| Dashboard Customizability | Add, Remove, Move `Dashboard` option dropdowns | Clunky UI, introduces complexity and increased learnability |
+| Dashboard Customizability | Add, Remove, Move `Dashboard` option dropdowns | Clunky UI, introduces complexity and decreases learnability |
 | Tasks | Assign Tasks as Action Items for an `Org` or for yourself | Feature is not relevant to `Event Scheduling` or `Organization Management`, external tools provide better solutions |
 
 ### Force Sign-in Action
@@ -183,15 +182,15 @@ Following the same approach from some University websites like Canvas and Cataly
 
 Each group member was tasked with sketching an initial design of each of the reworked features. 
 
-| [`Sketch 0`](/Project2/docs/first-sketch-iterations/sketch0.pdf) | [`Sketch 1`](/Project2/docs/first-sketch-iterations/sketch1.pdf) | [`Sketch 2`](/Project2/docs/first-sketch-iterations/sketch2.pdf) |
+| [`Sketch 0`](first-sketch-iterations/sketch0.pdf) | [`Sketch 1`](first-sketch-iterations/sketch1.pdf) | [`Sketch 2`](first-sketch-iterations/sketch2.pdf) |
 
 ### Iteration 2 
 
-Sketches of the new dashboard UI, menu, and dashboard pop-up windows can be found in [dashboard_final_sketches.pdf](/Project2/docs/final-vanilla-sketches/dashboard_final_sketches.pdf). Additionally, sketches for the Search window are located in [search_final_sketch.pdf](/Project2/docs/final-vanilla-sketches/search_final_sketch.pdf)
+Sketches of the new dashboard UI, menu, and dashboard pop-up windows can be found in [dashboard_final_sketches.pdf](final-vanilla-sketches/dashboard_final_sketches.pdf). Additionally, sketches for the Search window are located in [search_final_sketch.pdf](final-vanilla-sketches/search_final_sketch.pdf)
 
 ### Final Sketch Mockups
 
-Final Design mockups were created for each of the following components. The strategy for creating these design mockups followed an iterative design approach using various AI models. Each group member attempted to create each of components using a different model. The model was tasked with creating 3 iterations of each component based on the [final design mockups](/Project2/docs/final-design-mockups/). The models used were as follows: 
+Final Design mockups were created for each of the following components. The strategy for creating these design mockups followed an iterative design approach using various AI models. Each group member attempted to create each of components using a different model. The model was tasked with creating 3 iterations of each component based on the [final design mockups](final-design-mockups/). The models used were as follows: 
 
 - Gemini 4 Argon
 - Claude 

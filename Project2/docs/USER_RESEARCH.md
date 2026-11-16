@@ -1,6 +1,6 @@
 # User Research
 
-This document includes the results of six observational studies where each interviewee was tasked to solve two challenges. Afterward, they were given an survey.
+This document includes the results of six observational studies where each interviewee was tasked to solve two challenges. Afterward, they were given a survey.
 
 ## Challenges
 

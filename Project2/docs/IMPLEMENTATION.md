@@ -3,6 +3,7 @@
 ## Table of Contents
 
 - [Overview](#overview)
+- [Svelte Architecture](#svelte-architecture)
 - [Tier Based User Experience](#tier-based-user-experience)
 - [Dashboard Redesign](#dashboard-redesign)
 - [Menu Redesign](#menu-redesign)
@@ -25,7 +26,7 @@ The software architecture of the new 25Live prototype is built using Svelte, Jav
 
 ## Tier Based User Experience
 
-As a recap from the redesign decisions, the new tier based user experience provides a feature set specific to a user's involvement in UC's organizations. For our initial prototype, we chose to implement Tier 1 for a user with no organizational involvement. Features such as a `Your Organizations` quick view and organization admin features are hidden. 
+As a recap from the redesign decisions, the [new tier based user experience](REDESIGN.md#tier-based-user-experience) provides a feature set specific to a user's involvement in UC's organizations. For our initial prototype, we chose to implement Tier 1 for a user with no organizational involvement. Features such as a `Your Organizations` quick view and organization admin features are hidden. 
 
 ## Dashboard Redesign
 
@@ -96,7 +97,7 @@ The next section of search screen presents search results according to the selec
 
 ## Event Management
 
-According to our observational interviews, 2 out of 6 interviewees successfully cancelled an event. There needs no explanation as to why this might be a problem. To solve this issue, scheduled events can now be cancelled by selecting the event under the `Your Events` box, and selecting the `Cancel event` button where the user will then be prompted to confirm the action.
+According to our observational interviews, 2 out of 6 interviewees successfully cancelled an event. There needs no explanation as to why this might be a problem. To solve this issue, scheduled events can now be cancelled by selecting the event under the `Your Events` box, and selecting the `Cancel event` button where the user will then be prompted to confirm the action. Upon cancelling, the event is correctly removed from `Your Events`, a feature missing in the original 25Live design.
 
 ## Future Work
 
