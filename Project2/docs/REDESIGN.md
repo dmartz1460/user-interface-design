@@ -16,6 +16,9 @@
   - [Iteration 1](#iteration-1)
   - [Iteration 2](#iteration-2)
   - [Final Sketch Mockups](#final-sketch-mockups)
+- [Design Feedback](#design-feedback)
+  - [Sketch Feedback](#sketch-feedback)
+  - [Mockup Feedback](#mockup-feedback)
 
 ---
 
@@ -232,3 +235,23 @@ After reviewing the outputs of each of the models, it was determined that Claude
 <p align="center">
     <img src="final-design-mockups/search-C-weekly-light.svg" width="650px"></img>
 </p>
+
+## Design Feedback
+
+In an effort to prioritize user-centered design, user feedback was collected during the sketching stage and final mockup stage before implementation began. The original six interviewees observed during the observational study where asked to compare sketches, talk about what they liked and disliked, and suggest additional features or areas of improvement.
+
+### Sketch Feedback
+
+The initial sketches were reviewed against the main problems found in the original 25Live interface, such as having too many competing navigation paths, an information-heavy dashboard, and a cluttered menu and search screen. Reviewers generally preferred the sketches that preserved the `Express Scheduling` feature and grouped secondary information into clear sections for upcoming events, recents, and favorites on the dashboard. They felt that removing the customizable dashboard tiles would reduce clutter and streamline navigation.
+
+Reviewers also noted that the menu still felt clunky. One reviewer pointed out that they didn't see the need for subcategories within the menu, especially considering there would only be 4-7 menu buttons once the clutter was removed. As a result, the final vanilla sketches prioritized a bare-bones menu that combines menu features and user account features into one centralized location, accessible via clicking the user icon.
+
+Upon reviewing the final vanilla sketches, feedback was mostly positive. Reviewers particularly liked the event cancellation confirmation popup, especially since the original site made it unclear if cancellation worked. This would also help prevent accidental cancellations. Reviewers did suggest moving the search bar from the dashboard screen to the header to increase dashboard spacing and draw attention to the search bar. The search page was well received, with one reviewer mentioning they would prefer the `List`, `Daily`, and `Weekly` `View by` icons to be more closely grouped with the `Results`.
+
+### Mockup Feedback
+
+The final mockups were reviewed for learnability, visual hierarchy, and consistency with the proposed UC branding. Reviewers found the red header, menu, and simplified dashboard easier to scan than the original 25Live layout. The `Event details` and `View all` pop-ups were considered useful because they expose details without requiring users to navigate through several screens.
+
+Reviewers did want to see the search bar centered in the header, a change carried through to implementation. A few reviewers also expressed concern that having the ability to unstar `Events`, `Locations`, and `Organizations` directly from the dashboard could lead to accidentally removing items from `Favorites`. As a result, we decided to hide this feature behind either clicking `View all`, selecting the entry in `Favorites`, or searching for the event/location/org.
+
+Overall, the mockup feedback supported moving forward with implementing the prototype. The remaining placeholder menu items and unimplemented account features were intentionally left outside the prototype's scope and are documented as future work in [IMPLEMENTATION.md](IMPLEMENTATION.md#future-work).
