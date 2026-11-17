@@ -20,6 +20,12 @@ The redesign strategies for redesigning 25Live's dashboard, navigation, and sear
 
 The instructions for testing the features of the UI and its deployment are outlined in [USAGE.md](docs/USAGE.md).
 
+## Use of AI
+
+AI tools were used during the design phase to standardize mockups for all teammates to code off of, as based on the final UI sketches. For more details, see [REDESIGN.md](docs/REDESIGN.md#final-sketch-mockups). Additionally, AI was periodically used to evaluate the usefulness and need for additional signifiers, such as a dedicated dashboard button versus a clickable 25Live logo. AI was not used in the original sketching or ideation process, and all AI-generated designs were treated as exploratory ideas rather than final decisions.
+
+During the implementation phase, AI tools were used as a development assistant. AI helped inspect existing code, diagnose potential bugs, draft some features, and ensure consistent branding usage across all modules and between all teammates' code. Testing and quality assurance were handled independent of AI tools.
+
 ## Group Members
 
 The following parties were involved in the redesign of 25Live:
