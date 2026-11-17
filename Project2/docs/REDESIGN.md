@@ -14,7 +14,11 @@
   - [Force Sign-in Action](#force-sign-in-action)
 - [Sketching](#sketching)
   - [Iteration 1](#iteration-1)
-  - [Final Sketch Mockup](#final-sketch-mockup)
+  - [Iteration 2](#iteration-2)
+  - [Final Sketch Mockups](#final-sketch-mockups)
+- [Design Feedback](#design-feedback)
+  - [Sketch Feedback](#sketch-feedback)
+  - [Mockup Feedback](#mockup-feedback)
 
 ---
 
@@ -35,7 +39,7 @@ This document covers the following topics:
 
 `Guest View`
 
-Upon entering the 25Live dashboard, a user is considered a guest and is presented with a restricted view of the dashboard screen. As a user of 25Live, I am most likely a student or faculty member of the University of Cincinnati as a user cannot perform any actions within the dashboard without signing in with UC credentials. Once signed in, the user is unable to perform a sign-out action. This renders the guest view obsolete.
+Upon entering the 25Live dashboard, a user is considered a guest and is presented with a restricted view of the dashboard screen. A user of 25Live is most likely a student or faculty member of the University of Cincinnati. Furthermore, a user cannot perform any actions within the dashboard without signing in with UC credentials. Once signed in, the user is unable to perform a sign-out action. This renders the guest view obsolete.
 
 `Choice of Icons`
 
@@ -117,13 +121,11 @@ While solving these challenges, the user may encounter the following problems:
 - How satisfied are you with 25Live?
 - What features in 25Live need the most improvement?
 - What is the most frustrating part about using 25Live?
-- What do you like about using 25Live? 
-
-Survey Link: https://forms.gle/R9xwjFvTYdHHdNV97
+- What do you like about using 25Live?
 
 ### Results
 
-Results of the observational studies and interviews can be found in [USER_RESEARCH.md](USER_RESEARCH.md).
+Results of the observational studies and surveys can be found in [USER_RESEARCH.md](USER_RESEARCH.md).
 
 ### Expert Heuristic Evaluation
 
@@ -168,7 +170,7 @@ The following features will be deprecated as a result of the following justifica
 | Feature | Overview | Justification | 
 | ------- | -------- | ------------- |
 | Calendar View | View `Events`, `Locations`, `Orgs` in a `Calendar` view | Information overload |
-| Dashboard Customizability | Add, Remove, Move `Dashboard` option dropdowns | Clunky UI, introduces complexity and increased learnability |
+| Dashboard Customizability | Add, Remove, Move `Dashboard` option dropdowns | Clunky UI, introduces complexity and decreases learnability |
 | Tasks | Assign Tasks as Action Items for an `Org` or for yourself | Feature is not relevant to `Event Scheduling` or `Organization Management`, external tools provide better solutions |
 
 ### Force Sign-in Action
@@ -183,15 +185,15 @@ Following the same approach from some University websites like Canvas and Cataly
 
 Each group member was tasked with sketching an initial design of each of the reworked features. 
 
-| [`Sketch 0`](/Project2/docs/first-sketch-iterations/sketch0.pdf) | [`Sketch 1`](/Project2/docs/first-sketch-iterations/sketch1.pdf) | [`Sketch 2`](/Project2/docs/first-sketch-iterations/sketch2.pdf) |
+| [`Sketch 0`](first-sketch-iterations/sketch0.pdf) | [`Sketch 1`](first-sketch-iterations/sketch1.pdf) | [`Sketch 2`](first-sketch-iterations/sketch2.pdf) |
 
 ### Iteration 2 
 
-Sketches of the new dashboard UI, menu, and dashboard pop-up windows can be found in [dashboard_final_sketches.pdf](/Project2/docs/final-vanilla-sketches/dashboard_final_sketches.pdf). Additionally, sketches for the Search window are located in [search_final_sketch.pdf](/Project2/docs/final-vanilla-sketches/search_final_sketch.pdf)
+Sketches of the new dashboard UI, menu, and dashboard pop-up windows can be found in [dashboard_final_sketches.pdf](final-vanilla-sketches/dashboard_final_sketches.pdf). Additionally, sketches for the Search window are located in [search_final_sketch.pdf](final-vanilla-sketches/search_final_sketch.pdf)
 
 ### Final Sketch Mockups
 
-Final Design mockups were created for each of the following components. The strategy for creating these design mockups followed an iterative design approach using various AI models. Each group member attempted to create each of components using a different model. The model was tasked with creating 3 iterations of each component based on the [final design mockups](/Project2/docs/final-design-mockups/). The models used were as follows: 
+Final Design mockups were created for each of the following components. The strategy for creating these design mockups followed an iterative design approach using various AI models. Each group member attempted to create each of components using a different model. The model was tasked with creating 3 iterations of each component based on the [final design mockups](final-design-mockups/). The models used were as follows: 
 
 - Gemini 4 Argon
 - Claude 
@@ -233,3 +235,23 @@ After reviewing the outputs of each of the models, it was determined that Claude
 <p align="center">
     <img src="final-design-mockups/search-C-weekly-light.svg" width="650px"></img>
 </p>
+
+## Design Feedback
+
+In an effort to prioritize user-centered design, user feedback was collected during the sketching stage and final mockup stage before implementation began. The original six interviewees observed during the observational study where asked to compare sketches, talk about what they liked and disliked, and suggest additional features or areas of improvement.
+
+### Sketch Feedback
+
+The initial sketches were reviewed against the main problems found in the original 25Live interface, such as having too many competing navigation paths, an information-heavy dashboard, and a cluttered menu and search screen. Reviewers generally preferred the sketches that preserved the `Express Scheduling` feature and grouped secondary information into clear sections for upcoming events, recents, and favorites on the dashboard. They felt that removing the customizable dashboard tiles would reduce clutter and streamline navigation.
+
+Reviewers also noted that the menu still felt clunky. One reviewer pointed out that they didn't see the need for subcategories within the menu, especially considering there would only be 4-7 menu buttons once the clutter was removed. As a result, the final vanilla sketches prioritized a bare-bones menu that combines menu features and user account features into one centralized location, accessible via clicking the user icon.
+
+Upon reviewing the final vanilla sketches, feedback was mostly positive. Reviewers particularly liked the event cancellation confirmation popup, especially since the original site made it unclear if cancellation worked. This would also help prevent accidental cancellations. Reviewers did suggest moving the search bar from the dashboard screen to the header to increase dashboard spacing and draw attention to the search bar. The search page was well received, with one reviewer mentioning they would prefer the `List`, `Daily`, and `Weekly` `View by` icons to be more closely grouped with the `Results`.
+
+### Mockup Feedback
+
+The final mockups were reviewed for learnability, visual hierarchy, and consistency with the proposed UC branding. Reviewers found the red header, menu, and simplified dashboard easier to scan than the original 25Live layout. The `Event details` and `View all` pop-ups were considered useful because they expose details without requiring users to navigate through several screens.
+
+Reviewers did want to see the search bar centered in the header, a change carried through to implementation. A few reviewers also expressed concern that having the ability to unstar `Events`, `Locations`, and `Organizations` directly from the dashboard could lead to accidentally removing items from `Favorites`. As a result, we decided to hide this feature behind either clicking `View all`, selecting the entry in `Favorites`, or searching for the event/location/org.
+
+Overall, the mockup feedback supported moving forward with implementing the prototype. The remaining placeholder menu items and unimplemented account features were intentionally left outside the prototype's scope and are documented as future work in [IMPLEMENTATION.md](IMPLEMENTATION.md#future-work).

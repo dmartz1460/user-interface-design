@@ -3,6 +3,7 @@
 ## Table of Contents
 
 - [Overview](#overview)
+- [Svelte Architecture](#svelte-architecture)
 - [Tier Based User Experience](#tier-based-user-experience)
 - [Dashboard Redesign](#dashboard-redesign)
 - [Menu Redesign](#menu-redesign)
@@ -25,7 +26,7 @@ The software architecture of the new 25Live prototype is built using Svelte, Jav
 
 ## Tier Based User Experience
 
-As a recap from the redesign decisions, the new tier based user experience provides a feature set specific to a user's involvement in UC's organizations. For our initial prototype, we chose to implement Tier 1 for a user with no organizational involvement. Features such as a `Your Organizations` quick view and organization admin features are hidden. 
+As a recap from the redesign decisions, the [new tier based user experience](REDESIGN.md#tier-based-user-experience) provides a feature set specific to a user's involvement in UC's organizations. For our initial prototype, we chose to implement Tier 1 for a user with no organizational involvement. Features such as a `Your Organizations` quick view and organization admin features are hidden. 
 
 ## Dashboard Redesign
 
@@ -96,8 +97,24 @@ The next section of search screen presents search results according to the selec
 
 ## Event Management
 
-According to our observational interviews, 2 out of 6 interviewees successfully cancelled an event. There needs no explanation as to why this might be a problem. To solve this issue, scheduled events can now be cancelled by selecting the event under the `Your Events` box, and selecting the `Cancel event` button where the user will then be prompted to confirm the action.
+According to our observational interviews, 2 out of 6 interviewees successfully cancelled an event. There needs no explanation as to why this might be a problem. To solve this issue, scheduled events can now be cancelled by selecting the event under the `Your Events` box, and selecting the `Cancel event` button where the user will then be prompted to confirm the action. Upon cancelling, the event is correctly removed from `Your Events`, a feature missing in the original 25Live design.
 
 ## Future Work
 
-The initial prototype is meant to cover the primary redesign decisions and highlight the most important features of the site. In the future, the `Event Details` screen could be reworked which would extend the functionality of the new `Your Events` popup window. In addition, Tiers 2 and 3 would be implemented to highlight the differences in user experience between them. 
+This initial prototype is meant to cover the primary redesign decisions and highlight the most important features for the average 25Live user.
+
+For simplicity, certain features were left out. For example, some "placeholder" buttons were added to the redesigned UI to demonstrate where those features would live, but their underlying complexity or niche use cases led us to not implementing their functionality or resulting screens.
+
+Examples of future work includes:
+
+1. Implementing all "placeholder" buttons, including:
+    - The `Help` icon
+    - The `Settings`, `Reports`, `About`, `API documentation`, and `Sign out` buttons within the `Menu`.
+    - The `Modify` button within the `Event details` pop-up
+2. Redesigning the screens these buttons navigate to, ensuring all screens follow consistent branding, style, and simplicity. This includes but is not limited to:
+    - The `Help` screen
+    - The `Settings`, `Reports`, `About`, and `API documentation` screens
+    - The `Event Details` screen, as seen in the original 25Live, which could extend the functionality of the new `Your Events` dashboard feature and `Event details` pop-up.
+3. Ensuring the site immediately redirects the user to UC's sign-in screen before displaying their dashboard.
+4. Implementing Tiers 2 and 3 as detailed in [REDESIGN.md](REDESIGN.md#tier-based-user-experience), including features like `Your Organizations`, `Resource Booking`, and the `Event Wizard`.
+5. A proper backend to make this a usable university site.
